@@ -1,15 +1,17 @@
-# Matt execution adapter
+# Matt entry and handoff
 
 Load on explicit Matt entry or resume of a recorded Matt task. This is routing
 and runtime adaptation; methodology stays in the genuine installed skills.
 
 ## Select and authorize
 
-Execute the selected real skill: Claude Code invokes it with the Skill tool
-(`.claude/skills/`); Codex reads `.agents/skills/<name>/SKILL.md` and referenced
-resources. Record the source path. If missing or blocked by invocation policy,
-report the exact prerequisite; never simulate it or read around a runtime block.
-Setup and policy checks are in README. A catalog listing isn't execution.
+Use the genuine installed skills with their stock invocation policy. Claude Code
+uses its skill mechanism; Codex uses its supported skill loading, including
+ordinary file reads when permitted. Record the source path. A catalog listing
+isn't execution, and task-context loading doesn't authorize skill invocation.
+For policy inspection, Codex uses `agents/openai.yaml`, not Claude's frontmatter;
+Claude Code uses `disable-model-invocation`. Keep both installer-produced files intact.
+Setup and installation evidence are linked from README.
 
 Use `grill-with-docs` for discovery or `wayfinder` for uncertainty spanning
 sessions. Wayfinder is planning-only until the user authorizes delivery; a
@@ -18,38 +20,47 @@ Trellis Other tracker, never infer GitHub/GitLab publication from a remote.
 
 Resolve material questions with the real skill. Record the user's answers and
 scope, testing seam, delegated engineering decisions, commit/closeout permission,
-and any stop condition. Combine overlapping questions; don't require separate
-consent for bookkeeping or a skill name. Existing answers satisfy later skill
-questions only when they actually cover them. Never invent approval. Explicit
+and any stop condition. Combine overlapping questions and reuse recorded answers.
+Existing answers satisfy later skill questions only when they actually cover
+them. Never invent approval. Explicit
 planning-only requests remain planning-only.
 
-## Continue within that scope
+## Continue or hand off
 
-The coordinator selects and loads the next needed real skill without a command
-handoff: `to-spec` when a durable spec is useful; `to-tickets` when decomposition
-helps; `implement` for ready work; `code-review` for qualitative review. A small
-settled contract may go directly to implement. No duplicate Trellis interview,
-specification, decomposition or Standards/Spec review is needed.
+Select only the next needed skill: `to-spec` when a durable spec is useful;
+`to-tickets` when decomposition helps; `implement` for ready work; `code-review`
+for qualitative review. A small settled contract may go directly to implement.
+Avoid duplicate Trellis interviews, specifications and reviews.
 
-The project policy adapters let the coordinator invoke `to-spec`, `to-tickets`,
-`implement` and `retro` after this project's explicit Matt route selection. Entry
-skills stay user-only. If the runtime still blocks a stage, report the unapplied
-adapter; do not bypass a runtime invocation control.
+Continue while the installed skill and harness permit it. When the next skill
+requires user invocation, save the current task context and give the exact next
+command: `$<skill> <task-reference>` in Codex or `/<skill> <task-reference>` in
+Claude Code, replacing both placeholders with the selected skill and actual task
+path. Explain the stock policy boundary and pause. Scope authorization remains
+valid, but doesn't replace the required invocation. Do not bypass that boundary
+through direct reads, copied or renamed skills, wrappers, or metadata edits.
+If a required skill is missing, report the prerequisite without reconstructing it.
 
 Persist route, source paths, authorization, fixed point, ticket/blocker/ownership
-map, progress, checks and next action in existing task Notes/implement.md. Keep
-one source for each fact. Resume reads this record and current files; it doesn't
-repeat approved interviews or stop merely because a skill finished.
+map, progress, checks and the next command in existing task Notes/implement.md.
+Keep one source for each fact. Resume reads this record and current files, retains
+approved decisions and honors any pending invocation boundary. A Trellis resume
+command does not invoke a pending user-only Matt skill.
 
 ## Delegate and join
 
-Use actual runtime tools, not names presumed from another platform. When useful,
+Delegate within the invoked skill's permitted scope; dispatch cannot satisfy a
+different skill's user-only boundary. Use actual runtime tools. When useful,
 spawn independent ready tickets before waiting for either (Claude Code: several
 `Agent` calls in one message). Give each worker an exact task path as a line
-`Active task: <path>` (Claude's injection hook uses it instead of the single
-session pointer), real skill path, acceptance, blockers, owned files and
-applicable spec pointers. Tell workers they share a checkout, must preserve
-others' edits, and must not mutate task lifecycle, shared indexes or Git. Use
+`Active task: <path>`, real skill path, acceptance, blockers, owned files and
+applicable spec pointers. Claude's hook resolves that marker. Codex's native
+start event lacks the dispatch prompt: it supplies loading instructions only;
+the worker validates and explicitly loads its task after receiving the dispatch.
+Invalid or conflicting identity stops loading, never falls back to another task.
+Parent-session fallback is only for a dispatch with no explicit task marker.
+Tell workers they share a checkout, must preserve others' edits, and must not
+mutate task lifecycle, shared indexes or Git. Use
 separate worktrees if ownership overlaps. A worker reads its missing context
 explicitly; native injection must be observed, not inferred from the agent name.
 Claude Code rejects report-file writes from subagents: have research workers
@@ -65,22 +76,23 @@ tools can require sequential execution; record that accurately.
 ## Review, fixing and closeout
 
 Capture a resolvable base before implementation and record the initial dirty
-paths. The installed `code-review` uses `git diff <base>...HEAD`; it cannot review
-uncommitted edits. The installed `implement` asks for review before committing.
-Resolve that ordering explicitly: run focused executable checks, create an
-**authorized local checkpoint commit**, then run real `code-review` against the
-saved base with exact full spec/ticket paths. Uncommitted changes never count as
-reviewed. With no commit permission, report the pending committed review; do not
-claim PASS or silently change the real review skill's diff.
+paths. Inspect the installed `code-review` contract when invoked; updates may
+change which diff it reviews. If it reviews only `git diff <base>...HEAD`, run
+focused checks and create an authorized local checkpoint commit before review
+against the saved base and exact spec/ticket paths. Without commit permission,
+record that review as pending. If the installed skill supports working-tree
+review, follow its actual contract. Report the revision and changes actually
+reviewed; an empty diff never establishes acceptance of uncommitted work.
 
 After verified findings, fix in scope, recheck affected behavior and commit the
-correction when authorized; rerun affected review axes on the new revision.
+correction when authorized; rerun affected review axes when invocation is permitted.
 Limit unsuccessful repair cycles to three. Use the Trellis checker for remaining
 project/executable checks, allowing bounded fixes. Reuse successful checks tied to
 an unchanged revision and scope. Final acceptance covers the combined result.
 
-Use real `retro` when requested or evidence warrants it, including its
-`writing-for-agents` dependency. Retro proposes environment improvements; it need
-not change `.trellis/spec/`. Use `trellis-update-spec` only when a durable contract
-was learned. Record no-change honestly. Authorized closeout follows workflow 3.5;
+Use real `retro` when installed and requested or warranted, honoring its policy
+and dependencies. If unavailable, report that fact; do not restore old copies or
+patch the installation to supply it. Retro proposes environment improvements;
+use `trellis-update-spec` only for a durable contract learned. Neither requires
+the other. Record no-change honestly. Authorized closeout follows workflow 3.5;
 archive children before parent, use no-auto-commit flags, and never push by default.

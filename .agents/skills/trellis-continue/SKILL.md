@@ -16,7 +16,9 @@ Missing identity or a material decision warrants clarification; missing optional
 artifacts, completed stage names, or an unchanged authorization do not.
 
 Resume the first unfinished responsibility. For Matt, load
-`docs/agents/matt-flow.md` and the actual needed skill, preserving recorded route
-and scope. Load `get_context.py --mode phase --step <X.Y> --platform codex` only
+`docs/agents/matt-flow.md`, preserving recorded route and scope. Honor the needed
+skill's stock invocation policy; persist context and give the exact next command
+at a user-only boundary. This resume command does not invoke that skill.
+Load `get_context.py --mode phase --step <X.Y> --platform codex` only
 when its detail is needed. Never restart finished interviews or execute blocked
 work because a lifecycle status suggests a numbered step.

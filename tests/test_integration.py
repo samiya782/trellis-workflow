@@ -129,7 +129,11 @@ class InstalledRuntimeTests(unittest.TestCase):
         }))
         if not result.stdout.strip():
             return None
-        return json.loads(result.stdout)["hookSpecificOutput"]["updatedInput"]["prompt"]
+        output = json.loads(result.stdout)["hookSpecificOutput"]
+        if output.get("permissionDecision") == "deny":
+            self.assertNotIn("updatedInput", output)
+            return None
+        return output["updatedInput"]["prompt"]
 
     def test_parallel_claude_workers_receive_their_named_task(self) -> None:
         first, second = self.create_task("area-ticket"), self.create_task("perimeter-ticket")
@@ -145,14 +149,14 @@ class InstalledRuntimeTests(unittest.TestCase):
                     body = self.subagent_prompt(f"{line}\nImplement the ticket.")
                     self.assertIn(f"# {task.name[6:]}", body)
                     self.assertNotIn(f"# {other.name[6:]}\n", body)
-        # Ambiguous, missing or out-of-tree names fall back to the pointer.
+        # Invalid explicit identity must never borrow the pointer's task.
         for prompt in (
             f"Active task: {first.relative_to(self.root)}\nActive task: {second.relative_to(self.root)}",
             "Active task: .trellis/tasks/09-29-missing",
             "Active task: .trellis/scripts",
         ):
             with self.subTest(prompt=prompt):
-                self.assertIn("# perimeter-ticket", self.subagent_prompt(prompt))
+                self.assertIsNone(self.subagent_prompt(prompt))
 
     def test_effective_index_is_compact_and_detail_stays_on_demand(self) -> None:
         result = self.run_command(

@@ -1,66 +1,76 @@
 # Finish Work
 
-Wrap up the current session: archive the active task (and any other completed-but-unarchived tasks the user wants to clean up) and record the session journal. Code commits are NOT done here — those happen in workflow Phase 3.4 before you invoke this command.
+Complete the authorized work and reconcile closeout, including direct calls and
+interrupted or repeated attempts. Load `get_context.py --mode phase` and steps
+3.4/3.5; the project workflow owns authorization and commit policy.
 
-## Step 1: Survey current state
+## 1. Reconcile before writing
 
 ```bash
 python3 ./.trellis/scripts/get_context.py --mode record
 ```
 
-This prints:
+Resolve the exact task from the current session or the user's reference, including
+its stable identity under `.trellis/tasks/archive/` if already moved. Read its
+contract, recorded authorization and progress, then inspect current Git status,
+relevant commits and the developer journal/index. Lifecycle status alone proves
+neither permission nor completion. Limit closeout to this scope and its children.
 
-- **My active tasks** — review whether any besides the current one are actually done (code merged, AC met) and should be archived this round.
-- **Git status** — quick visual on what's dirty.
-- **Recent commits** — you'll need their hashes in Step 4 for `--commit`.
+Continue the first unfinished authorized responsibility within stock skill and
+runtime limits. For a pending Matt skill, follow `docs/agents/matt-flow.md` and
+pause with the exact next command if user invocation is required.
+Reuse checks only for unchanged revisions and scope; run missing checks or
+fix verified failures within the recorded repair budget. Preserve planning-only,
+no-commit and review boundaries. If acceptance or permission is still missing,
+record the precise pending boundary; keep incomplete tasks active.
 
-If `--mode record` surfaces other completed tasks not tied to the current session, surface them to the user with a one-shot confirmation: "These N tasks look done — archive them too in this round? [y/N]". Default is no; the current active task is always archived in Step 3 regardless.
+## 2. Resolve commits within scope
 
-## Step 2: Sanity check — classify dirty paths
+Classify all dirty paths, including task/workspace files, against the task's scope.
+When commits are authorized, complete workflow 3.4 here: inspect changes, stage
+only exact owned paths and commit with an explicit pathspec so unrelated staged
+work stays out. Reconcile existing commits before retrying. If permission excludes
+commits, leave changes for review and report that boundary; this does not prevent
+other authorized work. A finish request never overrides an explicit no-commit rule.
 
-Run:
+## 3. Archive accepted work
 
-```bash
-git status --porcelain
-```
-
-Filter out paths under `.trellis/workspace/` and `.trellis/tasks/` — those are managed by `add_session.py` and `task.py archive` auto-commits and will appear dirty as part of this skill's own work.
-
-For each remaining dirty path, decide whether it belongs to **the current task** or to **other parallel work** (e.g., another terminal window editing the same repo). Heuristics:
-
-- Paths referenced in the current task's `prd.md` / `implement.jsonl` / `check.jsonl` → current task
-- Paths in code areas matching the task's stated scope, or that you remember editing this session → current task
-- Paths in unrelated areas you have no recollection of touching this session → other parallel work
-
-Then route:
-
-- **Any remaining path looks like current-task work** — bail out with:
-  > "Working tree has uncommitted code changes from this task: `<list>`. Return to workflow Phase 3.4 to commit them before running `/trellis:finish-work`."
-
-  Do NOT run `git commit` here. Do NOT prompt the user to commit. The user goes back to Phase 3.4 and the AI drives the batched commit there.
-- **All remaining paths look unrelated** (other parallel-window work) — report them once and continue to Step 3:
-  > "FYI, dirty files outside this task's scope — leaving them for the other window: `<list>`."
-- **Genuinely unsure** — ask the user once: "Are `<list>` this task's work I forgot to commit, or another window's? (commit / ignore)" — then route per their answer.
-
-## Step 3: Archive task(s)
+After acceptance is verified and closeout is authorized, inspect command help and
+branch preconditions. Archive children before their parent:
 
 ```bash
-python3 ./.trellis/scripts/task.py archive <task-name>
+python3 ./.trellis/scripts/task.py archive <task-path> --no-commit
 ```
 
-At minimum: the current active task (if any). Plus any extra tasks the user confirmed in Step 1. Each archive produces a `chore(task): archive ...` commit via the script's auto-commit.
+Resolve each stable task identity first. Skip an already archived child or parent;
+resume the remaining archives. Leave unrelated tasks alone. Retain the resolved
+archive path for journaling even after the active pointer is cleared. Report a
+failed precondition; use a documented exception only when its conditions apply.
 
-If there is no active task and the user did not confirm any cleanup archives, skip this step.
+## 4. Record or resume the journal
 
-## Step 4: Record session journal
+Find any existing entry for this closeout in both journal and index before writing.
+Use the same inputs and stable retry key for the same logical closeout, including
+a retry after its journal was committed. Recover those inputs from task progress
+or the existing entry; don't create a second entry for a repeated finish. Inspect
+`add_session.py --help` for supported arguments.
 
 ```bash
 python3 ./.trellis/scripts/add_session.py \
   --title "Session Title" \
   --commit "hash1,hash2" \
-  --summary "Brief summary"
+  --summary "Verified outcome and remaining boundaries" \
+  --idempotency-key "task-slug-closeout-1" \
+  --no-commit
 ```
 
-Use the work-commit hashes produced in Phase 3.4 (visible in Step 1's `Recent commits` list, or via `git log --oneline`) for `--commit`. Do not include the archive commit hashes from Step 3. This produces a `chore: record journal` commit.
+Use actual work-commit hashes, or `--commit "-"` when none were made. The retry key
+identifies one closeout operation (1–64 letters, digits, dots, underscores or
+hyphens); choose a new key for distinct later work. If the journal append succeeded
+but its index update failed, rerun the identical command to repair the index.
+An already complete entry needs no append.
 
-Final git log order: `<work commits from 3.4>` → `chore(task): archive ...` (one or more) → `chore: record journal`.
+Both lifecycle commands always use `--no-commit`. If authorization includes
+committing closeout records, inspect their final diff and commit only their exact
+owned paths explicitly under step 3.4. Check Git, archive identities and the
+journal/index again before reporting completion, evidence and any pending boundary.

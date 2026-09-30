@@ -3,14 +3,16 @@
 """
 Multi-Platform Sub-Agent Context Injection Hook
 
-Injects task-specific context when sub-agents (implement, check, research) are spawned.
+Loads task-specific context for sub-agents (implement, check, research).
 
 Core Design Philosophy:
-- Hook is responsible for injecting all context, subagent works autonomously with complete info
+- Prompt-bearing hooks inject context; Codex roles pull it after dispatch arrives
 - Each agent has a dedicated jsonl file defining its context
 - No resume needed, no segmentation, behavior controlled by code not prompt
 
-Trigger: PreToolUse (before Task tool call)
+Codex SubagentStart supplies loading instructions only: that event has no
+dispatch prompt. After receiving the dispatch, the role uses --load-context
+with its explicit task, or confirms absence before using its parent pointer.
 
 Context Source: Trellis active task resolver points to task directory
 - implement.jsonl - Implement agent dedicated context
@@ -26,8 +28,10 @@ from __future__ import annotations
 import warnings
 warnings.filterwarnings("ignore")
 
+import argparse
 import json
 import os
+import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -895,10 +899,10 @@ def build_codex_subagent_context(
     task_dir: str,
     context: str,
 ) -> str:
-    """Build developer context for a native, already-dispatched Codex role."""
+    """Build task context for an already-dispatched Codex role's explicit load."""
     role = subagent_type.removeprefix("trellis-")
-    return f"""<!-- trellis-hook-injected -->
-# Trellis Native {role.title()} Subagent
+    return f"""<!-- trellis-context-loaded -->
+# Trellis {role.title()} Task Context
 
 You are the dispatched `{subagent_type}` role for this task. Perform that role
 directly; do not follow main-session dispatch or wait instructions, and do not
@@ -912,61 +916,28 @@ Active task: {task_dir}
 
 
 def _handle_codex_subagent_start(input_data: dict) -> None:
-    """Emit Codex developer context for a recognised native Trellis subagent.
+    """Defer task selection until the worker can inspect its own dispatch.
 
-    The event supplies the parent session id. Disabling the generic
-    single-session fallback is essential here: native starts must never borrow
-    a task from another Codex window when that parent id is absent or stale.
+    Codex 0.159.0 supplies no prompt at SubagentStart. The dispatch is recorded
+    after this hook, and v2 collaboration messages may be encrypted. Neither
+    the pointer nor a transcript can establish that explicit identity is absent.
     """
     subagent_type = _codex_subagent_type(input_data)
     parent_session_id = _string_value(input_data.get("session_id"))
-    if not subagent_type or not parent_session_id:
+    if not subagent_type:
         return
-
-    # Payload cwd first, then our own — some hosts (CodeBuddy IDE 4.10.4)
-    # report "/" for every hook event. See inject-workflow-state.py.
-    repo_root = None
-    for candidate in (_string_value(input_data.get("cwd")), os.getcwd()):
-        if not candidate:
-            continue
-        repo_root = find_repo_root(candidate)
-        if repo_root:
-            break
-    if not repo_root:
-        return
-
-    task_dir = get_current_task(
-        repo_root,
-        {"session_id": parent_session_id},
-        platform="codex",
-        allow_single_session_fallback=False,
-        allow_environment_context=False,
-        require_existing=True,
+    context = (
+        "<!-- trellis-context-loader -->\n"
+        "No task artifacts have been injected. SubagentStart has no dispatch prompt.\n"
+        "Follow your role's context-loading protocol after receiving your dispatch.\n"
+        "Parent session id for the no-explicit-task fallback: "
+        f"{json.dumps(parent_session_id) if parent_session_id else 'unavailable'}\n"
+        "Explicit task identity takes precedence; an invalid marker must never use the pointer."
     )
-    if not task_dir:
-        return
-
-    if subagent_type in AGENTS_REQUIRE_TASK:
-        task_dir_full = Path(repo_root) / task_dir
-        if not task_dir_full.is_dir():
-            return
-
-    if subagent_type == AGENT_IMPLEMENT:
-        context = get_implement_context(repo_root, task_dir)
-    elif subagent_type == AGENT_CHECK:
-        context = get_check_context(repo_root, task_dir)
-    else:
-        context = get_research_context(repo_root, task_dir)
-
-    if not context:
-        return
-
     output = {
         "hookSpecificOutput": {
             "hookEventName": "SubagentStart",
-            "additionalContext": build_codex_subagent_context(
-                subagent_type, task_dir, context
-            ),
+            "additionalContext": context,
         }
     }
     print(json.dumps(output, ensure_ascii=False))
@@ -1090,7 +1061,85 @@ def _parse_hook_input(input_data: dict) -> tuple[str, str, dict]:
     return "", "", tool_input
 
 
+def _explicit_task(repo_root: str, prompt: str) -> str | None:
+    """Resolve an explicit task; invalid markers must never use the pointer."""
+    markers = re.findall(r"(?m)^[ \t]*Active task:([^\r\n]*)", prompt)
+    if not markers:
+        return None
+    names = set()
+    for marker in markers:
+        match = re.fullmatch(r"[ \t]*(?:`([^`\s]+)`|([^`\s]+))[ \t]*", marker)
+        if not match:
+            raise ValueError("Malformed Active task marker")
+        names.add(match.group(1) or match.group(2))
+    if len(names) != 1:
+        raise ValueError("Conflicting Active task markers")
+    root = Path(repo_root).resolve()
+    try:
+        task = (root / names.pop()).resolve()
+        workflow_root = (root / DIR_WORKFLOW).resolve()
+        tasks_root = (workflow_root / "tasks").resolve()
+        if (not tasks_root.is_relative_to(workflow_root) or not task.is_relative_to(tasks_root)
+                or not (task / FILE_TASK_JSON).is_file()):
+            raise ValueError("Active task must name an existing task inside .trellis/tasks")
+    except (OSError, RuntimeError) as error:
+        raise ValueError("Invalid Active task path") from error
+    # Preserve Trellis's supported external workflow store, while returning the
+    # logical project path used by its readers and rejecting task-tree escapes.
+    return (Path(DIR_WORKFLOW) / "tasks" / task.relative_to(tasks_root)).as_posix()
+
+
+def _load_codex_context() -> None:
+    """Explicit role pull; absence of a marker must be acknowledged by a flag."""
+    parser = argparse.ArgumentParser(description="Load one Codex worker's task context")
+    parser.add_argument("--load-context", action="store_true", required=True)
+    parser.add_argument("--agent-type", choices=AGENTS_ALL, required=True)
+    identity = parser.add_mutually_exclusive_group(required=True)
+    identity.add_argument("--task", action="append", help="One value per dispatch Active task marker")
+    identity.add_argument("--no-explicit-task", action="store_true")
+    parser.add_argument("--parent-session-id")
+    args = parser.parse_args()
+    repo_root = find_repo_root(os.getcwd())
+    if not repo_root:
+        parser.error("No repository found; no task context loaded")
+    try:
+        if args.task is not None:
+            if any("\n" in value or "\r" in value for value in args.task):
+                raise ValueError("Malformed Active task marker")
+            task_dir = _explicit_task(
+                repo_root, "\n".join(f"Active task: {value}" for value in args.task)
+            )
+        else:
+            if not args.parent_session_id:
+                raise ValueError("No parent session identity; ask the main session for the task path")
+            task_dir = get_current_task(
+                repo_root,
+                {"session_id": args.parent_session_id},
+                platform="codex",
+                allow_single_session_fallback=False,
+                allow_environment_context=False,
+                require_existing=True,
+            )
+            if task_dir:
+                task_dir = _explicit_task(repo_root, f"Active task: {task_dir}")
+        if not task_dir:
+            raise ValueError("No task for this parent session; ask the main session for the task path")
+    except ValueError as error:
+        parser.error(f"{error}; no task context loaded")
+
+    if args.agent_type == AGENT_IMPLEMENT:
+        context = get_implement_context(repo_root, task_dir)
+    elif args.agent_type == AGENT_CHECK:
+        context = get_check_context(repo_root, task_dir)
+    else:
+        context = get_research_context(repo_root, task_dir)
+    print(build_codex_subagent_context(args.agent_type, task_dir, context))
+
+
 def main():
+    if "--load-context" in sys.argv[1:]:
+        _load_codex_context()
+        return
     if os.environ.get("TRELLIS_HOOKS") == "0" or os.environ.get("TRELLIS_DISABLE_HOOKS") == "1":
         sys.exit(0)
 

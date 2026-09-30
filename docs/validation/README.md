@@ -1,5 +1,18 @@
 # Validation record — 2026-09-29
 
+Current supported installation: [stock-installation.md](stock-installation.md).
+It uses the exact standard unpinned installer command, leaves upstream invocation
+policies intact and accepts required manual handoffs. Its focused current-harness
+evidence is separate from the historical patched-installation runs below.
+
+Earlier increment from HEAD `fdb57d2`: [runtime-gaps.md](runtime-gaps.md) and
+[structured evidence](runtime-gaps.json) cover worker task isolation,
+authorization/closeout sources, existing-project installation/loading and the
+recorded repair-budget resume boundary. **40 local regressions pass.** This
+increment ran only Codex with the then-adapted installation. Its independent
+runtime fixes are retained; its automation results do not establish stock-skill
+automation. The records below retain their original scope and dates.
+
 This directory is evidence, not startup instructions. Sections below describe the
 Codex run; the later fresh Claude Code run is in [claude.md](claude.md). Raw native histories stay
 in their existing stores; the checked-in reports contain selected sanitized

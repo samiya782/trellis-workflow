@@ -1,15 +1,1 @@
-# Codex Matt installations are restored from the pinned upstream source (README).
-# Keep complete upstream bodies installer-owned; configure only Codex metadata.
-/.agents/skills/code-review/
-/.agents/skills/domain-modeling/
-/.agents/skills/grill-with-docs/
-/.agents/skills/grilling/
-/.agents/skills/implement/
-/.agents/skills/research/
-/.agents/skills/retro/
-/.agents/skills/tdd/
-/.agents/skills/to-spec/
-/.agents/skills/to-tickets/
-/.agents/skills/wayfinder/
-/.agents/skills/writing-for-agents/
 __pycache__/

@@ -428,9 +428,7 @@ def _get_task_status(trellis_dir: Path, input_data: dict) -> str:
     if not active.task_path:
         return (
             "Status: NO ACTIVE TASK\n"
-            "Next-Action: Classify the current turn before creating any Trellis task. "
-            "Simple conversation / small task asks only whether this turn should create a Trellis task. "
-            "Complex task asks whether task creation and planning are allowed."
+            "Next-Action: Follow `get_context.py --mode phase` for task scope and authorization."
         )
 
     task_ref = active.task_path
@@ -438,8 +436,8 @@ def _get_task_status(trellis_dir: Path, input_data: dict) -> str:
     if active.stale or not task_dir.is_dir():
         return (
             f"Status: STALE POINTER\nTask: {task_ref}\n"
-            f"Next-Action: Run `python3 ./.trellis/scripts/task.py finish` to clear the stale pointer, "
-            "then ask the user what to work on next."
+            "Next-Action: Resolve the exact task in active/archive records and inspect journal/Git "
+            "before clearing the pointer or resuming authorized work."
         )
 
     task_json_path = task_dir / "task.json"
@@ -462,48 +460,27 @@ def _get_task_status(trellis_dir: Path, input_data: dict) -> str:
         return (
             f"Status: COMPLETED\nTask: {task_title}\n"
             f"Present: {present_line}\n"
-            "Next-Action: Run `/trellis:finish-work`. If the working tree is dirty, return to Phase 3.4 first."
+            "Next-Action: Reconcile acceptance, authorization and existing closeout records using "
+            "`get_context.py --mode phase --step 3.5` and trellis-finish-work."
         )
 
     has_prd = (task_dir / "prd.md").is_file()
-    has_design = (task_dir / "design.md").is_file()
-    has_implement_plan = (task_dir / "implement.md").is_file()
-    implement_jsonl = task_dir / "implement.jsonl"
-    check_jsonl = task_dir / "check.jsonl"
-    jsonl_ready = (
-        (not implement_jsonl.is_file() or _has_curated_jsonl_entry(implement_jsonl))
-        and (not check_jsonl.is_file() or _has_curated_jsonl_entry(check_jsonl))
-    )
 
     if task_status == "planning" and not has_prd:
         return (
             f"Status: PLANNING\nTask: {task_title}\n"
             f"Present: {present_line}\n"
-            "Next-Action: Load `trellis-brainstorm` and write `prd.md`. Stay in planning."
+            "Next-Action: Read recorded scope and authorization; use `get_context.py --mode phase` "
+            "to resolve missing requirements within that scope."
         )
 
     if task_status == "planning":
-        missing_complex = [
-            name for name, exists in (
-                ("design.md", has_design),
-                ("implement.md", has_implement_plan),
-            )
-            if not exists
-        ]
-        next_bits: list[str] = []
-        if missing_complex:
-            next_bits.append(
-                "Lightweight task can request start review with PRD-only; "
-                f"complex task must add {', '.join(missing_complex)} before start"
-            )
-        else:
-            next_bits.append("Planning artifacts are present; ask for review before `task.py start`")
-        if not jsonl_ready:
-            next_bits.append("curate `implement.jsonl` and `check.jsonl` before sub-agent mode start")
         return (
             f"Status: PLANNING\nTask: {task_title}\n"
             f"Present: {present_line}\n"
-            f"Next-Action: {'; '.join(next_bits)}. Do not enter implementation until the user confirms start."
+            "Next-Action: Read recorded scope, authorization and progress; follow "
+            "`get_context.py --mode phase --step 1.4`. Continue within existing authorization; "
+            "preserve planning-only and no-commit boundaries."
         )
 
     return (

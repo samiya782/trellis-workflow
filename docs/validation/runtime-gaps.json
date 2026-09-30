@@ -1,0 +1,550 @@
+{
+  "baseline_head": "fdb57d28e3281f0b913cb896b1a3e95c707460f2",
+  "versions": {
+    "codex_cli": "0.159.0",
+    "trellis": "0.7.0-beta.4",
+    "skills_installer": "1.7.0",
+    "matt": "d81f3a183412e71a5b1e84ca21bc1a35eea03a60"
+  },
+  "regressions": {
+    "baseline": {
+      "tests": 26,
+      "seconds": 4.425
+    },
+    "final": {
+      "tests": 40,
+      "seconds": 7.264
+    },
+    "new_tests": 14
+  },
+  "native_worker_probes": [
+    {
+      "agent": "context_probe_fallback",
+      "thread_id": "01a0f03a-2824-75f0-8bb3-a6e7ca6eaa35",
+      "transcript": "/home/samiya/.codex/sessions/2026/09/29/rollout-2026-09-29T19-52-18-01a0f03a-2824-75f0-8bb3-a6e7ca6eaa35.jsonl",
+      "parent": "01a0ee17-b680-7f83-913d-20e05a8b5acb",
+      "native_notices": [
+        {
+          "line": 9,
+          "chars": 361,
+          "task_artifacts": false,
+          "parent_id_present": true
+        }
+      ],
+      "load_calls": [
+        {
+          "line": 16,
+          "tool": "exec",
+          "input": "const results = await Promise.allSettled([\n  tools.exec_command({cmd:\"python3 .trellis/scripts/get_context.py --mode phase\",workdir:\"/home/samiya/trellis\",max_output_tokens:12000}),\n  tools.exec_command({cmd:\"python3 .codex/hooks/inject-subagent-context.py --load-context --agent-type trellis-check --no-explicit-task --parent-session-id '01a0ee17-b680-7f83-913d-20e05a8b5acb'\",workdir:\"/home/samiya/trellis\",max_output_tokens:22000})\n]);\nfor (let i=0;i<results.length;i++) text({index:i,...results[i]});\n"
+        }
+      ],
+      "loader_results": [
+        {
+          "line": 20,
+          "probe_a_sentinels": 0,
+          "probe_b_sentinels": 0,
+          "integration_prd": true,
+          "loaded_marker": true,
+          "error_no_context": false
+        }
+      ],
+      "scope": "Initial no-explicit-identity diagnostic only; later code review excluded.",
+      "runtime": {
+        "approval_policy": "never",
+        "sandbox_policy": {
+          "type": "danger-full-access"
+        },
+        "model": "gpt-6-astra",
+        "cli_version": "0.159.0"
+      }
+    },
+    {
+      "agent": "context_probe_b",
+      "thread_id": "01a0f03a-17cc-74f2-a047-d34040956a1d",
+      "transcript": "/home/samiya/.codex/sessions/2026/09/29/rollout-2026-09-29T19-52-14-01a0f03a-17cc-74f2-a047-d34040956a1d.jsonl",
+      "parent": "01a0ee17-b680-7f83-913d-20e05a8b5acb",
+      "native_notices": [
+        {
+          "line": 9,
+          "chars": 361,
+          "task_artifacts": false,
+          "parent_id_present": true
+        }
+      ],
+      "load_calls": [
+        {
+          "line": 16,
+          "tool": "exec",
+          "input": "text(await tools.exec_command({cmd:\"python3 .codex/hooks/inject-subagent-context.py --load-context --agent-type trellis-check --task '.trellis/tasks/09-29-context-probe-b'\",workdir:\"/home/samiya/trellis\",max_output_tokens:20000}));\n"
+        },
+        {
+          "line": 42,
+          "tool": "exec",
+          "input": "text(await tools.exec_command({cmd:\"python3 .codex/hooks/inject-subagent-context.py --load-context --agent-type trellis-check --task '.trellis/tasks/09-29-context-probe-missing'\",workdir:\"/home/samiya/trellis\",max_output_tokens:12000}));\n"
+        }
+      ],
+      "loader_results": [
+        {
+          "line": 19,
+          "probe_a_sentinels": 0,
+          "probe_b_sentinels": 1,
+          "integration_prd": false,
+          "loaded_marker": true,
+          "error_no_context": false
+        },
+        {
+          "line": 45,
+          "probe_a_sentinels": 0,
+          "probe_b_sentinels": 0,
+          "integration_prd": false,
+          "loaded_marker": false,
+          "error_no_context": true
+        }
+      ],
+      "runtime": {
+        "approval_policy": "never",
+        "sandbox_policy": {
+          "type": "danger-full-access"
+        },
+        "model": "gpt-6-astra",
+        "cli_version": "0.159.0"
+      }
+    },
+    {
+      "agent": "context_probe_a",
+      "thread_id": "01a0f038-259e-70c3-9bd1-d8997e7c0769",
+      "transcript": "/home/samiya/.codex/sessions/2026/09/29/rollout-2026-09-29T19-50-06-01a0f038-259e-70c3-9bd1-d8997e7c0769.jsonl",
+      "parent": "01a0ee17-b680-7f83-913d-20e05a8b5acb",
+      "native_notices": [
+        {
+          "line": 9,
+          "chars": 361,
+          "task_artifacts": false,
+          "parent_id_present": true
+        }
+      ],
+      "load_calls": [
+        {
+          "line": 16,
+          "tool": "exec",
+          "input": "const results = await Promise.allSettled([\n  tools.exec_command({cmd: \"python3 .codex/hooks/inject-subagent-context.py --load-context --agent-type trellis-check --task '.trellis/tasks/09-29-context-probe-a'\", workdir: \"/home/samiya/trellis\", max_output_tokens: 12000}),\n  tools.exec_command({cmd: \"python3 .trellis/scripts/get_context.py --mode phase\", workdir: \"/home/samiya/trellis\", max_output_tokens: 6000})\n]);\nfor (let i = 0; i < results.length; i++) text({source: i === 0 ? \"assigned_task_loader\" : \"compact_workflow\", result: results[i]});\n"
+        },
+        {
+          "line": 38,
+          "tool": "exec",
+          "input": "text(await tools.exec_command({cmd: \"python3 .codex/hooks/inject-subagent-context.py --load-context --agent-type trellis-check --task '.trellis/tasks/09-29-context-probe-a' --task '.trellis/tasks/09-29-context-probe-b'\", workdir: \"/home/samiya/trellis\", max_output_tokens: 3000}));\n"
+        }
+      ],
+      "loader_results": [
+        {
+          "line": 20,
+          "probe_a_sentinels": 1,
+          "probe_b_sentinels": 0,
+          "integration_prd": false,
+          "loaded_marker": true,
+          "error_no_context": false
+        },
+        {
+          "line": 41,
+          "probe_a_sentinels": 0,
+          "probe_b_sentinels": 0,
+          "integration_prd": false,
+          "loaded_marker": false,
+          "error_no_context": true
+        }
+      ],
+      "runtime": {
+        "approval_policy": "never",
+        "sandbox_policy": {
+          "type": "danger-full-access"
+        },
+        "model": "gpt-6-astra",
+        "cli_version": "0.159.0"
+      }
+    }
+  ],
+  "closeout_runs": {
+    "authorized": {
+      "thread_id": "01a0f033-f680-7003-b1c7-4387d85a34de",
+      "command": [
+        "codex",
+        "exec",
+        "--approve-for-me",
+        "--cd",
+        "/tmp/runtime-closeout-x8zmv427/authorized",
+        "--json",
+        "--color",
+        "never",
+        "--output-last-message",
+        "/tmp/runtime-closeout-x8zmv427/authorized-final.md",
+        "Finish .trellis/tasks/09-29-authorized-finish using trellis-finish-work."
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 163.52,
+      "usage": {
+        "input_tokens": 540816,
+        "cached_input_tokens": 488960,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3956,
+        "reasoning_output_tokens": 519
+      },
+      "skill_read": true,
+      "denial_outputs": [],
+      "native_developer_hook_markers": [],
+      "lifecycle_calls": [
+        {
+          "command": "/usr/bin/zsh -lc \"python3 .trellis/scripts/task.py archive --help; python3 .trellis/scripts/add_session.py --help; rg -n -F 'no-auto-commit' .trellis/workflow.md; rg --files -g AGENTS.md -g pyproject.toml -g package.json -g '*test*' -g '*spec*' -g README.md\"",
+          "exit_code": 0
+        },
+        {
+          "command": "/usr/bin/zsh -lc \"git commit -m 'fix: compute square by multiplication' -- calc.py\"",
+          "exit_code": 0
+        },
+        {
+          "command": "/usr/bin/zsh -lc 'python3 .trellis/scripts/task.py archive .trellis/tasks/09-29-remaining-child --no-commit'",
+          "exit_code": 0
+        },
+        {
+          "command": "/usr/bin/zsh -lc 'python3 .trellis/scripts/task.py archive .trellis/tasks/09-29-authorized-finish --no-commit'",
+          "exit_code": 0
+        },
+        {
+          "command": "/usr/bin/zsh -lc \"python3 .trellis/scripts/add_session.py --title 'Finish authorized-finish' --commit '1e33c84ae40c5285c6ccf3723943b2b02875422f' --summary 'Verified square(-3), square(0), and square(3); archived the accepted parent and both children under .trellis/tasks/archive/2026-09/. Preserved unrelated staged work. No remaining task work.' --idempotency-key 'authorized-finish-closeout-1' --no-commit\"",
+          "exit_code": 0
+        },
+        {
+          "command": "/usr/bin/zsh -lc \"git commit -m 'chore: close out authorized-finish task' -- .trellis/tasks/09-29-archived-child .trellis/tasks/09-29-remaining-child .trellis/tasks/09-29-authorized-finish .trellis/tasks/archive/2026-09/09-29-archived-child .trellis/tasks/archive/2026-09/09-29-remaining-child .trellis/tasks/archive/2026-09/09-29-authorized-finish .trellis/workspace/integration-test/index.md .trellis/workspace/integration-test/journal-1.md .trellis/.runtime/sessions/closeout-authorized.json\"",
+          "exit_code": 0
+        }
+      ]
+    },
+    "planning": {
+      "thread_id": "01a0f033-f668-7cf1-af95-bf09591c3a0a",
+      "command": [
+        "codex",
+        "exec",
+        "--sandbox",
+        "workspace-write",
+        "-c",
+        "approval_policy=\"never\"",
+        "--cd",
+        "/tmp/runtime-closeout-x8zmv427/planning",
+        "--json",
+        "--color",
+        "never",
+        "--output-last-message",
+        "/tmp/runtime-closeout-x8zmv427/planning-final.md",
+        "Finish .trellis/tasks/09-29-planning-finish using trellis-finish-work."
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 95.058,
+      "usage": {
+        "input_tokens": 201399,
+        "cached_input_tokens": 179072,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2308,
+        "reasoning_output_tokens": 695
+      },
+      "skill_read": true,
+      "denial_outputs": [],
+      "native_developer_hook_markers": [],
+      "lifecycle_calls": [
+        {
+          "command": "/usr/bin/zsh -lc 'python3 .trellis/scripts/task.py archive --help; python3 .trellis/scripts/add_session.py --help'",
+          "exit_code": 0
+        },
+        {
+          "command": "/usr/bin/zsh -lc \"rg -n -F 'commit' .trellis/scripts/add_session.py; rg -n -F 'idempotency' .trellis/scripts/add_session.py; rg -n -F 'AGENTS' AGENTS.md; tail -n 25 AGENTS.md\"",
+          "exit_code": 0
+        },
+        {
+          "command": "/usr/bin/zsh -lc \"sed -n '866,944p' .trellis/scripts/add_session.py; sed -n '1238,1275p' .trellis/scripts/add_session.py; rg -n -F 'Planning is complete.' .trellis/tasks/09-29-planning-finish/prd.md\"",
+          "exit_code": 0
+        },
+        {
+          "command": "/usr/bin/zsh -lc \"python3 .trellis/scripts/add_session.py \\\\\n  --title 'planning-finish: planning review checkpoint' \\\\\n  --commit '-' \\\\\n  --branch 'feature/fixture' \\\\\n  --summary 'Verified proposal.txt names square(value), returning value squared, for a later delivery task. Planning is complete; task remains active for user review and delivery authorization. No implementation, commits, or archives; calc.py is unchanged.' \\\\\n  --idempotency-key 'planning-finish-closeout-1' \\\\\n  --no-commit\"",
+          "exit_code": 0
+        }
+      ]
+    },
+    "repeat": {
+      "thread_id": "01a0f037-1373-79f3-b09a-988f6e51fad0",
+      "command": [
+        "codex",
+        "exec",
+        "--approve-for-me",
+        "--cd",
+        "/tmp/runtime-closeout-x8zmv427/authorized",
+        "--json",
+        "--color",
+        "never",
+        "--output-last-message",
+        "/tmp/runtime-closeout-x8zmv427/repeat-final.md",
+        "Finish .trellis/tasks/09-29-authorized-finish using trellis-finish-work."
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 61.335,
+      "usage": {
+        "input_tokens": 119275,
+        "cached_input_tokens": 95104,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1465,
+        "reasoning_output_tokens": 334
+      },
+      "skill_read": true,
+      "denial_outputs": [],
+      "native_developer_hook_markers": [],
+      "lifecycle_calls": [
+        {
+          "command": "/usr/bin/zsh -lc 'python3 .trellis/scripts/task.py archive --help'",
+          "exit_code": 0
+        },
+        {
+          "command": "/usr/bin/zsh -lc 'python3 .trellis/scripts/add_session.py --help'",
+          "exit_code": 0
+        }
+      ]
+    }
+  },
+  "closeout_audit": {
+    "authorized": {
+      "head": "59f2be9a8af7ca487ac972c3efb5fdefe9ca0626",
+      "status": "A  unrelated.txt",
+      "commits": [
+        "59f2be9a8af7ca487ac972c3efb5fdefe9ca0626 chore: close out authorized-finish task",
+        "1e33c84ae40c5285c6ccf3723943b2b02875422f fix: compute square by multiplication"
+      ],
+      "staged": "100644 a069243a6b8fa76def0c613120a2bddf5d52e3e1 0\tunrelated.txt",
+      "source_unchanged_since_setup": true,
+      "journal_entries": 1,
+      "journal_sha": "fb841b31baeb01d9991c519b5580042322e4c5d918f0b2109bf2ccef63a51ba2",
+      "index_sha": "06acdd5ae387f82538e39d704d7237eb3f667afbed38e126865fa2f4c332f0fc",
+      "tasks": {
+        ".trellis/tasks/archive/2026-09/09-29-remaining-child/task.json": {
+          "id": "remaining-child",
+          "status": "completed",
+          "children": [],
+          "parent": "09-29-authorized-finish"
+        },
+        ".trellis/tasks/archive/2026-09/09-29-authorized-finish/task.json": {
+          "id": "authorized-finish",
+          "status": "completed",
+          "children": [
+            "09-29-archived-child",
+            "09-29-remaining-child"
+          ],
+          "parent": null
+        },
+        ".trellis/tasks/archive/2026-09/09-29-archived-child/task.json": {
+          "id": "archived-child",
+          "status": "completed",
+          "children": [],
+          "parent": "09-29-authorized-finish"
+        }
+      }
+    },
+    "planning": {
+      "head": "54fadb94d69dbdedaaf9ac5b36ced66ea0f13435",
+      "status": "M .trellis/tasks/09-29-planning-finish/prd.md\n M .trellis/workspace/integration-test/index.md\n M .trellis/workspace/integration-test/journal-1.md\n M proposal.txt",
+      "commits": [],
+      "staged": "",
+      "source_unchanged_since_setup": true,
+      "journal_entries": 1,
+      "journal_sha": "336a7afb8bd32f12ee3e0ade6ea9c3e8d2f9a61907f6b67e4415163cc8ef21bc",
+      "index_sha": "ebfc004de4b857612bc9fa36e8dc1a6508356f3e5d6d7a4f6af0bee1120c42c6",
+      "tasks": {
+        ".trellis/tasks/09-29-planning-finish/task.json": {
+          "id": "planning-finish",
+          "status": "planning",
+          "children": [],
+          "parent": null
+        }
+      }
+    }
+  },
+  "repeat_audit_identical": true,
+  "budget_resume": {
+    "root": "/tmp/trellis-budget-resume-6lcxqfnf",
+    "prompt": "Resume the task at .trellis/tasks/09-29-sum-repair within its recorded authorization.",
+    "setup": "Three real failing checks seeded by test controller, not three autonomous agent repair cycles.",
+    "command": [
+      "codex",
+      "exec",
+      "--sandbox",
+      "workspace-write",
+      "-c",
+      "approval_policy=\"never\"",
+      "--cd",
+      "/tmp/trellis-budget-resume-6lcxqfnf",
+      "--json",
+      "--color",
+      "never",
+      "--output-last-message",
+      "/tmp/runtime-budget-final.txt",
+      "Resume the task at .trellis/tasks/09-29-sum-repair within its recorded authorization."
+    ],
+    "exit": 0,
+    "seconds": 103.995,
+    "thread_id": "01a0f030-a0cd-7432-be1d-212f4564dd54",
+    "usage": {
+      "input_tokens": 196829,
+      "cached_input_tokens": 177280,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 1991,
+      "reasoning_output_tokens": 458
+    },
+    "code_and_test_unchanged": true
+  },
+  "existing_project": {
+    "thread_id": "01a0f036-9048-7962-a306-650f65759c1f",
+    "run": {
+      "fixture": "/tmp/trellis-existing-indupolicy-_3qry4lp",
+      "command": [
+        "codex",
+        "exec",
+        "-C",
+        "/tmp/trellis-existing-indupolicy-_3qry4lp",
+        "--sandbox",
+        "workspace-write",
+        "-c",
+        "approval_policy=\"never\"",
+        "--json",
+        "-o",
+        "/tmp/runtime-existing-final.txt",
+        "In docs/infra/README.md, add \"Local validation copy.\" as a final standalone paragraph. Leave changes uncommitted."
+      ],
+      "prompt": "In docs/infra/README.md, add \"Local validation copy.\" as a final standalone paragraph. Leave changes uncommitted.",
+      "transient_parent_identity_removed": [
+        "CODEX_THREAD_ID"
+      ],
+      "started_at": "2026-09-30T02:48:22.770543+00:00",
+      "returncode": 0,
+      "wall_seconds": 31.580542568000965,
+      "finished_at": "2026-09-30T02:48:56.178358+00:00"
+    },
+    "usage": {
+      "input_tokens": 78612,
+      "cached_input_tokens": 64128,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 544,
+      "reasoning_output_tokens": 54
+    },
+    "native_path": "/home/samiya/.codex/sessions/2026/09/29/rollout-2026-09-29T19-48-22-01a0f036-9048-7962-a306-650f65759c1f.jsonl",
+    "changed_paths": [
+      "docs/infra/README.md"
+    ],
+    "target_exact": true,
+    "static_audit": {
+      "pinned_file_count": 58,
+      "allowed_policy_changes": [
+        ".claude/skills/to-spec/SKILL.md",
+        ".claude/skills/to-tickets/SKILL.md",
+        ".claude/skills/implement/SKILL.md",
+        ".claude/skills/retro/SKILL.md",
+        ".agents/skills/to-spec/agents/openai.yaml",
+        ".agents/skills/to-tickets/agents/openai.yaml",
+        ".agents/skills/implement/agents/openai.yaml",
+        ".agents/skills/retro/agents/openai.yaml"
+      ],
+      "source_files_unchanged": 864,
+      "matching_body_pairs": 12,
+      "settings_untouched": 4,
+      "no_symlinks": true,
+      "task_spec_counts_preserved": true
+    },
+    "native_catalog_entries": 37,
+    "native_catalog_duplicates": 0,
+    "native_agents_message_count": 1,
+    "native_hook_events": [],
+    "own_artifact_entries_in_158_role_manifests": 0
+  },
+  "context_characters": {
+    ".trellis/workflow.md": {
+      "before_chars": 8572,
+      "after_chars": 8572,
+      "unchanged": true,
+      "delta_chars": 0
+    },
+    "AGENTS.md": {
+      "before_chars": 1569,
+      "after_chars": 1569,
+      "unchanged": true,
+      "delta_chars": 0
+    },
+    ".agents/skills/trellis-finish-work/SKILL.md": {
+      "before_chars": 3665,
+      "after_chars": 3807,
+      "unchanged": false,
+      "delta_chars": 142
+    },
+    ".claude/commands/trellis/finish-work.md": {
+      "before_chars": 3394,
+      "after_chars": 3580,
+      "unchanged": false,
+      "delta_chars": 186
+    },
+    ".codex/agents/trellis-implement.toml": {
+      "before_chars": 2531,
+      "after_chars": 3202,
+      "unchanged": false,
+      "delta_chars": 671
+    },
+    ".codex/agents/trellis-check.toml": {
+      "before_chars": 3473,
+      "after_chars": 4155,
+      "unchanged": false,
+      "delta_chars": 682
+    },
+    ".codex/agents/trellis-research.toml": {
+      "before_chars": 2741,
+      "after_chars": 3405,
+      "unchanged": false,
+      "delta_chars": 664
+    }
+  },
+  "genuine_matt_skill_files_unchanged": [
+    ".agents/skills/grill-with-docs/SKILL.md",
+    ".agents/skills/wayfinder/SKILL.md",
+    ".agents/skills/grilling/SKILL.md",
+    ".agents/skills/domain-modeling/SKILL.md",
+    ".agents/skills/to-spec/SKILL.md",
+    ".agents/skills/to-tickets/SKILL.md",
+    ".agents/skills/implement/SKILL.md",
+    ".agents/skills/tdd/SKILL.md",
+    ".agents/skills/code-review/SKILL.md",
+    ".agents/skills/retro/SKILL.md",
+    ".agents/skills/writing-for-agents/SKILL.md",
+    ".agents/skills/research/SKILL.md",
+    ".claude/skills/grill-with-docs/SKILL.md",
+    ".claude/skills/wayfinder/SKILL.md",
+    ".claude/skills/grilling/SKILL.md",
+    ".claude/skills/domain-modeling/SKILL.md",
+    ".claude/skills/to-spec/SKILL.md",
+    ".claude/skills/to-tickets/SKILL.md",
+    ".claude/skills/implement/SKILL.md",
+    ".claude/skills/tdd/SKILL.md",
+    ".claude/skills/code-review/SKILL.md",
+    ".claude/skills/retro/SKILL.md",
+    ".claude/skills/writing-for-agents/SKILL.md",
+    ".claude/skills/research/SKILL.md"
+  ],
+  "fixture_trust_cleanup": {
+    "removed_fixture_entries": [
+      "/tmp/trellis-budget-resume-6lcxqfnf",
+      "/tmp/runtime-closeout-x8zmv427/authorized",
+      "/tmp/runtime-closeout-x8zmv427/planning",
+      "/tmp/trellis-existing-indupolicy-_3qry4lp"
+    ],
+    "other_toml_values_unchanged": true,
+    "before_sha256": "27df5ca699d687be1d81929a19ec2535af73036e6811243757e0a8af179ffa0f",
+    "after_sha256": "4adfadd507f461340635abc81e234c6736edeb1499a664eeefef958e79bd34b4",
+    "attribution": "Entries appeared during fresh CLI experiments; exact writer not proven. Only test-created fixture names removed after all CLI runs; no hook approval changed."
+  },
+  "limits": [
+    "Controlled native probes use explicit task reads after native loading guidance; not native task-artifact push or skill invocation.",
+    "Claude harness not run in this increment.",
+    "Repair failures were seeded controller checks, not autonomous exhaustion.",
+    "Fresh CLI sessions did not execute copied hooks; no hook trust bypass.",
+    "Global config baseline bytes were not captured; only exact disposable-fixture trust entries were removed, all other parsed values preserved."
+  ]
+}

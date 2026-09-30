@@ -1092,17 +1092,31 @@ def _parse_hook_input(input_data: dict) -> tuple[str, str, dict]:
 
 
 def _explicit_task(repo_root: str, prompt: str) -> str | None:
-    """Return the one task named by `Active task: <path>` lines, if it exists."""
-    names = set(re.findall(r"(?m)^[ \t]*Active task:[ \t]*`?([^`\s]+)`?[ \t]*$", prompt or ""))
+    """Resolve an explicit task; invalid markers must never use the pointer."""
+    markers = re.findall(r"(?m)^[ \t]*Active task:([^\r\n]*)", prompt)
+    if not markers:
+        return None
+    names = set()
+    for marker in markers:
+        match = re.fullmatch(r"[ \t]*(?:`([^`\s]+)`|([^`\s]+))[ \t]*", marker)
+        if not match:
+            raise ValueError("Malformed Active task marker")
+        names.add(match.group(1) or match.group(2))
     if len(names) != 1:
-        return None
+        raise ValueError("Conflicting Active task markers")
     root = Path(repo_root).resolve()
-    candidate = Path(names.pop())
-    task = (candidate if candidate.is_absolute() else root / candidate).resolve()
-    tasks_root = (root / DIR_WORKFLOW / "tasks").resolve()
-    if not task.is_relative_to(tasks_root) or not (task / "task.json").is_file():
-        return None
-    return task.relative_to(root).as_posix()
+    try:
+        task = (root / names.pop()).resolve()
+        workflow_root = (root / DIR_WORKFLOW).resolve()
+        tasks_root = (workflow_root / "tasks").resolve()
+        if (not tasks_root.is_relative_to(workflow_root) or not task.is_relative_to(tasks_root)
+                or not (task / FILE_TASK_JSON).is_file()):
+            raise ValueError("Active task must name an existing task inside .trellis/tasks")
+    except (OSError, RuntimeError) as error:
+        raise ValueError("Invalid Active task path") from error
+    # Preserve Trellis's supported external workflow store, while returning the
+    # logical project path used by its readers and rejecting task-tree escapes.
+    return (Path(DIR_WORKFLOW) / "tasks" / task.relative_to(tasks_root)).as_posix()
 
 
 def main():
@@ -1140,11 +1154,23 @@ def main():
     # Get current task directory (research doesn't require it). A parallel
     # dispatch names each worker's task explicitly; the session pointer can
     # only hold one of them.
-    task_dir = _explicit_task(repo_root, original_prompt) or get_current_task(
-        repo_root,
-        input_data,
-        allow_single_session_fallback=True,
-    )
+    try:
+        task_dir = _explicit_task(repo_root, original_prompt)
+    except ValueError as error:
+        # Deny the dispatch itself: an empty successful hook result would let a
+        # worker's legacy first-marker fallback select one conflicting task.
+        print(json.dumps({"hookSpecificOutput": {
+            "hookEventName": "PreToolUse",
+            "permissionDecision": "deny",
+            "permissionDecisionReason": f"{error}; provide one valid Active task path.",
+        }}))
+        sys.exit(0)
+    if task_dir is None:
+        task_dir = get_current_task(
+            repo_root,
+            input_data,
+            allow_single_session_fallback=True,
+        )
 
     # implement/check need task directory
     if subagent_type in AGENTS_REQUIRE_TASK:

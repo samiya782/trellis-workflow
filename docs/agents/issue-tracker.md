@@ -78,7 +78,8 @@ archive state. Wait for all required results before dependent integration.
 Review passes exact child and full parent spec paths plus the saved Git base to
 real `code-review`; it does not understand `trellis-task:` as a hosted issue.
 Persist per-axis findings and executable evidence, allow bounded fixes, and use
-workflow 2.2 for rechecking. Don't require a new explicit `implement` command.
+workflow 2.2 for rechecking. Continue repairs within the invoked skill's scope;
+if stock policy requires a new invocation, persist the next command and pause.
 
 ## Close
 
