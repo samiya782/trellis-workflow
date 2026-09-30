@@ -47,3 +47,25 @@ Committed the authorized integration, tests and validation evidence. Archived th
 ### Status
 
 [OK] **Completed**
+
+
+## Session 3: Deliver stock Matt installation and runtime fixes
+<!-- trellis-session: v=2 fp=0dda01316617bb30 -->
+
+**Date**: 2026-09-29
+**Task**: Deliver stock Matt installation and runtime fixes
+**Branch**: `main`
+
+### Summary
+
+Restored stock upstream Matt installation, removed invocation-policy adapters, retained worker isolation and safe closeout. Verified 23 regressions, focused workflow checks and one fresh Codex handoff; no Claude rerun. User authorized commits and completed-task closeout. No push.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `49509f6` | fix: use stock Matt skills and isolate Trellis task context |
+
+### Status
+
+[OK] **Completed**
