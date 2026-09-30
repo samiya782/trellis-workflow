@@ -145,3 +145,110 @@ usage are in [stock-installation.json](stock-installation.json). Raw logs stay i
 `/tmp/trellis-stock-run.*` and the native session store. Remaining limits: no stock
 full delivery matrix, fresh stock entry interview, Claude execution or hook-trust
 approval test; automatic end-to-end delivery is not an acceptance requirement.
+
+## Claude Code compatibility check — 2026-09-29
+
+Verification only; no integration change. Claude Code **2.1.284**, model
+`claude-opus-5-5[1m]`, checkout `db83481` with a clean working tree. Fixtures are
+`git archive HEAD` copies under `/tmp/cs/` plus a two-function `textstats.py`
+sample app, local Git, a fixture developer and no remote. Before the interactive
+run, every tracked file and symlink in the Matt fixture matched the checkout.
+Only ignored per-developer/runtime state and an unrelated `ask` override differed.
+
+| Check | Execution mode | Result |
+| --- | --- | --- |
+| 1. Normal route | Fresh headless `claude -p`, `--permission-mode acceptEdits`, tool allowlist; `317236af` | **Pass.** "Correct the typo in the textstats help text and run the relevant check. Leave it uncommitted." Direct edit, tests run, uncommitted; no task, question or Skill call. $0.27 |
+| 2. Explicit Matt entry and boundary | Interactive TUI, `--permission-mode acceptEdits`; the user typed every prompt; `5cab24dd` | **Entry passes; boundary fails.** See below |
+| 3. Fresh-session recovery | Not run | **Blocked:** session 2 recorded no task path or handoff to recover |
+
+Static only: session init listed the six stock Matt skills and their dependencies.
+Observed in `5cab24dd` (native transcript
+`~/.claude/projects/-tmp-cs-fx-matt-4R7h/5cab24dd-e93a-4594-a15b-ae553d61a34f.jsonl`):
+
+- SessionStart and UserPromptSubmit hook context loaded; AGENTS.md loaded natively.
+- User input `/grill-with-docs Add a --top N option to textstats that prints the N
+  most frequent words. Help settle the behavior first.` produced the harness skill
+  expansion. Its stock body led to `Skill` executions of `grilling` and
+  `domain-modeling`. The agent read the phase index and `matt-flow.md`.
+- One numbered round of five questions with recommendations. It stated it would
+  write the contract into a Trellis task before any code.
+- The user replied `accept all`. Claude wrote `GLOSSARY.md`, then implemented `--top`
+  in `textstats.py` and its tests (10 app and 23 repo tests passed), uncommitted. No
+  task, `to-spec`/`implement` Skill call or SKILL.md read, next command or pause. It
+  cited the Phase Index small-settled-work rule.
+
+The user-only control was not circumvented through a skill read or call. The Matt
+route was nevertheless abandoned: implementation replaced the next stock skill
+without a recorded task or handoff. This contradicts `matt-flow.md`, whether or
+not the original "Add …" request authorized implementation. Workflow, hooks and
+configuration were not changed to make it pass, and the check was not retried.
+
+Integrity: 239 entries per tree matched before and after for the checkout and both
+fixtures. The entries are: every `.agents/skills` file (mode and SHA-256), 37 Claude
+symlink targets, the legacy skill, `skills-lock.json`, workflow, routing doc,
+AGENTS.md, Claude settings and hooks. `~/.claude/settings.json` was unchanged. No
+commit, push or reference-project write. Delivery, parallelism, retro and
+repair-exhaustion matrices were not rerun.
+
+### Routing fix and handoff/resume retest
+
+Authorized minimal fix for the failure above; the failed fixture and transcript are
+preserved. Transcript text was treated as evidence of likely contributors, not of a
+single cause, because the model's reasoning is redacted:
+
+- the unscoped Phase Index small-work bullet, which the agent cited;
+- the `no_task` breadcrumb ("Normal small work proceeds directly"), injected
+  before `accept all`;
+- `matt-flow.md` naming only an "existing task" for state and an unformatted
+  "go directly to implement".
+
+Changes: the Phase Index and `no_task` breadcrumb now state that an explicit Matt
+selection governs its work item. Settled requirements, small size or general
+authorization don't switch it; only the user can. Unrelated work defaults to normal
+Trellis, and the small-work bullet is limited to the normal route. `matt-flow.md`
+states the same rule. At a user-only boundary it now creates or reuses a minimal
+`--no-start` task and records only what happened. Inline substitution for the
+needed skill is listed as a bypass. Stage selection stays conditional. One text
+test (`test_explicit_matt_route_is_not_replaced_by_small_work_shortcut`) fails on
+the old text; all **24** tests pass. Workflow is 7,126 characters, with 13 step
+headers and 6 breadcrumbs.
+
+Fresh fixture `/tmp/cs/fx-retest-Ayjc`: current working-tree files, pre-feature
+app, every tracked file and link identical to the checkout.
+
+| Check | Execution mode | Result |
+| --- | --- | --- |
+| 2. Entry and boundary | Interactive TUI, started `acceptEdits`; the user switched to Claude Code's `auto` permission mode after round 1; the user typed every prompt; `0ff11216` | **Pass** |
+| 3. Fresh recovery | Fresh headless `claude -p "Continue the task at .trellis/tasks/09-29-textstats-top."`, `acceptEdits`, allowlist; `d088de09` | **Pass**, $0.23 |
+
+Observed in `0ff11216`:
+
+- The same `/grill-with-docs` request produced the harness expansion and `Skill`
+  executions of `grilling` and `domain-modeling`.
+- Two numbered rounds (Q1–Q6, then Q7–Q10), each answered `accept all` by the
+  user. Q10 asked whether local commits and pushes were allowed, and proposed going
+  directly to `/implement`.
+- The agent inspected `implement`/`to-spec` frontmatter for policy and wrote
+  `GLOSSARY.md` (domain-modeling output).
+- It created `.trellis/tasks/09-29-textstats-top` with `--no-start` (status
+  `planning`, no session pointer). Its `prd.md` holds the ten decisions, marked as
+  assistant-proposed and user-accepted. It also records route, source skills, the
+  testing seam, commit yes/push no, base `419849c`, dirty paths and the next command.
+- It returned `/implement .trellis/tasks/09-29-textstats-top` and paused. No code,
+  commit, `implement` call or `SKILL.md` body load.
+
+Observed in `d088de09`:
+
+- It read the task, glossary, `matt-flow.md` and the first lines of the installed
+  `implement` file (policy check, not execution).
+- It restated the settled contract and permissions without asking a question.
+- It returned the same `/implement` command and stopped. No Skill call, no denial,
+  no file or Git change: status and hashes identical before and after.
+
+Not established: the `/implement` run itself (not requested), Codex behavior with
+the new text, and repeatability beyond one run.
+
+Integrity: all 230 installed Matt entries (`.agents/skills` files, Claude links,
+legacy skill, `skills-lock.json`) match the first baseline, in the checkout and
+the retest fixture. `~/.claude/settings.json` is unchanged. No commit, push or
+reference-project write; the delivery matrix was not rerun.

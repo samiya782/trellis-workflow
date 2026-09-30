@@ -5,6 +5,9 @@
 Normal Trellis is the default. Use Matt only when the user explicitly selects
 `grill-with-docs` or `wayfinder`, or resumes a recorded Matt task; then load
 `docs/agents/matt-flow.md`. Publication uses `docs/agents/issue-tracker.md`.
+That selection governs its work item: settled requirements, small size or general
+implementation authorization never switch it to the normal route; only the user
+can. Unrelated later work defaults to normal Trellis.
 
 Continue within the user's scope and runtime permissions. At a user-only skill
 boundary, persist context, give the exact next skill command with its task path,
@@ -14,7 +17,8 @@ Authorization persists across stages and sessions when recorded with its scope.
 This workflow replaces generic Trellis examples requiring repeated approvals or
 fixed stages/artifacts; stock skill invocation controls still apply.
 
-- Small settled work: edit, run relevant checks, report. No task ceremony.
+- Small settled normal-route work: edit, run relevant checks, report. No task
+  ceremony.
 - Durable work: one task with contract, authorization, progress and evidence.
 - Read applicable `.trellis/spec/` before coding. Implement and fix in scope;
   verify the combined result before closeout. Keep research and logs on demand.
@@ -122,7 +126,7 @@ any boundary requiring changes to remain for user review.
 ## Runtime breadcrumbs
 
 [workflow-state:no_task]
-Read the Phase Index. Normal small work proceeds directly. Explicit/recorded Matt: docs/agents/matt-flow.md. Honor scope and stock invocation boundaries.
+Read the Phase Index. Normal-route small work proceeds directly. A Matt selection for this work item keeps its route: docs/agents/matt-flow.md. Honor scope and stock invocation boundaries.
 [/workflow-state:no_task]
 
 [workflow-state:planning]

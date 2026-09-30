@@ -3,7 +3,9 @@
 Normal Trellis is the default. Choose `grill-with-docs` for explicit Matt
 requirements discovery or `wayfinder` for planning across sessions. The agent
 continues within the agreed scope where the stock skills and harness allow it.
-At a user-only skill boundary, it saves context, gives the next command and pauses.
+At a user-only skill boundary, it is meant to save context, give the next command
+and pause. Claude Code showed this in one retest, Codex in one seeded resume; see
+the evidence note below.
 
 ## Install and update
 
@@ -99,7 +101,12 @@ permission. Check the installed skill's contract after updates, and never count
 an empty diff as acceptance of working-tree changes.
 
 [Current stock-installation evidence](docs/validation/stock-installation.md)
-records the exact installer run, installed policies and limited fresh-session
-check. Earlier [validation reports](docs/validation/README.md) describe the
-historical patched setup and independent runtime fixes; they do not establish
-automatic end-to-end delivery with the current stock installation.
+records the exact installer run, installed policies, a seeded Codex handoff check
+and Claude Code checks. The first Claude run implemented inline after grilling,
+without a task, command or pause. After a project-routing fix, one retest recorded
+a minimal task, returned `/implement <task>` and paused. One fresh session then
+recovered that command without repeating decisions. The `/implement` run itself
+and Codex behavior with the new routing text were not retested. Earlier
+[validation reports](docs/validation/README.md) describe the historical patched
+setup and independent runtime fixes; they do not establish automatic end-to-end
+delivery with the current stock installation.

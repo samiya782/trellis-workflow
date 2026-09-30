@@ -17,6 +17,9 @@ Use `grill-with-docs` for discovery or `wayfinder` for uncertainty spanning
 sessions. Wayfinder is planning-only until the user authorizes delivery; a
 resolved decision ticket isn't an implementation ticket. Use the configured
 Trellis Other tracker, never infer GitHub/GitLab publication from a remote.
+Explicit selection keeps this route for its work item until done or until the user
+switches it. Settled requirements, small size or general implementation authority
+don't switch it. Unrelated later work defaults to normal Trellis.
 
 Resolve material questions with the real skill. Record the user's answers and
 scope, testing seam, delegated engineering decisions, commit/closeout permission,
@@ -29,20 +32,23 @@ planning-only requests remain planning-only.
 
 Select only the next needed skill: `to-spec` when a durable spec is useful;
 `to-tickets` when decomposition helps; `implement` for ready work; `code-review`
-for qualitative review. A small settled contract may go directly to implement.
+for qualitative review. A small settled contract may go directly to `implement`.
 Avoid duplicate Trellis interviews, specifications and reviews.
 
 Continue while the installed skill and harness permit it. When the next skill
-requires user invocation, save the current task context and give the exact next
-command: `$<skill> <task-reference>` in Codex or `/<skill> <task-reference>` in
-Claude Code, replacing both placeholders with the selected skill and actual task
-path. Explain the stock policy boundary and pause. Scope authorization remains
-valid, but doesn't replace the required invocation. Do not bypass that boundary
-through direct reads, copied or renamed skills, wrappers, or metadata edits.
+requires user invocation, create (workflow 1.0, `--no-start`) or reuse the minimal
+task, save the current context there and give the exact next command:
+`$<skill> <task-reference>` in Codex or `/<skill> <task-reference>` in Claude Code,
+replacing both placeholders with the selected skill and actual task path. Explain
+the stock policy boundary and pause. Scope authorization remains valid, but
+doesn't replace the required invocation. Do not bypass that boundary
+through direct reads, copied or renamed skills, wrappers, metadata edits, or
+ordinary inline work in place of the needed skill.
 If a required skill is missing, report the prerequisite without reconstructing it.
 
-Persist route, source paths, authorization, fixed point, ticket/blocker/ownership
-map, progress, checks and the next command in existing task Notes/implement.md.
+Persist actual decisions, route, source/output paths, authorization, fixed point,
+ticket/blocker/ownership map, progress, checks and the next command in the task's
+Notes/implement.md; record only what happened.
 Keep one source for each fact. Resume reads this record and current files, retains
 approved decisions and honors any pending invocation boundary. A Trellis resume
 command does not invoke a pending user-only Matt skill.

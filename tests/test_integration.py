@@ -170,6 +170,24 @@ class InstalledRuntimeTests(unittest.TestCase):
         self.assertNotIn("## Runtime breadcrumbs", index)
         self.assertIn("get_context.py --mode phase --step", index)
 
+    def test_explicit_matt_route_is_not_replaced_by_small_work_shortcut(self) -> None:
+        """Routing text only: the small-work shortcut is scoped to the normal route."""
+        flat = lambda text: " ".join(text.split())
+        index = flat(self.run_command(
+            sys.executable, ".trellis/scripts/get_context.py", "--mode", "phase",
+        ).stdout)
+        self.assertIn("Small settled normal-route work", index)
+        self.assertIn("never switch it to the normal route; only the user can", index)
+        for platform in ("codex", "claude"):
+            with self.subTest(platform=platform):
+                body = self.hook(platform, "accept all")
+                self.assertIn("Normal-route small work", body)
+                self.assertIn("keeps its route: docs/agents/matt-flow.md", body)
+                self.assertNotIn("Normal small work", body)
+        flow = flat((REPOSITORY / "docs/agents/matt-flow.md").read_text())
+        self.assertIn("create (workflow 1.0, `--no-start`) or reuse the minimal task", flow)
+        self.assertIn("ordinary inline work in place of the needed skill", flow)
+
     def test_every_runtime_step_renders_for_codex_and_claude(self) -> None:
         for platform in ("codex", "claude"):
             for step in STEPS:
