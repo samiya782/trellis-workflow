@@ -118,6 +118,42 @@ class InstalledRuntimeTests(unittest.TestCase):
         self.assertEqual(payload["hookEventName"], "UserPromptSubmit")
         return payload["additionalContext"]
 
+    def subagent_prompt(self, prompt: str) -> str | None:
+        """Run the actual Claude PreToolUse hook for a trellis-implement dispatch."""
+        hook = self.root / ".claude/hooks/inject-subagent-context.py"
+        if not hook.exists():
+            shutil.copy2(REPOSITORY / ".claude/hooks/inject-subagent-context.py", hook)
+        result = self.run_command(sys.executable, str(hook), input_text=json.dumps({
+            "hook_event_name": "PreToolUse", "tool_name": "Agent", "cwd": str(self.root),
+            "tool_input": {"subagent_type": "trellis-implement", "prompt": prompt},
+        }))
+        if not result.stdout.strip():
+            return None
+        return json.loads(result.stdout)["hookSpecificOutput"]["updatedInput"]["prompt"]
+
+    def test_parallel_claude_workers_receive_their_named_task(self) -> None:
+        first, second = self.create_task("area-ticket"), self.create_task("perimeter-ticket")
+        for task in (first, second):
+            self.task("start", str(task), "--allow-empty-context")
+        # Starting the second task moved the single session pointer.
+        pointer = self.subagent_prompt("Implement the ticket.")
+        self.assertIn("# perimeter-ticket", pointer)
+        for task, other in ((first, second), (second, first)):
+            relative = task.relative_to(self.root).as_posix()
+            for line in (f"Active task: {relative}", f"Active task: `{task}`"):
+                with self.subTest(line=line):
+                    body = self.subagent_prompt(f"{line}\nImplement the ticket.")
+                    self.assertIn(f"# {task.name[6:]}", body)
+                    self.assertNotIn(f"# {other.name[6:]}\n", body)
+        # Ambiguous, missing or out-of-tree names fall back to the pointer.
+        for prompt in (
+            f"Active task: {first.relative_to(self.root)}\nActive task: {second.relative_to(self.root)}",
+            "Active task: .trellis/tasks/09-29-missing",
+            "Active task: .trellis/scripts",
+        ):
+            with self.subTest(prompt=prompt):
+                self.assertIn("# perimeter-ticket", self.subagent_prompt(prompt))
+
     def test_effective_index_is_compact_and_detail_stays_on_demand(self) -> None:
         result = self.run_command(
             sys.executable, ".trellis/scripts/get_context.py", "--mode", "phase",

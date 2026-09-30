@@ -1,6 +1,7 @@
 # Validation record — 2026-09-29
 
-This directory is evidence, not startup instructions. Raw native histories stay
+This directory is evidence, not startup instructions. Sections below describe the
+Codex run; the later fresh Claude Code run is in [claude.md](claude.md). Raw native histories stay
 in their existing stores; the checked-in reports contain selected sanitized
 observations and fixture-only command evidence. Reference projects were read-only.
 
@@ -28,6 +29,7 @@ installer-owned and generated Codex directories are ignored by Git.
 
 | Evidence | What it establishes |
 | --- | --- |
+| [claude.md](claude.md) | Fresh Claude Code 2.1.284 runs: invocation-policy probes, normal route, parallel delivery, injection defect and fix, interrupted resume, planning-only, no-commit, repair bound, closeout |
 | [execution.md](execution.md), [execution.json](execution.json) | Ordinary fresh prompts, baseline failures, exact downstream reads, native worker events, review/commit experiment, permission boundary, resume and delivery |
 | [delivery-audit.json](delivery-audit.json) | Independent final fixture checks: all four tasks completed, references valid, reviewed code unchanged, unrelated file preserved |
 | [normal-retro.md](normal-retro.md) | Controlled small-task comparison; actual retro and its dependency, conditional spec relationship |
@@ -52,7 +54,7 @@ actual publication, TDD and two-axis review behavior—not a skill name in prose
   as executed interruptions.
 - **Skill policy:** upstream OpenAI metadata hid downstream skills from implicit
   discovery. Supported project metadata changes expose four stages; entries stay
-  explicit. Claude frontmatter has different semantics and is unchanged.
+  explicit. Claude frontmatter has different semantics; its later adapter is in claude.md.
 - **Decisions:** the old actual to-spec run separately asked for a testing-seam
   confirmation. That is distinct from a command-only handoff. New execution used
   fully specified behavior and delegated routine engineering choices.
@@ -109,7 +111,8 @@ performance benchmark.
 
 ## Runtime checks and limits
 
-`python3 -m unittest discover -s tests -v`: **17 passing tests**. Tests exercise
+`python3 -m unittest discover -s tests -v`: **17 passing tests** at the time (26 after
+the Claude adaptation). Tests exercise
 actual installed parser/hook/task APIs in temporary repositories, metadata
 apply/check/restore, invocation-policy drift and cross-platform preservation.
 `git diff --check`, Python syntax checks and adapter `--check` pass. No linter or
@@ -128,8 +131,8 @@ child-side context loading, not hook injection. Native injection was separately
 observed here. Project trust is not hook approval. Existing config comments about
 feature defaults are older than the tested runtime; no global flags were changed.
 
-All **103 tracked .claude files are byte-identical** to baseline. Existing Claude
-history evidence is retained; no fresh Claude Code harness was run. No automated
+During the Codex run all **103 tracked .claude files were byte-identical** to baseline
+and no Claude Code harness ran; claude.md records the later Claude changes and runs. No automated
 three-failure exhaustion test was run: one repair cycle is observed and the limit
 is guidance, not an enforcement service. Unattended background persistence after
 session exit, arbitrary platforms, and every permission configuration are untested.

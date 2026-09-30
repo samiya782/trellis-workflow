@@ -5,10 +5,11 @@ and runtime adaptation; methodology stays in the genuine installed skills.
 
 ## Select and authorize
 
-Read the selected `.agents/skills/<name>/SKILL.md` and its referenced resources
-(Codex); Claude uses `.claude/skills/`. Record the source path. If missing or
-blocked by invocation policy, report the exact prerequisite; never simulate it.
-Codex setup and policy checks are in README. A catalog listing isn't execution.
+Execute the selected real skill: Claude Code invokes it with the Skill tool
+(`.claude/skills/`); Codex reads `.agents/skills/<name>/SKILL.md` and referenced
+resources. Record the source path. If missing or blocked by invocation policy,
+report the exact prerequisite; never simulate it or read around a runtime block.
+Setup and policy checks are in README. A catalog listing isn't execution.
 
 Use `grill-with-docs` for discovery or `wayfinder` for uncertainty spanning
 sessions. Wayfinder is planning-only until the user authorizes delivery; a
@@ -30,10 +31,10 @@ helps; `implement` for ready work; `code-review` for qualitative review. A small
 settled contract may go directly to implement. No duplicate Trellis interview,
 specification, decomposition or Standards/Spec review is needed.
 
-Codex downstream metadata permits implicit invocation only after this project's
-explicit Matt route selection. Entry skills remain explicit. Claude's upstream
-`disable-model-invocation` boundaries remain in force: show required commands if
-the harness disallows continuation. Do not bypass a runtime invocation control.
+The project policy adapters let the coordinator invoke `to-spec`, `to-tickets`,
+`implement` and `retro` after this project's explicit Matt route selection. Entry
+skills stay user-only. If the runtime still blocks a stage, report the unapplied
+adapter; do not bypass a runtime invocation control.
 
 Persist route, source paths, authorization, fixed point, ticket/blocker/ownership
 map, progress, checks and next action in existing task Notes/implement.md. Keep
@@ -43,17 +44,21 @@ repeat approved interviews or stop merely because a skill finished.
 ## Delegate and join
 
 Use actual runtime tools, not names presumed from another platform. When useful,
-spawn independent ready tickets before waiting for either. Give each worker an
-exact task path, real skill path, acceptance, blockers, owned files and applicable
-spec pointers. Tell workers they share a checkout, must preserve others' edits,
-and must not mutate task lifecycle, shared indexes or Git. Use separate worktrees
-if ownership overlaps. A worker reads its missing context explicitly; native
-injection must be observed, not inferred from the agent name.
+spawn independent ready tickets before waiting for either (Claude Code: several
+`Agent` calls in one message). Give each worker an exact task path as a line
+`Active task: <path>` (Claude's injection hook uses it instead of the single
+session pointer), real skill path, acceptance, blockers, owned files and
+applicable spec pointers. Tell workers they share a checkout, must preserve
+others' edits, and must not mutate task lifecycle, shared indexes or Git. Use
+separate worktrees if ownership overlaps. A worker reads its missing context
+explicitly; native injection must be observed, not inferred from the agent name.
+Claude Code rejects report-file writes from subagents: have research workers
+return findings, then persist them as coordinator.
 
 The coordinator owns shared task state, commits and final review. Workers may
 execute the real implement skill's code/test responsibilities; its shared review
 and commit responsibilities return to the coordinator. This avoids nested review
-agents hitting Codex depth limits and competing Git index writes. Join all results,
+agents hitting agent depth limits and competing Git index writes. Join all results,
 verify accepted blockers, then start dependent integration. Capacity or unavailable
 tools can require sequential execution; record that accurately.
 

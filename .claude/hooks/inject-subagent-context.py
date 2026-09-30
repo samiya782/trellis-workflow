@@ -28,6 +28,7 @@ warnings.filterwarnings("ignore")
 
 import json
 import os
+import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -1090,6 +1091,20 @@ def _parse_hook_input(input_data: dict) -> tuple[str, str, dict]:
     return "", "", tool_input
 
 
+def _explicit_task(repo_root: str, prompt: str) -> str | None:
+    """Return the one task named by `Active task: <path>` lines, if it exists."""
+    names = set(re.findall(r"(?m)^[ \t]*Active task:[ \t]*`?([^`\s]+)`?[ \t]*$", prompt or ""))
+    if len(names) != 1:
+        return None
+    root = Path(repo_root).resolve()
+    candidate = Path(names.pop())
+    task = (candidate if candidate.is_absolute() else root / candidate).resolve()
+    tasks_root = (root / DIR_WORKFLOW / "tasks").resolve()
+    if not task.is_relative_to(tasks_root) or not (task / "task.json").is_file():
+        return None
+    return task.relative_to(root).as_posix()
+
+
 def main():
     if os.environ.get("TRELLIS_HOOKS") == "0" or os.environ.get("TRELLIS_DISABLE_HOOKS") == "1":
         sys.exit(0)
@@ -1122,8 +1137,10 @@ def main():
     if not repo_root:
         sys.exit(0)
 
-    # Get current task directory (research doesn't require it)
-    task_dir = get_current_task(
+    # Get current task directory (research doesn't require it). A parallel
+    # dispatch names each worker's task explicitly; the session pointer can
+    # only hold one of them.
+    task_dir = _explicit_task(repo_root, original_prompt) or get_current_task(
         repo_root,
         input_data,
         allow_single_session_fallback=True,
