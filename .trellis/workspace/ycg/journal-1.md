@@ -25,3 +25,25 @@ Implemented project-only continuation adapter and compact workflow; real fresh C
 ### Status
 
 [OK] **Completed**
+
+
+## Session 2: Commit and close Codex Matt integration
+<!-- trellis-session: v=2 fp=4f01181d567f6459 -->
+
+**Date**: 2026-09-29
+**Task**: Commit and close Codex Matt integration
+**Branch**: `main`
+
+### Summary
+
+Committed the authorized integration, tests and validation evidence. Archived the completed non-PR task using the supported direct-branch option. No push or unrelated-task changes.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `8e13bc9` | feat: enable automatic Codex Matt workflow continuation |
+
+### Status
+
+[OK] **Completed**
