@@ -1,0 +1,29 @@
+{
+  "area": {
+    "status": "completed",
+    "commit": "03c1199c24e230d365176e0f927b7bd6cfe97cfd",
+    "context_entries": 16,
+    "publication_ref": "trellis-task:09-29-rectangle-area"
+  },
+  "perimeter": {
+    "status": "completed",
+    "commit": "03c1199c24e230d365176e0f927b7bd6cfe97cfd",
+    "context_entries": 16,
+    "publication_ref": "trellis-task:09-29-rectangle-perimeter"
+  },
+  "summary": {
+    "status": "completed",
+    "commit": "03c1199c24e230d365176e0f927b7bd6cfe97cfd",
+    "context_entries": 16,
+    "publication_ref": "trellis-task:09-29-rectangle-summary"
+  },
+  "toolkit": {
+    "status": "completed",
+    "commit": "03c1199c24e230d365176e0f927b7bd6cfe97cfd",
+    "context_entries": 14,
+    "publication_ref": "trellis-task:09-29-rectangle-toolkit"
+  },
+  "final_head": "a65c8c84b468c3325d4743780ca887d872597c4a",
+  "unrelated_preserved": true,
+  "reviewed_python_unchanged": true
+}

@@ -1,0 +1,13 @@
+{
+  "upstream_commit": "d81f3a183412e71a5b1e84ca21bc1a35eea03a60",
+  "compared_matt_files": 29,
+  "only_differences": [
+    "to-spec/agents/openai.yaml",
+    "to-tickets/agents/openai.yaml",
+    "implement/agents/openai.yaml",
+    "retro/agents/openai.yaml"
+  ],
+  "claude_files_unchanged": 103,
+  "python_syntax": "pass",
+  "root_head": "ca6764825667bcc0ee6cc6b2b70a84dea9a32cb1"
+}

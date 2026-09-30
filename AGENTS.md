@@ -19,3 +19,12 @@ If you're using Codex or another agent-capable tool, additional project-scoped h
 Managed by Trellis. Edits outside this block are preserved; edits inside may be overwritten by a future `trellis update`.
 
 <!-- TRELLIS:END -->
+
+For literal text edits, use `rg -n -F` and nearby lines (or `tail` if absent).
+Keep full-file reads for work that needs them.
+
+For work in this project, load the compact workflow with
+`python3 .trellis/scripts/get_context.py --mode phase` before choosing a route.
+It governs local orchestration even when bundled skill examples prescribe extra
+stages. Matt entry/resume details: `docs/agents/matt-flow.md`; publication:
+`docs/agents/issue-tracker.md`. Validation history is on demand in `docs/validation/`.
