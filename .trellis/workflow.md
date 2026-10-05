@@ -2,23 +2,27 @@
 
 ## Phase Index
 
-Normal Trellis is the default. Use Matt only when the user explicitly selects
-`grill-with-docs` or `wayfinder`, or resumes a recorded Matt task; then load
-`docs/agents/matt-flow.md`. Publication uses `docs/agents/issue-tracker.md`.
+Normal Trellis is the default. Use Matt only when the user explicitly invokes a
+Matt skill (e.g. `grill-with-docs`, `grill-me`, `wayfinder`, `implement`) or resumes
+a recorded Matt task; then load `docs/agents/matt-flow.md`. Publication uses
+`docs/agents/issue-tracker.md`.
 That selection governs its work item: settled requirements, small size or general
 implementation authorization never switch it to the normal route; only the user
 can. Unrelated later work defaults to normal Trellis.
 
 Continue within the user's scope and runtime permissions. At a user-only skill
-boundary, persist context, give the exact next skill command with its task path,
-and pause. Otherwise ask only for unresolved material decisions, scope changes,
-or missing permissions.
+boundary, persist context, give the exact next skill command with its task path
+(or agreed scope for same-session small work), and pause. Otherwise ask only for
+unresolved material decisions, scope changes, or missing permissions.
 Authorization persists across stages and sessions when recorded with its scope.
 This workflow replaces generic Trellis examples requiring repeated approvals or
 fixed stages/artifacts; stock skill invocation controls still apply.
 
 - Small settled normal-route work: edit, run relevant checks, report. No task
   ceremony.
+- Reported bug symptom (wrong output, error, failure, slowness) without a stated
+  fix: invoke stock `diagnosing-bugs` before reading code for a theory; it scales
+  its own phases. A user-stated fix or typo stays small work. No task unless durable.
 - Durable work: one task with contract, authorization, progress and evidence.
 - Read applicable `.trellis/spec/` before coding. Implement and fix in scope;
   verify the combined result before closeout. Keep research and logs on demand.
@@ -126,7 +130,7 @@ any boundary requiring changes to remain for user review.
 ## Runtime breadcrumbs
 
 [workflow-state:no_task]
-Read the Phase Index. Normal-route small work proceeds directly. A Matt selection for this work item keeps its route: docs/agents/matt-flow.md. Honor scope and stock invocation boundaries.
+Read the Phase Index. Normal-route small work proceeds directly; a reported bug symptom invokes diagnosing-bugs first. A Matt selection for this work item keeps its route: docs/agents/matt-flow.md. Honor scope and stock invocation boundaries.
 [/workflow-state:no_task]
 
 [workflow-state:planning]

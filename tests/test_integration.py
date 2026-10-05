@@ -188,6 +188,27 @@ class InstalledRuntimeTests(unittest.TestCase):
         self.assertIn("create (workflow 1.0, `--no-start`) or reuse the minimal task", flow)
         self.assertIn("ordinary inline work in place of the needed skill", flow)
 
+    def test_small_matt_entries_and_bug_reports_avoid_task_ceremony(self) -> None:
+        """Routing text only: the entry skill sizes the record; defects get diagnosis."""
+        flat = lambda text: " ".join(text.split())
+        index = flat(self.run_command(
+            sys.executable, ".trellis/scripts/get_context.py", "--mode", "phase",
+        ).stdout)
+        self.assertIn("explicitly invokes a Matt skill", index)
+        self.assertIn("without a stated fix: invoke stock `diagnosing-bugs` before", index)
+        for platform in ("codex", "claude"):
+            with self.subTest(platform=platform):
+                body = self.hook(platform, "The word count is wrong for this file")
+                self.assertIn("a reported bug symptom invokes diagnosing-bugs first", body)
+        flow = flat((REPOSITORY / "docs/agents/matt-flow.md").read_text())
+        self.assertIn("`grill-me` is stateless: no task, glossary or ADR", flow)
+        self.assertIn("No spec, tickets or task unless the work must survive the session", flow)
+        self.assertIn("never fabricate a spec or tickets to satisfy it", flow)
+        self.assertIn("for same-session small work, the conversation suffices", flow)
+        for skill in ("grill-me", "implement-spec", "implement", "diagnosing-bugs"):
+            with self.subTest(skill=skill):
+                self.assertTrue((REPOSITORY / ".agents/skills" / skill / "SKILL.md").is_file())
+
     def test_every_runtime_step_renders_for_codex_and_claude(self) -> None:
         for platform in ("codex", "claude"):
             for step in STEPS:

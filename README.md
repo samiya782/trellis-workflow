@@ -1,81 +1,128 @@
 # Trellis + Matt Pocock Skills
 
-Normal Trellis is the default. Choose `grill-with-docs` for explicit Matt
-requirements discovery or `wayfinder` for planning across sessions. The agent
-continues within the agreed scope where the stock skills and harness allow it.
-At a user-only skill boundary, it is meant to save context, give the next command
-and pause. Claude Code showed this in one retest, Codex in one seeded resume; see
-the evidence note below.
+Normal Trellis is the default. Explicitly invoking a Matt skill selects the Matt
+route for that work item. Small work stays light: ordinary edits, bug reports,
+`/grill-me` discussions and direct `/implement` runs create no Trellis task. At a
+user-only skill boundary, the agent is meant to save context, give the next
+command and pause. See the evidence note below for what has actually been run.
 
-## Install and update
+## Files that make up this setup
 
-Use an initialized Trellis project with Git, Python 3, Node/npx, and the Claude
-Code or Codex runtime you plan to use. From the project root, run:
+Matt's skills are installed unmodified by the standard installer. Trellis files
+come from `trellis init`. This integration is a small layer of local files:
+
+| File | Purpose |
+| --- | --- |
+| [.trellis/workflow.md](.trellis/workflow.md) | Phase Index, routes and hook breadcrumbs. Replaces the stock workflow, including its per-turn task-consent prompt |
+| [docs/agents/matt-flow.md](docs/agents/matt-flow.md) | Matt entry, record size per entry skill, handoff/resume, delegation, review |
+| [docs/agents/issue-tracker.md](docs/agents/issue-tracker.md) | Matt publication backend on Trellis tasks; this is the file `/setup-matt-pocock-skills` would otherwise write |
+| `AGENTS.md` (paragraph after the Trellis block) | Points agents at the workflow and `docs/agents/` |
+| `.claude/hooks/{session-start,inject-subagent-context}.py`, `.claude/commands/trellis/{continue,finish-work}.md` | Claude Code context loading, worker task binding, resume and closeout |
+| `.codex/config.toml`, `.codex/hooks/{session-start,inject-subagent-context}.py`, `.codex/agents/trellis-{check,implement,research}.toml` | The same for Codex |
+| `.agents/skills/trellis-{start,continue,finish-work}/SKILL.md` | Trellis start/resume/closeout skills aligned with this workflow |
+
+`docs/validation/`, `tests/` and this README document and test this checkout.
+New projects don't need them.
+
+## Set up a new project
+
+Requirements: Git, Python 3, Node/npx, the `trellis` CLI, and Claude Code and/or
+Codex. The files above were made against Trellis **0.7.0-beta.4**. Under another
+Trellis version, merge their changes into that version's generated files instead
+of copying over them. From the new project's root, with this checkout at
+`~/trellis`:
 
 ```bash
+git init                                   # skip if already a repository
+trellis init -u your-name --claude --codex # choose your platforms
 npx skills@latest add mattpocock/skills --agent claude-code codex --yes
+
+R=~/trellis
+for f in .trellis/workflow.md docs/agents/matt-flow.md docs/agents/issue-tracker.md \
+  .claude/hooks/session-start.py .claude/hooks/inject-subagent-context.py \
+  .claude/commands/trellis/continue.md .claude/commands/trellis/finish-work.md \
+  .codex/config.toml .codex/hooks/session-start.py .codex/hooks/inject-subagent-context.py \
+  .codex/agents/trellis-check.toml .codex/agents/trellis-implement.toml \
+  .codex/agents/trellis-research.toml .agents/skills/trellis-start/SKILL.md \
+  .agents/skills/trellis-continue/SKILL.md .agents/skills/trellis-finish-work/SKILL.md
+do mkdir -p "$(dirname "$f")" && cp "$R/$f" "$f"; done
 ```
 
-Rerun that same command to install current upstream skills. Let the standard
-installer manage skill contents, metadata, links and `skills-lock.json`; this
-integration requires no policy patches, wrappers, pinned revision or copy mode.
-Review installer changes and refresh the runtime's skill catalog before use.
-An upstream update can change available skills or their invocation policy.
+Skip the `.claude` or `.codex` files for a platform you didn't initialize. Then
+add this paragraph to `AGENTS.md` after the Trellis-managed block. Edits outside
+that block survive `trellis update`:
 
-This checkout's local routing lives in [.trellis/workflow.md](.trellis/workflow.md),
-with [Matt entry and handoff](docs/agents/matt-flow.md) and the
-[Trellis publication backend](docs/agents/issue-tracker.md) loaded on demand.
-When adopting these files in an existing project, preserve its Trellis setup,
-custom hooks and instructions. Inspect applicable ancestor/project instructions
-and merge the platform entry points instead of replacing them wholesale.
-Trellis updates may report these local workflow/hook edits as user modifications.
+```markdown
+For work in this project, load the compact workflow with
+`python3 .trellis/scripts/get_context.py --mode phase` before choosing a route.
+It governs local orchestration even when bundled skill examples prescribe extra
+stages. Matt entry/resume details: `docs/agents/matt-flow.md`; publication:
+`docs/agents/issue-tracker.md`.
+```
+
+Check that `python3 .trellis/scripts/get_context.py --mode phase` mentions
+"explicitly invokes a Matt skill". Then review and commit the result, and start a
+fresh agent session. Codex hooks also need `features.hooks = true` in
+`~/.codex/config.toml` and a one-time `/hooks` approval, as `trellis init` reports.
+
+Don't run `/setup-matt-pocock-skills` for this layout: `docs/agents/issue-tracker.md`
+already configures Trellis tasks as the tracker. Rerun it only to switch to a
+hosted tracker. When adopting these files into an existing project, keep its
+custom hooks and instructions and merge entry points rather than replacing them.
+`trellis update` reports the files above as user modifications. Review its
+changes and keep the local edits.
+
+## Update the Matt skills
+
+Rerun the same `npx skills@latest add mattpocock/skills …` command for current
+upstream skills. The standard installer manages skill contents, metadata, links
+and `skills-lock.json`. This integration needs no policy patches, wrappers,
+pinned revision or copy mode. Review installer changes and refresh the runtime's
+skill catalog. An upstream update can add or remove skills or change their
+invocation policy.
 
 ## Use
 
-Ordinary requests stay on the normal Trellis route:
+Pick the entry by the situation. Codex uses `$skill` where Claude Code uses `/skill`.
 
-> Correct the typo in the help text and run the relevant check. Leave it uncommitted.
+| Situation | You type | What happens |
+| --- | --- | --- |
+| Small, clear change | A plain request, e.g. "Correct the typo in the help text and run the check. Leave it uncommitted." | Normal Trellis: edit, check, report. No task |
+| Bug report: you describe the symptom, not the fix | A plain request, e.g. "`textstats` prints 4 words for `hello   world`; fix it." | Stock `diagnosing-bugs`: reproduce, then fix, then a regression test. No task |
+| Small idea to settle before building | `/grill-me <idea>` | Stateless interview: no task, glossary or ADR. Ends with an `/implement <scope>` command for you to run |
+| Small settled build | `/implement <scope>` | Builds directly with `tdd` and `code-review`. No spec, tickets or task |
+| Feature that deserves a durable record | `/grill-with-docs <idea>` | Interview with `GLOSSARY.md`/ADRs. A minimal Trellis task carries the handoff |
+| Published spec with tickets | `/implement-spec <task>` | Works the tickets as a task graph on an integration branch. Without a spec it stops and offers `/implement` |
+| Uncertainty spanning sessions | `/wayfinder <goal>` | Planning only, until you authorize delivery |
 
-For Matt discovery, use the runtime's explicit skill syntax:
-
-```text
-# Codex
-$grill-with-docs Add CSV import with a preview. Help settle the behavior first.
-
-# Claude Code
-/grill-with-docs Add CSV import with a preview. Help settle the behavior first.
-```
-
-Record scope, material decisions and permission once. For example:
+Stock `/implement` commits to the current branch. Agents have treated invoking
+it as commit permission. Say "leave it uncommitted" in the request to prevent
+that. The installed `code-review` reviews `<fixed-point>...HEAD`, so without a
+commit, review stays pending. Recorded authorization for larger work reads like:
 
 > Implement the agreed scope. Choose routine engineering details, fix and recheck
 > defects, and leave all changes uncommitted. Do not push.
 
-For planning only, use `$wayfinder` in Codex or `/wayfinder` in Claude Code and
-state that boundary. A planning decision does not authorize implementation.
-
-When a needed skill requires user invocation, the agent supplies the actual next
-command and task path. For example, if `to-spec` is needed:
+When a needed skill requires user invocation, the agent gives the actual next
+command and pauses. Stateful entries (`grill-with-docs`, `wayfinder`) reference a
+task path:
 
 ```text
-# Codex
-$to-spec .trellis/tasks/09-29-csv-import
-
-# Claude Code
-/to-spec .trellis/tasks/09-29-csv-import
+/implement .trellis/tasks/09-29-csv-import      # Codex: $implement …
 ```
 
-That handoff preserves the answers and authorization already recorded. It does
-not require repeating them. Stages are selected when useful; specification,
-ticketing, retro and spec updates are not a mandatory pipeline. Stock `retro`
-currently requires user invocation; if an update removes a needed skill, report
-it as unavailable instead of reconstructing or patching it.
+Same-session small work references the agreed scope instead. Handoffs keep the
+answers and authorization already given. Specification, ticketing, retro and
+spec updates are selected when useful, not a mandatory pipeline. Stock `retro`
+requires user invocation. If an update removes a needed skill, the agent reports
+it instead of reconstructing it.
 
 Resume with the exact task reference, `$trellis-continue` in Codex, or
 `/trellis:continue` in Claude Code. Resume recovers task progress and any pending
-skill command; it does not itself invoke a user-only Matt skill. Closeout retains
-planning/no-commit boundaries, reconciles prior archives and journal entries, and
-uses explicit no-auto-commit lifecycle calls.
+skill command; it does not itself invoke a user-only Matt skill. `/grill-me` and
+other task-free work have nothing to resume after the session ends. Closeout
+retains planning/no-commit boundaries, reconciles prior archives and journal
+entries, and uses explicit no-auto-commit lifecycle calls.
 
 ## Runtime limits and evidence
 
@@ -101,12 +148,18 @@ permission. Check the installed skill's contract after updates, and never count
 an empty diff as acceptance of working-tree changes.
 
 [Current stock-installation evidence](docs/validation/stock-installation.md)
-records the exact installer run, installed policies, a seeded Codex handoff check
-and Claude Code checks. The first Claude run implemented inline after grilling,
-without a task, command or pause. After a project-routing fix, one retest recorded
-a minimal task, returned `/implement <task>` and paused. One fresh session then
-recovered that command without repeating decisions. The `/implement` run itself
-and Codex behavior with the new routing text were not retested. Earlier
-[validation reports](docs/validation/README.md) describe the historical patched
-setup and independent runtime fixes; they do not establish automatic end-to-end
-delivery with the current stock installation.
+records the installer run, installed policies, a seeded Codex handoff check and
+Claude Code checks:
+- **`grill-with-docs` handoff:** the first run implemented inline. After a
+  routing fix, one retest recorded a task, returned `/implement <task>` and paused,
+  and one fresh session recovered it.
+- **Small-task routes (2026-10-05):** Claude Code ran each scenario in the table
+  once, except `grill-with-docs`, `implement-spec` with a real spec, and
+  `wayfinder`. The first bug-report run fixed the bug without `diagnosing-bugs`;
+  it passed after a wording fix. The setup procedure above was also run once in a
+  scratch project.
+- **Not run:** Codex behavior with the current routing text, and repeatability.
+
+Earlier [validation reports](docs/validation/README.md) describe the historical
+patched setup and independent runtime fixes; they do not establish automatic
+end-to-end delivery with the current stock installation.

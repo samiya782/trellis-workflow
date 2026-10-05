@@ -252,3 +252,99 @@ Integrity: all 230 installed Matt entries (`.agents/skills` files, Claude links,
 legacy skill, `skills-lock.json`) match the first baseline, in the checkout and
 the retest fixture. `~/.claude/settings.json` is unchanged. No commit, push or
 reference-project write; the delivery matrix was not rerun.
+
+## Small-task routes — 2026-10-05
+
+Routing-text change plus one runtime check per scenario. Claude Code **2.1.289**,
+model `claude-opus-5-5[1m]`. No installer, skill, hook-code or config change.
+
+**Sources.** Installed stock skills and upstream `README.md`/`ask-matt` (fetched
+2026-10-05):
+- `implement` builds "a piece of work based on a spec or set of tickets". `ask-matt`
+  routes builds that are not multi-session to "`/implement` right here".
+- `implement-spec` "Implement[s] the result of /to-spec and /to-tickets": a ticket
+  task graph, integration branch, worktrees and merger subagents. It is the
+  multi-session option, so it is not the small-task route requested. Small
+  builds use `implement`; `implement-spec` without a spec stops and offers it.
+- `grill-me` is the stateless interview: no `GLOSSARY.md` or ADRs.
+- `diagnosing-bugs` is model-invoked, for reported broken, throwing, failing or
+  slow behavior.
+
+**Changes.**
+- `workflow.md`: any explicit Matt skill invocation selects the route.
+  A reported bug symptom without a stated fix invokes `diagnosing-bugs` before code
+  is read for a theory; a stated fix or typo stays small work. The no_task
+  breadcrumb says the same.
+- `matt-flow.md`: the entry skill sets the record size:
+  - `grill-with-docs` and `wayfinder` keep the task record;
+  - `grill-me` keeps none;
+  - `implement` needs no spec, tickets or task;
+  - `implement-spec` requires a published spec with tickets, never fabricated.
+
+  Same-session small handoffs reference the agreed scope instead of a task.
+- One focused test in `tests/test_integration.py`. 25 tests pass, and the new test
+  fails against the previous routing text.
+
+Fixtures: working-tree copies (`git stash create` + `git archive`) under
+`/tmp/cs/` with the `textstats.py` sample app. The bug fixtures change
+`word_count` to `text.split(" ")`; the existing app test still passes there.
+
+| Scenario | Mode; session | Result |
+| --- | --- | --- |
+| Small change | Headless `claude -p`, `acceptEdits`, allowlist; `11108fd4`, rerun on final text `2d2101be` | **Pass** both: direct edit and app tests, uncommitted; no Skill call, task or question. $0.25 / $0.21 |
+| Bug report, first wording | Headless; `c4be4f06` | **Fail (routing):** correct fix and regression test, no task, but no `diagnosing-bugs`. It read the code and edited before reproducing. $0.30 |
+| Bug report, final wording | Headless, fresh fixture; `c591495c` | **Pass:** `Skill diagnosing-bugs` first. It reproduced the bug (red) and minimised it. Its regression test failed `4 != 2`, then the fix went in and the repro was rerun. No task, uncommitted. $0.34 |
+| `/grill-me` → `/implement` | Interactive TUI, user typed both commands; ran in `bypassPermissions` (user's default); `49be3b33` | **Pass,** see below |
+| `/implement-spec` without spec → `/implement` | Interactive TUI, user typed both commands; `bypassPermissions`; `15801f40` | **Pass,** see below |
+| New-project setup + bug report | Scratch `trellis init` + current upstream installer + README steps; headless `c7fd53ce` | **Pass,** see below. $0.31 |
+
+`49be3b33` (`~/.claude/projects/-tmp-cs-fx-grillme2-qyyd/`):
+- The `/grill-me` expansion led to `Skill grilling`. The agent said up front that
+  nothing goes to a task, glossary or ADR.
+- Rounds: Q1–Q8, answered `accept all`, then Q9–Q10 with a summary.
+- It ended with `/implement textstats --top N per the behavior agreed in this
+  conversation`. It noted that only the user can start `implement`, suggested
+  `/grill-with-docs` for a recoverable record, and paused.
+- The user ran that command without answering Q9–Q10. The agent used its
+  recommendations and said so in the final report.
+- `implement` ran `Skill tdd` (six red-green slices), the full suite (34 tests) and
+  `Skill code-review` with two parallel reviewers.
+- It committed `2eb3fec` on `main` without asking. Its stated basis was the stock
+  `implement` commit step and `code-review`'s `<base>...HEAD` contract.
+- No task, spec, tickets or `GLOSSARY.md`.
+
+`15801f40` (`~/.claude/projects/-tmp-cs-fx-ispec2-2q4Y/`):
+- `/implement-spec Make textstats accept -l as a short alias for --lines.`
+  searched tasks for a spec and tickets and found none. Citing `matt-flow.md`, it
+  wrote no code and returned `/implement Make textstats accept -l as a short alias
+  for --lines.`
+- After the user's `/implement`, it ran `tdd` (red: argparse exit 2; green) and
+  asked about the seam and the branch. The user chose "Commit on main".
+- It ran `code-review` on both axes and applied one low-severity test suggestion.
+  Commits: `c19a0fe` and `f01fbec`.
+- No task, spec or tickets.
+
+New-project setup (`/tmp/cs/newproj`, isolated `HOME` for `trellis` and `npx`):
+- `trellis init -u tester --claude --codex -y` (0.7.0-beta.4) left 17 files
+  different from this checkout. They are the 14 copied integration files,
+  `AGENTS.md`, `.template-hashes.json`, and `.claude/settings.json` (the optional
+  statusline only). Only `docs/agents/*`, `statusline.py`, `.gitignore` and the
+  lockfile existed only in the checkout.
+- The current upstream installer added `chief-of-staff` and changed `ask-matt` to
+  suggest `/retro` after a bug fix. `resolving-merge-conflicts` is absent.
+  Policies of `grill-me`, `implement`, `implement-spec` and `diagnosing-bugs` are
+  unchanged.
+- After the README copy steps, `get_context.py --mode phase`, both
+  UserPromptSubmit hooks and Claude SessionStart carried the new routing. The
+  stock breadcrumb asked for task-creation consent on every turn.
+- The headless bug report invoked `diagnosing-bugs` and reproduced the bug before
+  reading code. Its regression test went red, then the fix went in. No task,
+  uncommitted.
+
+Not run: `/grill-with-docs` and `/wayfinder` with the new text, `implement-spec`
+with a real spec, Codex behavior, and repeatability. Each scenario ran once.
+
+Integrity: all 230 installed Matt entries match before and after in the checkout
+and all eight fixtures. The only checkout change after its baseline was the
+intended `workflow.md` wording. `~/.claude/settings.json` is unchanged. No push
+or reference-project write. Fixture commits stay local to the disposable fixtures.
