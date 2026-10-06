@@ -348,3 +348,161 @@ Integrity: all 230 installed Matt entries match before and after in the checkout
 and all eight fixtures. The only checkout change after its baseline was the
 intended `workflow.md` wording. `~/.claude/settings.json` is unchanged. No push
 or reference-project write. Fixture commits stay local to the disposable fixtures.
+
+## Remaining Claude Code routes — 2026-10-05 (after `c962f9b`)
+
+Validation only; no routing change. Fixtures were rebuilt from `c962f9b` under
+`/var/tmp/cs/` (the `/tmp` fixtures were lost to a reboot; native transcripts of
+every cited session remain under `~/.claude/projects/`). Claude Code 2.1.289,
+`claude-opus-5-5[1m]`.
+
+| Scenario | Mode; session | Result |
+| --- | --- | --- |
+| Repeat: small change ×2 | Headless, `acceptEdits`, allowlist; `1bebc697`, `6998ffd0` | **Pass** both. Totals on final text: 4/4 |
+| Repeat: bug report ×2 | Headless; `5a932171`, `e0a1c860` | **Pass** both: `diagnosing-bugs` first, repro and minimisation before reading code, red regression test before the fix, no task. Totals on final wording: 4/4 |
+| `/grill-with-docs` → `/to-spec` → `/to-tickets` | Interactive TUI, user typed all three; `bypassPermissions`; `938548bb` | **Pass**, see below |
+| Fresh recovery from that handoff | Headless on a copy taken at the first pause; `1909c45d` | **Pass**, $0.26 |
+| `/wayfinder` planning only | Interactive TUI, user typed; `bypassPermissions`; `87785278` | **Pass**, see below |
+
+`938548bb`:
+- Ran `Skill grilling` and `Skill domain-modeling`; wrote `GLOSSARY.md` (Token,
+  Word, Report) and no ADRs ("nothing met the bar").
+- Three rounds, Q1–Q14, each answered `accept all`. Q13 set planning only
+  (spec, tickets, stop) and Q14 set no commits and no push.
+- It created `10-05-textstats-report-mode` (`--no-start`), recorded route,
+  scope, decisions and the next command in `implement.md`, returned
+  `/to-spec .trellis/tasks/10-05-textstats-report-mode` and paused.
+- `/to-spec` treated the Q11 seam answer as the skill's seam check, and
+  published the full template into `prd.md` (30 user stories, kind `spec`,
+  ready true).
+- `/to-tickets` treated Q12 as approval and published three child tickets with
+  exact `trellis-task:` blockers, all `task.py validate` clean. The parent's
+  empty manifests fail validation, as workflow 1.3 states.
+- It stopped at the recorded planning boundary and offered
+  `/implement-spec .trellis/tasks/10-05-textstats-report-mode`. Nothing was
+  committed and no code changed.
+
+`1909c45d` ("Continue the task at .trellis/tasks/10-05-textstats-report-mode.",
+on the copy): it read the task record and loaded `matt-flow.md` because the task
+is on the Matt route. It checked `to-spec`'s policy, restated the scope and
+decisions without asking anything, refused to write the spec inline, and
+returned the same `/to-spec …` command. Git status and file hashes were
+unchanged.
+
+`87785278`:
+- Ran `grilling` and `domain-modeling` to set the destination, a published
+  spec, over two rounds answered `accept all`.
+- Published a `wayfinder-map` task with seven typed `wayfinder-ticket`
+  children (research, grilling, prototype). The graph was validated before
+  readiness was set.
+- A research subagent resolved the packaging-facts ticket. The coordinator
+  wrote `research.md` and appended `## Resolution`, plus a "Decisions so far"
+  line on the map. It archived the ticket with `--no-commit` and added the
+  research to the dependent ticket's context.
+- No code; everything uncommitted. It ended with
+  `/wayfinder .trellis/tasks/10-05-textstats-library-map` for the next ticket.
+
+Still not run: `implement-spec` executing a real spec. Session `938548bb`
+published one, but the user's planning-only choice ended there.
+
+Codex (recorded, not pursued in this round):
+- Two headless `codex exec` runs (`gpt-6-luna`, workspace-write, per-run
+  `--dangerously-bypass-hook-trust`). The configured `gpt-6-astra` is rejected
+  for this account.
+- The small change passed.
+- Three bug reports each loaded `diagnosing-bugs`, reproduced the bug and
+  probed it before reading code. None wrote a regression test or reran the
+  check after the fix.
+- One run grepped the planted bug's description out of this file.
+- Those runs added three fixture `trust_level` entries to `~/.codex/config.toml`.
+  They were removed, and the file's hash matches the pre-run baseline.
+
+Integrity: all 230 installed Matt entries match before and after, in the
+checkout and all 13 fixtures. `~/.claude/settings.json` is unchanged.
+
+### `implement-spec` on the published spec — 2026-10-05
+
+Same interactive session `938548bb` (`bypassPermissions`). The user typed
+`/implement-spec @.trellis/tasks/10-05-textstats-report-mode/`, which supplied the
+delivery authorization that Q13 had deferred. **Pass**, with the notes below.
+
+- **Branch and tickets.** It created integration branch `textstats-report-mode`
+  from `f32ce58`, opened no PR (the Trellis tracker closes work by archive) and
+  started ticket 1.
+- **Workers.**
+  - The coordinator dispatched one worktree implementer for the unblocked
+    ticket. After it merged, it dispatched the two parallel tickets
+    concurrently, each in its own worktree.
+  - Each worker prompt began with `Active task: <ticket>`. All four
+    implementers (three tickets, one review-fix) called `Skill tdd` and made no
+    commits.
+  - The coordinator reviewed each diff and reran the tests. It committed and
+    merged as `1df071d`, `4e727d4`, `0a46932`, `12c5f36` and `afde5b0`.
+- **Merge.** It resolved additive conflicts with the local legacy
+  `resolving-merge-conflicts` skill. It also found that the clean auto-merge had
+  dropped `--min-length` from the JSON path, fixed it, and had the worker add
+  the combined test.
+- **Review.**
+  - It ran `code-review` against `f32ce58` with parallel Standards and Spec
+    reviewers.
+  - There were no hard violations or spec gaps, but two defects: ASCII symbols
+    weren't stripped, and `int()` accepted `1_0`.
+  - One review-fix worker fixed both test-first, plus the cleanups (`b293cfb`).
+  - The review axes were not rerun after the fixes. The coordinator verified
+    each fix directly and said so. `matt-flow.md` asks for affected axes to be
+    rerun when invocation is permitted, so this is a minor gap.
+- **Closeout.**
+  - The children were archived `completed` with `--no-commit`, and the worker
+    worktrees and branches were removed.
+  - The parent stayed `planning` for the user's merge and closeout decision.
+    Its `implement.md` holds the integration log, review findings, fix
+    decisions and acceptance.
+  - `main`, `GLOSSARY.md` and the task files were untouched; the task files
+    stay uncommitted per Q14.
+- **Disclosed decisions** made without asking: the punctuation reading, keeping
+  `ensure_ascii`, and the skipped review rerun.
+- **Independent check:** 57 app tests and 25 repo tests pass on `b293cfb`, and
+  the combined `--json --top --min-length` CLI output applies the filter.
+- **Adaptation:** stock `implement-spec` has implementers commit and a merger
+  subagent merge. Here the coordinator did both, as `matt-flow.md` assigns
+  shared Git to the coordinator.
+
+Integrity: the fixture's and checkout's 230 installed Matt entries are unchanged,
+and `~/.claude/settings.json` and `~/.codex/config.toml` match their baselines.
+
+### Follow-up closeout and skills update — 2026-10-05
+
+Same session `938548bb`, after the user reviewed the report above and authorized
+closeout. The user accepted the disclosed decisions as long as each is reported
+and recorded.
+
+- **Review rerun.** `code-review` was rerun at `b293cfb` against `f32ce58`.
+  - Spec: nothing missing, nothing beyond the spec and nothing wrong. Both
+    earlier defects were confirmed fixed.
+  - Standards: no hard violations, and every first-round item was resolved.
+    One claim was checked and rejected: that `GLOSSARY.md` spells it
+    "normalized". It doesn't.
+  - One worker fixed four minor style issues (`4514aa9`), with 57 tests passing.
+    That behavior-neutral commit was not reviewed a third time.
+- **Merge and closeout.**
+  - `textstats-report-mode` was merged into fixture `main` with `--no-ff`
+    (`b995fbd`).
+  - `GLOSSARY.md`, the task records and the fixture README were committed by
+    explicit path (`9f892d9`). The user's untracked transcript export was left
+    out.
+  - `/trellis:finish-work` archived the parent as `completed` and appended one
+    journal entry with idempotency key `textstats-report-mode-closeout-1`
+    (`76aad34`).
+  - The user then deleted the merged integration branch. No push from the
+    fixture.
+- **Skills update in this checkout.** The user ran
+  `npx skills@latest add mattpocock/skills --agent claude-code` to drop legacy
+  and removed skills. With one agent, the installer replaced the Claude links
+  with copies and left `.agents/skills` stale.
+  - The README's two-agent command (`--agent claude-code codex --yes`) was
+    rerun. It restored the shared directory and link layout, updated `ask-matt`
+    and added `chief-of-staff` for both runtimes.
+  - `npx skills remove resolving-merge-conflicts --yes` removed the legacy copy
+    and its lock entry. Merge conflicts are now resolved by the coordinator
+    directly.
+  - Lock: 38 skills before and after.

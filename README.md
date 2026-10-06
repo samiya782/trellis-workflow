@@ -142,6 +142,17 @@ Codex workers explicitly validate and load their dispatched task context when
 native events lack the dispatch prompt. That loads task data; it does not grant
 permission to invoke a skill.
 
+In Claude Code, `implement-spec` workers that must call `tdd` run as general-purpose
+agents, because `trellis-implement` has no Skill tool. Their worktrees don't contain
+uncommitted planning files, so the dispatch gives absolute paths to the spec and
+ticket in the main checkout. Workers leave edits uncommitted; the coordinator
+reviews, commits and merges. The coordinator resolves merge conflicts itself,
+without asking, and reports how. Code that git merges without a conflict can still
+be wrong. In the recorded run, git flagged the option definitions as conflicting.
+It merged the output dispatch without a conflict, and that merged code dropped the
+`--min-length` filter from `--json`. Review the merged code, not only the conflict
+hunks.
+
 The current `code-review` installation reviews `<fixed-point>...HEAD`, which
 excludes uncommitted edits. Review requiring a commit stays pending without commit
 permission. Check the installed skill's contract after updates, and never count
@@ -153,12 +164,24 @@ Claude Code checks:
 - **`grill-with-docs` handoff:** the first run implemented inline. After a
   routing fix, one retest recorded a task, returned `/implement <task>` and paused,
   and one fresh session recovered it.
-- **Small-task routes (2026-10-05):** Claude Code ran each scenario in the table
-  once, except `grill-with-docs`, `implement-spec` with a real spec, and
-  `wayfinder`. The first bug-report run fixed the bug without `diagnosing-bugs`;
-  it passed after a wording fix. The setup procedure above was also run once in a
-  scratch project.
-- **Not run:** Codex behavior with the current routing text, and repeatability.
+- **Small-task routes (2026-10-05):** the first bug-report run fixed the bug
+  without `diagnosing-bugs`. After a wording fix, the plain small-change and
+  bug-report routes each passed 4 of 4 headless Claude Code runs. `/grill-me` →
+  `/implement` and `/implement-spec` without a spec passed once each.
+- **Durable routes (2026-10-05, Claude Code, once each):** passed.
+  - `/grill-with-docs` recorded a task and paused with `/to-spec <task>`.
+  - A fresh session recovered that command.
+  - `/to-spec` and `/to-tickets` published a spec and three tickets.
+  - `/wayfinder` published a map and resolved a research ticket, without code.
+- **`/implement-spec` on that spec (once):** passed. It built three tickets in
+  parallel worktrees with `tdd` and integrated them on a branch. It reviewed with
+  `code-review`, fixed two findings and archived the tickets. At the user's
+  request, a second review found no spec issues and four minor style issues;
+  those were fixed. The branch was then merged and the task closed out with
+  `/trellis:finish-work`.
+- **New-project setup:** the procedure above was run once in a scratch project.
+- **Not run:** Codex with the current routing text (preliminary runs are
+  recorded in the evidence).
 
 Earlier [validation reports](docs/validation/README.md) describe the historical
 patched setup and independent runtime fixes; they do not establish automatic
