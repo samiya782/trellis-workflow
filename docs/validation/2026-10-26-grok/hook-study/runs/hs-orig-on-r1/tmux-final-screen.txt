@@ -1,0 +1,50 @@
+
+  main ~/t/trellis-grok-val-20261026/hs-orig-on-r1                                                                                                                            88K / 256K │ [Dashboard]
+
+
+     ❯ /trellis-continue .trellis/tasks/10-26-textstats-top                                                                                                                                  8:29 AM
+
+
+     Implementation is in. I'll read the result and run the tests before the quality check.                                                                                                  8:35 AM
+
+     ◈ Explored 3 files, ran 1 command
+
+     The 11 tests passed. Next is the Trellis quality check, still without a commit.                                                                                                         8:36 AM
+
+     ◆ Subagent completed in 3m35s: “Check textstats top changes”
+     ◈ Explored spec, 3 files
+
+     textstats --top N is implemented and the tests pass. The changes are still uncommitted.                                                                                                 8:40 AM
+
+     textstats.py now accepts only three invocations: no arguments, a sole --help, or --top plus one token matching [1-9][0-9]*. Anything else prints the usage line on stderr and exits
+     2. Arguments are checked before stdin is read. A valid --top prints the existing words: and lines: summary, then the ranking with no blank line and no header. Words stay maximal
+     non-whitespace sequences, ordered by frequency descending and then by Unicode code point.
+
+     tests/test_textstats.py covers the golden output, exact usage, empty text, short rankings, tie-breaks, and the invalid invocations. Those error and help cases use an unfed stdin
+     pipe so a read would hang the test.
+
+     python3 -m unittest tests.test_textstats -v passed here: 11 tests, OK. The quality check found nothing to change and reran the same suite. This repo has no lint or type-check                    █
+     command.                                                                                                                                                                                          █
+                                                                                                                                                                                                       █
+     Spec update: the new contract is the exact argv form, and the pitfall is that argparse would accept --top=N, 0, and leading zeros. That behavior is already fixed by GLOSSARY.md,                 █
+     docs/adr/0001-rank-exact-words.md, and the tests. The .trellis/spec/ files are still the init placeholders, and filling them belongs to the open bootstrap-guidelines task, so this               █
+     task does not edit them.                                                                                                                                                                          █
+                                                                                                                                                                                                       █
+     Dirty files:                                                                                                                                                                                      █
+                                                                                                                                                                                                       █
+     • textstats.py                                                                                                                                                                                    █
+     • tests/test_textstats.py                                                                                                                                                                         █
+     • .trellis/tasks/10-26-textstats-top/task.json (status is now in_progress, branch recorded as main)                                                                                               █
+                                                                                                                                                                                                       █
+     You asked not to commit or push, so nothing was committed. The task branch is main, which is also base_branch, so a later archive will refuse until the branch is set to a feature                █
+     branch. /trellis-finish-work can archive and journal after that.                                                                                                                                  █
+                                                                                                                                                                                                       █
+     Worked for 10m26s                                                                                                                                                                                 █
+                                                                                                                                                                                                       █
+
+  ╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+  │ ❯                                                                                                                                                                                                │
+  ╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── Grok 4.7 Fast (xhigh) · always-approve ─╯
+
+  Shift+Tab:mode  │  Ctrl+x:shortcuts
+

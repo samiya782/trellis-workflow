@@ -1,0 +1,50 @@
+
+  main ~/t/trellis-grok-val-20261026/hs-fix2-on-r2                                                                                                                            84K / 256K │ [Dashboard]
+
+
+     ❯ /implement .trellis/tasks/10-26-textstats-top                                                                                                                                         9:19 AM
+
+
+
+     The task is active: .trellis/tasks/10-26-textstats-top, source session:grok_a90eb6d5-b3f4-417e-8d64-7eead86f8dba, status in_progress. Next I will load the contract and the existing    9:20 AM
+     textstats seam before writing tests.
+
+     ◈ Edited test_textstats.py, explored 1 directory, 7 files, 1 search, ran 2 commands +35 -2
+
+     The help test failed on the old usage line and did not block on stdin. I'll update that line next, then add the ranking test.                                                           9:21 AM
+
+     ◈ Edited 2 files, ran 2 commands +54 -5
+
+     Invalid invocations already exit 2. The three --top cases still fail, so I will add ranking at that command path.                                                                       9:21 AM
+
+     ◈ Edited 4 files, explored 4 files, ran 1 command +42 -21
+
+     textstats --top N is implemented on the active task .trellis/tasks/10-26-textstats-top. The work is uncommitted, and nothing was pushed.                                                9:22 AM
+
+     A sole --help prints the approved usage line on stdout and exits 0. No arguments still prints only words: and lines:. --top plus one token matching [1-9][0-9]* prints that summary,
+     then the ranking: the frequency descending, ties by Unicode code point, as <word> <frequency>. For A a A cat, cat cat, and --top 3, stdout is:
+
+     words: 6                                                                                                                                                                                          █
+     lines: 1                                                                                                                                                                                          █
+     A 2                                                                                                                                                                                               █
+     cat, 2                                                                                                                                                                                            █
+     a 1                                                                                                                                                                                               █
+     ◇ code   [Copy]                                                                                                                                                                                   █
+                                                                                                                                                                                                       █
+     Any other invocation prints that usage line on stderr and exits 2, without reading stdin. Tests cover a missing value, 0, a negative, a leading + or 0, a non-integer, --top=N, a                 █
+     filename, a short flag, and --help mixed with anything else.                                                                                                                                      █
+                                                                                                                                                                                                       █
+     python3 -m unittest tests.test_textstats passed, 8 tests. py_compile passed. No mypy or pyright is on PATH, so nothing was typechecked.                                                           █
+                                                                                                                                                                                                       █
+     code-review only reviews git diff <fixed-point>...HEAD. That diff is empty while the change is uncommitted, and the commit was refused, so the review stays pending. The fixed point              █
+     is 6c16f33.                                                                                                                                                                                       █
+                                                                                                                                                                                                       █
+     Worked for 2m59s                                                                                                                                                                                  █
+                                                                                                                                                                                                       █
+
+  ╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+  │ ❯                                                                                                                                                                                                │
+  ╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── Grok 4.7 Fast (xhigh) · always-approve ─╯
+
+  Shift+Tab:mode  │  Ctrl+x:shortcuts
+

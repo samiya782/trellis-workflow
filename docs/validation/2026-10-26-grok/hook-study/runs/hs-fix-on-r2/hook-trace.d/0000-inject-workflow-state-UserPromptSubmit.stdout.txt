@@ -1,0 +1,1 @@
+{"hookSpecificOutput": {"hookEventName": "UserPromptSubmit", "additionalContext": "<workflow-state>\nStatus: no_task\nRead the Phase Index. Normal-route small work proceeds directly; a reported bug symptom invokes diagnosing-bugs first. A Matt selection for this work item keeps its route: docs/agents/matt-flow.md. Honor scope and stock invocation boundaries.\n</workflow-state>"}}

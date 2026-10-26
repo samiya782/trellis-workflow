@@ -1,0 +1,50 @@
+
+  main ~/t/trellis-grok-val-20261026/hs-ours-off-r2                                                                                                                           82K / 256K │ [Dashboard]
+
+
+     ❯ /implement .trellis/tasks/10-26-textstats-top                                                                                                                                         8:48 AM
+
+
+     ◆ Thought for 5.4s
+
+     The task is Add textstats --top N. I'll load the implement and TDD skills, the task contract, and the current code before changing anything.                                            8:48 AM
+
+     ◈ Explored 18 files, 4 searches, ran 3 commands
+
+     The ticket is Add textstats --top N (trellis-task:10-26-textstats-top). The agreed seam is the existing subprocess CLI in tests/test_textstats.py: it checks stdout, stderr, and exit   8:49 AM
+     status, and it does not reach into helpers. I'll add one failing check at a time, starting with the usage line.
+
+     ◈ Edited 2 files, ran 3 commands +22 -3
+
+     The ranking test fails because --top is still rejected. I'll accept a valid --top N and print the agreed order after the summary.                                                       8:50 AM
+
+     ◈ Edited 4 files, explored 2 files, ran 4 commands +99 -14
+
+     Add textstats --top N is implemented in the worktree. The changes are uncommitted, and nothing was pushed.                                                                              8:51 AM
+
+     textstats --top N reads stdin, prints the existing words: and lines: summary, then prints up to N ranking lines as <word> <frequency>. The order is frequency descending, then                    █
+     ascending Unicode code point. --help and every other invocation print the agreed usage line and do not read stdin. Invalid invocations exit 2.                                                    █
+                                                                                                                                                                                                       █
+     python3 -m py_compile textstats.py tests/test_textstats.py passed. No mypy or pyright is installed. python3 -m unittest discover -s tests -v passed, 10 tests.                                    █
+                                                                                                                                                                                                       █
+     code-review only reviews git diff <fixed-point>...HEAD. Against the saved base e797938 that diff is empty, so the review is pending until a commit is allowed.                                    █
+                                                                                                                                                                                                       █
+     Worked for 3m34s                                                                                                                                                                                  █
+                                                                                                                                                                                                       █
+                                                                                                                                                                                                       █
+                                                                                                                                                                                                       █
+                                                                                                                                                                                                       █
+                                                                                                                                                                                                       █
+                                                                                                                                                                                                       █
+                                                                                                                                                                                                       █
+                                                                                                                                                                                                       █
+                                                                                                                                                                                                       █
+                                                                                                                                                                                                       █
+                                                                                                                                                                                                       █
+
+  ╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+  │ ❯                                                                                                                                                                                                │
+  ╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── Grok 4.7 Fast (xhigh) · always-approve ─╯
+
+  Shift+Tab:mode  │  Ctrl+x:shortcuts
+
