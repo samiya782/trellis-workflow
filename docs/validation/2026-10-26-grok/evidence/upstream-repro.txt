@@ -1,0 +1,37 @@
+# upstream repro, WSL 2026-10-26T07:46:10-07:00
+
+===== stock (sha256: 1dcba0c191bc 73b0e07345f2)
+--- bug 1
+✓ Branch recorded: demo (degraded)
+Current task: (none)
+Source: none
+ls: cannot access '.trellis/.runtime/sessions': No such file or directory
+--- bug 2
+Added file: .trellis/tasks/10-26-parent/prd.md
+.trellis/tasks/archive/2026-10/10-26-child
+.trellis/tasks/archive/2026-10/10-26-parent
+  implement.jsonl:1: File not found: .trellis/tasks/10-26-parent/prd.md
+  implement.jsonl: ✗ (1 errors)
+  check.jsonl: not found (skipped)
+
+✗ Validation failed (1 errors)
+{"file": ".trellis/tasks/10-26-parent/prd.md", "reason": "parent spec"}
+commits: 1
+
+===== patched (sha256: dfa406b75552 bab9e441d9a4)
+--- bug 1
+The hook will now inject context from this task's jsonl files.
+Current task: .trellis/tasks/10-26-demo
+Source: session:grok_demo
+grok_demo.json
+--- bug 2
+Added file: .trellis/tasks/10-26-parent/prd.md
+.trellis/tasks/archive/2026-10/10-26-child
+.trellis/tasks/archive/2026-10/10-26-parent
+
+  implement.jsonl: ✓ (1 entries)
+  check.jsonl: not found (skipped)
+
+✓ All validations passed
+{"file": ".trellis/tasks/archive/2026-10/10-26-parent/prd.md", "reason": "parent spec"}
+commits: 1

@@ -1,0 +1,32 @@
+{
+  "info": {
+    "id": "01a1780d-d0c4-7f71-88dd-783ca1e6413c",
+    "cwd": "/home/samiya/trellis"
+  },
+  "agent_id": "ag1.866fb08a43d94f7c9ae1c41993ec337a",
+  "attempt_id": "at1.f23d344e8d22422f80c36402f42a1472",
+  "session_summary": "Trellis Matt workflow validation and grill-me handoff miss",
+  "created_at": "2026-10-26T11:52:13.805807666Z",
+  "updated_at": "2026-10-26T12:38:23.841848081Z",
+  "num_messages": 495,
+  "num_chat_messages": 160,
+  "current_model_id": "grok-4.7-build-fast",
+  "next_trace_turn": 3,
+  "chat_format_version": 1,
+  "git_root_dir": "/home/samiya/trellis/",
+  "git_remotes": [
+    "https://github.com/samiya782/trellis-workflow.git"
+  ],
+  "head_commit": "835396ace416910f640668db1de1d76aa209dbe1",
+  "head_branch": "main",
+  "request_id": "5af37efc-bf62-4f05-8a21-8f7b0a4385ba",
+  "grok_home": "/home/samiya/.grok",
+  "last_active_at": "2026-10-26T12:38:23.834434133Z",
+  "generated_title": "Trellis Matt workflow validation and grill-me handoff miss",
+  "agent_name": "grok-build-plan",
+  "sandbox_profile": "off",
+  "reasoning_effort": "xhigh",
+  "context_window": 256000,
+  "last_turn_summary": "grill-me implemented itself; should have paused for /implement",
+  "last_turn_summary_prompt_id": "5af37efc-bf62-4f05-8a21-8f7b0a4385ba"
+}

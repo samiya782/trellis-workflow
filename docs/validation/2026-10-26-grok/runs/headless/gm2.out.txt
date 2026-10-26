@@ -1,0 +1,7 @@
+The case policy for `textstats --top` is settled.
+
+`--top` ranks the same whitespace-separated tokens as the word count. Punctuation stays on the token. `words:` and `lines:` stay as they are for the same stdin.
+
+Case variants form one row. The grouping key is `str.casefold()`, locale-independent. That merges `The`/`the`, `Straße`/`strasse`, final sigma `ς` with `σ`, and the ligature `ﬁ` with `fi`. Turkish `İ` stays distinct from `i`, and `I` stays distinct from dotless `ı`.
+
+Each row is labeled with that casefolded key. Folding is always on, with no case-sensitive switch. A higher count ranks first. Equal counts rank by the casefolded spelling in ordinary Python string order, ascending.

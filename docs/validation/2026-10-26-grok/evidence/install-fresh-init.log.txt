@@ -1,0 +1,21 @@
+
+ ███████████                    ████  ████   ███         
+▒█▒▒▒███▒▒▒█                   ▒▒███ ▒▒███  ▒▒▒          
+▒   ▒███  ▒  ████████   ██████  ▒███  ▒███  ████   █████ 
+    ▒███    ▒▒███▒▒███ ███▒▒███ ▒███  ▒███ ▒▒███  ███▒▒  
+    ▒███     ▒███ ▒▒▒ ▒███████  ▒███  ▒███  ▒███ ▒▒█████ 
+    ▒███     ▒███     ▒███▒▒▒   ▒███  ▒███  ▒███  ▒▒▒▒███
+    █████    █████    ▒▒██████  █████ █████ █████ ██████ 
+   ▒▒▒▒▒    ▒▒▒▒▒      ▒▒▒▒▒▒  ▒▒▒▒▒ ▒▒▒▒▒ ▒▒▒▒▒ ▒▒▒▒▒▒
+
+   All-in-one AI framework & toolkit for Claude Code & Cursor
+
+Mode: Non-interactive (skip existing files)
+
+👤 Developer: fixture
+📁 Creating workflow structure...
+📝 Configuring Claude Code...
+📝 Configuring Grok Build...
+📌 Linux detected: Trellis rendered Python commands as "python3" in generated hooks, settings, and help text
+📄 Created AGENTS.md
+📋 Tracking 138 template files for updates

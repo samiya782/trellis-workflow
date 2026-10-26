@@ -1,0 +1,27 @@
+{
+  "info": {
+    "id": "55555555-5555-4555-8555-555555555555",
+    "cwd": "/home/samiya/tmp/trellis-grok-val-20261026/recheck-tickets"
+  },
+  "agent_id": "ag1.e34905dfe6174d3293216726cbce1516",
+  "attempt_id": "at1.cf746ba8eae14c4bbebd15e2238e842e",
+  "session_summary": "Archive Trellis work without committing changes",
+  "created_at": "2026-10-26T13:54:53.828612033Z",
+  "updated_at": "2026-10-26T13:58:39.477733063Z",
+  "num_messages": 224,
+  "num_chat_messages": 98,
+  "current_model_id": "grok-4.7-build-fast",
+  "next_trace_turn": 1,
+  "chat_format_version": 1,
+  "session_kind": "headless",
+  "git_root_dir": "/home/samiya/tmp/trellis-grok-val-20261026/recheck-tickets/",
+  "head_commit": "e1206eb3280833007a5b4251cbcbcc3935019493",
+  "head_branch": "integrate/10-26-textstats-top",
+  "request_id": "9d899b21-3aa3-4b63-907c-8e5766eca47b",
+  "grok_home": "/home/samiya/.grok",
+  "last_active_at": "2026-10-26T13:58:39.477733063Z",
+  "generated_title": "Archive Trellis work without committing changes",
+  "agent_name": "grok-build-plan",
+  "sandbox_profile": "off",
+  "reasoning_effort": "xhigh"
+}

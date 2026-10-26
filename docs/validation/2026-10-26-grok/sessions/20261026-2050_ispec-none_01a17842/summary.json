@@ -1,0 +1,27 @@
+{
+  "info": {
+    "id": "01a17842-eb0d-7e51-9427-9531f7c2f1c0",
+    "cwd": "/home/samiya/tmp/trellis-grok-val-20261026/ispec-none"
+  },
+  "agent_id": "ag1.928f6ff926e34a48a62f2a57cc5b777d",
+  "attempt_id": "at1.4060ba53a7d9440a90080a54e276638d",
+  "session_summary": "Add -l alias for --lines in textstats",
+  "created_at": "2026-10-26T12:50:13.908015678Z",
+  "updated_at": "2026-10-26T12:50:47.852657623Z",
+  "num_messages": 89,
+  "num_chat_messages": 44,
+  "current_model_id": "grok-4.7-build-fast",
+  "next_trace_turn": 1,
+  "chat_format_version": 1,
+  "session_kind": "headless",
+  "git_root_dir": "/home/samiya/tmp/trellis-grok-val-20261026/ispec-none/",
+  "head_commit": "e1206eb3280833007a5b4251cbcbcc3935019493",
+  "head_branch": "main",
+  "request_id": "5ad3be70-a115-422f-84ed-64b5e23e0a54",
+  "grok_home": "/home/samiya/.grok",
+  "last_active_at": "2026-10-26T12:50:47.852657623Z",
+  "generated_title": "Add -l alias for --lines in textstats",
+  "agent_name": "grok-build-plan",
+  "sandbox_profile": "off",
+  "reasoning_effort": "xhigh"
+}

@@ -1,0 +1,50 @@
+
+  textstats-top ~/t/trellis-grok-val-20261026/recheck-tui                                                                                                                    119K / 256K │ [Dashboard]
+
+
+     ❯ /trellis-finish-work — do not commit and do not push. Archive the finished tickets with --no-commit and leave the parent spec task active.                                            7:37 AM
+
+
+     I'll close out only the finished tickets: load the finish-work rules, archive those children with --no-commit, and leave the parent spec task active.                                   7:37 AM
+
+     ◈ Explored 6 files, 3 searches, ran 3 commands
+
+     Both tickets were accepted by the test run, and this closeout allows archive but not a commit. I'll archive the two children and leave the parent spec task in place.                   7:38 AM
+
+     ◆ Ran archive both finished tickets without committing
+
+  ┃  ◆ Thinking…
+  ┃
+  ┃  Finished tickets were archived. The parent spec task remains active.
+  ┃
+  ┃  Session pointer cleared.
+
+
+
+
+
+
+
+
+
+
+
+
+                                                                                                                                                                                                       █
+                                                                                                                                                                                                       █
+                                                                                                                                                                                                       █
+                                                                                                                                                                                                       █
+                                                                                                                                                                                                       █
+                                                                                                                                                                                                       █
+                                                                                                                                                                                                       █
+                                                                                                                                                                                                       █
+                                                                                                                                                                                                       █
+
+   ⠦ Thinking… 0.9s                                                                                                                                                                  1m0s ⇣119k [stop]
+
+  ╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+  │ ❯                                                                                                                                                                                                │
+  ╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── Grok 4.7 Fast (xhigh) · always-approve ─╯
+
+  Shift+Tab:mode  │  Ctrl+c:cancel  │  Ctrl+x:shortcuts
+

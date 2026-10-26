@@ -1,0 +1,50 @@
+
+  main ~/t/trellis-grok-val-20261026/recheck-tui                                                                                                                              53K / 256K │ [Dashboard]
+
+
+     ❯ Granularity is right: keep two slices, ticket 2 blocked by ticket 1, no further split. Publish them.                                                                                  7:27 AM
+
+
+     ◆ Thought for 1.2s
+
+     The split is approved. I’ll publish the two child tickets in blocker order and wire ticket 2 to ticket 1.                                                                               7:28 AM
+
+     ◈ Explored 4 files, 5 searches, ran 1 command
+
+
+
+
+
+
+
+
+
+
+                                                                                                                                                                                                       █
+                                                                                                                                                                                                       █
+                                                                                                                                                                                                       █
+                                                                                                                                                                                                       █
+                                                                                                                                                                                                       █
+                                                                                                                                                                                                       █
+                                                                                                                                                                                                       █
+                                                                                                                                                                                                       █
+                                                                                                                                                                                                       █
+                                                                                                                                                                                                       █
+                                                                                                                                                                                                       █
+                                                                                                                                                                                                       █
+                                                                                                                                                                                                       █
+                                                                                                                                                                                                       █
+                                                                                                                                                                                                       █
+                                                                                                                                                                                                       █
+                                                                                                                                                                                                       █
+                                                                                                                                                                                                       █
+                                                                                                                                                                                                       █
+
+   ⠙ Waiting for response… 1.1s                                                                                                                                                      30s ⇣53.6k [stop]
+
+  ╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+  │ ❯                                                                                                                                                                                                │
+  ╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── Grok 4.7 Fast (xhigh) · always-approve ─╯
+
+  Shift+Tab:mode  │  Ctrl+c:cancel  │  Ctrl+x:shortcuts
+

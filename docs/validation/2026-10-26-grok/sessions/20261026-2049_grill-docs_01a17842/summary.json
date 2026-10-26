@@ -1,0 +1,24 @@
+{
+  "info": {
+    "id": "01a17842-a8aa-7830-991d-046ceba3f3da",
+    "cwd": "/home/samiya/tmp/trellis-grok-val-20261026/grill-docs"
+  },
+  "agent_id": "ag1.ad729345a6fb4c2eb8c25a705662763d",
+  "attempt_id": "at1.2eeaef43bca742d58cce038d0db3f5df",
+  "session_summary": "",
+  "created_at": "2026-10-26T12:49:56.918947898Z",
+  "updated_at": "2026-10-26T12:49:57.183585056Z",
+  "num_messages": 0,
+  "num_chat_messages": 2,
+  "current_model_id": "grok-4.7",
+  "next_trace_turn": 0,
+  "chat_format_version": 1,
+  "session_kind": "headless",
+  "git_root_dir": "/home/samiya/tmp/trellis-grok-val-20261026/grill-docs/",
+  "head_commit": "e1206eb3280833007a5b4251cbcbcc3935019493",
+  "head_branch": "main",
+  "grok_home": "/home/samiya/.grok",
+  "agent_name": "grok-build-plan",
+  "sandbox_profile": "off",
+  "reasoning_effort": "xhigh"
+}

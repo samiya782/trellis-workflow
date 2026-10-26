@@ -1,0 +1,24 @@
+{
+  "info": {
+    "id": "01a17842-a8ec-7f21-b61a-332a81f9d733",
+    "cwd": "/home/samiya/tmp/trellis-grok-val-20261026/continue"
+  },
+  "agent_id": "ag1.18c4951aba2741c1b410a0cd1efd8b88",
+  "attempt_id": "at1.da8dfb37cf554f489a67073df231681e",
+  "session_summary": "",
+  "created_at": "2026-10-26T12:49:56.986382609Z",
+  "updated_at": "2026-10-26T12:49:57.261383137Z",
+  "num_messages": 0,
+  "num_chat_messages": 2,
+  "current_model_id": "grok-4.7",
+  "next_trace_turn": 0,
+  "chat_format_version": 1,
+  "session_kind": "headless",
+  "git_root_dir": "/home/samiya/tmp/trellis-grok-val-20261026/continue/",
+  "head_commit": "e1206eb3280833007a5b4251cbcbcc3935019493",
+  "head_branch": "main",
+  "grok_home": "/home/samiya/.grok",
+  "agent_name": "grok-build-plan",
+  "sandbox_profile": "off",
+  "reasoning_effort": "xhigh"
+}

@@ -1,0 +1,13 @@
+Good work. Next, audit Trellis task creation in every scenario. Still do not modify ~/trellis; fixtures only.
+
+For each scenario fixture under ~/tmp/trellis-grok-val-20261026 (small change = normal typo run, bug report = bug, grill-me, grill-with-docs = grill-docs, wayfinder, to-spec/to-tickets and implement-spec = continue, implement, implement-spec without a spec = ispec-none, resume = resume and continue, trellis-start = start, trellis-finish-work = continue), record:
+- whether a new .trellis/tasks/<dir> was created, and whether one should have been per docs/agents/matt-flow.md and .trellis/workflow.md (expected vs actual);
+- `python3 .trellis/scripts/task.py validate <task>` result for every task the run created or touched;
+- presence of prd.md / implement.md / task.json and whether their content matches what actually happened (decisions, authorization, next command);
+- current-task pointer before and after (`python3 .trellis/scripts/task.py current --source`), and whether it was set or cleared correctly; never another session's pointer;
+- status transitions in task.json (planning / in_progress / completed) and whether `task.py start` was only run by the coordinator after recorded authorization;
+- archive behavior: children before parent, `--no-commit` used, archived paths, journal entry via `add_session.py --no-commit`;
+- no stray tasks, no stray commits (compare `git log` with the fixture base e1206eb), no edits outside the scenario scope.
+Also explain the pre-existing `00-bootstrap-guidelines` task (status in_progress in fresh fixtures): is it created by `trellis init`, does it pollute `task.py current` or the start/continue routing, and does ~/trellis itself have it?
+
+If a scenario's evidence is missing, re-run that scenario headlessly in a fresh fixture copy (accept recommended answers yourself). Finish with one table: Scenario | Task expected | Task actual | validate | pointer | status/archive | stray tasks/commits | Pass/Fail, followed by any new defects for ~/trellis with the exact file and minimal edit.

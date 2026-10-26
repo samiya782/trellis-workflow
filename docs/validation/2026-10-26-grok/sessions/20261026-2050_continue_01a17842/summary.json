@@ -1,0 +1,27 @@
+{
+  "info": {
+    "id": "01a17842-eae2-7db1-a257-a6f7ea443865",
+    "cwd": "/home/samiya/tmp/trellis-grok-val-20261026/continue"
+  },
+  "agent_id": "ag1.17d2644d9f34428aa96d388ab3fbe361",
+  "attempt_id": "at1.8496831e0bcc4085a60a02244e29d2d5",
+  "session_summary": "Continue Trellis 10-26 Textstats-Top Task",
+  "created_at": "2026-10-26T12:50:13.873124077Z",
+  "updated_at": "2026-10-26T12:51:04.704564627Z",
+  "num_messages": 62,
+  "num_chat_messages": 36,
+  "current_model_id": "grok-4.7-build-fast",
+  "next_trace_turn": 1,
+  "chat_format_version": 1,
+  "session_kind": "headless",
+  "git_root_dir": "/home/samiya/tmp/trellis-grok-val-20261026/continue/",
+  "head_commit": "e1206eb3280833007a5b4251cbcbcc3935019493",
+  "head_branch": "main",
+  "request_id": "e2e8633d-99a5-4fd0-9a20-69cae50cb9a7",
+  "grok_home": "/home/samiya/.grok",
+  "last_active_at": "2026-10-26T12:51:04.704564627Z",
+  "generated_title": "Continue Trellis 10-26 Textstats-Top Task",
+  "agent_name": "grok-build-plan",
+  "sandbox_profile": "off",
+  "reasoning_effort": "xhigh"
+}

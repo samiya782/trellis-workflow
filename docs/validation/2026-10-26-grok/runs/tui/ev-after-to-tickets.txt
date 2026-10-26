@@ -1,0 +1,109 @@
+## evidence after /to-tickets  (WSL 2026-10-26T07:30:27-07:00; UTC 2026-10-26T14:30:27+00:00)
+$ git log --oneline -3
+9164a53 fixture: overlay grok-branch fixes and planning task
+e1206eb fix multi-space word count and add regression test
+be375e2 fix help typo and seed multi-space word-count bug
+$ git status --short
+ M .trellis/tasks/10-26-textstats-top/implement.md
+ M .trellis/tasks/10-26-textstats-top/task.json
+?? .trellis/tasks/10-26-textstats-rank-top/
+?? .trellis/tasks/10-26-textstats-usage-reject/
+$ task.py list
+[0;34mAll active tasks:[0m
+
+  - 00-bootstrap-guidelines/ (in_progress) [[0;36mfixture[0m]
+  - 10-26-textstats-top/ (planning) [0/2 done] [[0;36mfixture[0m]
+    - 10-26-textstats-rank-top/ (planning) [[0;36mfixture[0m]
+    - 10-26-textstats-usage-reject/ (planning) [[0;36mfixture[0m]
+
+Total: 4 task(s)
+$ task.py validate .trellis/tasks/10-26-textstats-rank-top
+[0;34m=== Validating Context Files ===[0m
+Target dir: /home/samiya/tmp/trellis-grok-val-20261026/recheck-tui/.trellis/tasks/10-26-textstats-rank-top
+
+  [0;32mimplement.jsonl: ✓ (3 entries)[0m
+  [0;32mcheck.jsonl: ✓ (3 entries)[0m
+
+[0;32m✓ All validations passed[0m
+$ cat 10-26-textstats-rank-top/task.json
+{
+  "id": "textstats-rank-top",
+  "name": "textstats-rank-top",
+  "title": "Print the Ranking for a valid --top N",
+  "description": "A valid --top N reads stdin and prints the summary, then the Ranking of exact Words.",
+  "status": "planning",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P2",
+  "creator": "fixture",
+  "assignee": "fixture",
+  "createdAt": "2026-10-26",
+  "completedAt": null,
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": "10-26-textstats-top",
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {
+    "matt_publication_ref": "trellis-task:10-26-textstats-rank-top",
+    "matt_publication_kind": "ticket",
+    "matt_ready_for_agent": "true",
+    "matt_parent_ref": "trellis-task:10-26-textstats-top"
+  }
+}
+$ cat implement.jsonl
+{"file": ".trellis/tasks/10-26-textstats-top/prd.md", "reason": "Parent spec for the --top N contract"}
+{"file": "GLOSSARY.md", "reason": "Definitions of Text, Word, Frequency, and Ranking"}
+{"file": "docs/adr/0001-rank-exact-words.md", "reason": "Why the Ranking counts exact Words"}
+$ task.py validate .trellis/tasks/10-26-textstats-usage-reject
+[0;34m=== Validating Context Files ===[0m
+Target dir: /home/samiya/tmp/trellis-grok-val-20261026/recheck-tui/.trellis/tasks/10-26-textstats-usage-reject
+
+  [0;32mimplement.jsonl: ✓ (3 entries)[0m
+  [0;32mcheck.jsonl: ✓ (3 entries)[0m
+
+[0;32m✓ All validations passed[0m
+$ cat 10-26-textstats-usage-reject/task.json
+{
+  "id": "textstats-usage-reject",
+  "name": "textstats-usage-reject",
+  "title": "Publish the usage line and reject every other invocation",
+  "description": "Help and invalid invocations use the new usage line; no arguments still prints only the summary.",
+  "status": "planning",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P2",
+  "creator": "fixture",
+  "assignee": "fixture",
+  "createdAt": "2026-10-26",
+  "completedAt": null,
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": "10-26-textstats-top",
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {
+    "matt_publication_ref": "trellis-task:10-26-textstats-usage-reject",
+    "matt_publication_kind": "ticket",
+    "matt_ready_for_agent": "true",
+    "matt_parent_ref": "trellis-task:10-26-textstats-top"
+  }
+}
+$ cat implement.jsonl
+{"file": ".trellis/tasks/10-26-textstats-top/prd.md", "reason": "Parent spec for the --top N contract"}
+{"file": "GLOSSARY.md", "reason": "Definitions of Text, Word, Frequency, and Ranking"}
+{"file": "docs/adr/0001-rank-exact-words.md", "reason": "Why the Ranking counts exact Words"}
+$ ls .trellis/.runtime/sessions
+ls: cannot access '.trellis/.runtime/sessions': No such file or directory

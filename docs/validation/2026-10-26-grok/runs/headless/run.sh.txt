@@ -1,0 +1,6 @@
+#!/bin/bash
+# usage: run.sh <outname> <promptfile> [extra args]
+cd ~/trellis
+out=$1; pf=$2; shift 2
+grok --prompt-file "$pf" --always-approve --deny "Bash(git commit:*)" --deny "Bash(git push:*)" --deny "Bash(git reset:*)" --deny "Bash(git checkout:*)" --deny "Bash(git stash:*)" --deny "Bash(rm -rf:*)" "$@" > /tmp/grokval/$out.out 2> /tmp/grokval/$out.err < /dev/null
+echo "EXIT=$?" >> /tmp/grokval/$out.out

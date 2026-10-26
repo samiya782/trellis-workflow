@@ -1,0 +1,13 @@
+I'll grill the `--top` case-sensitivity question. First I'm loading the grilling skill and the project phase context so the questions stay inside this repo's rules.`textstats` counts words and lines from stdin. `--top` is not implemented: any other argument writes the usage line to stderr and exits 2. A word is whatever `str.split()` returns, so attached punctuation stays on the token, and the totals never group spellings together. Nothing in the specs or tests defines `--top`.
+
+The case rule is the next round, after the token is settled.
+
+❓ **Q1** - **What `--top` ranks**: Should `--top` rank those same whitespace-separated words by how often they occur?
+
+➡️ Yes. Same split as today's word count, punctuation left attached.
+
+---
+
+❓ **Q2** - **No-flag behavior**: Should a run with no `--top` keep today's stdout (`words: N` and `lines: M`) and exit 0?
+
+➡️ Yes.

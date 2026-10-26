@@ -1,0 +1,27 @@
+{
+  "info": {
+    "id": "11111111-1111-4111-8111-111111111111",
+    "cwd": "/home/samiya/tmp/trellis-grok-val-20261026/recheck-start"
+  },
+  "agent_id": "ag1.44ebec6482b94bf89272dc36924e8297",
+  "attempt_id": "at1.24ed695f0a6a4c7b8d03fafb22e3b639",
+  "session_summary": "Trellis Start Session Initialization Command",
+  "created_at": "2026-10-26T13:45:12.210214963Z",
+  "updated_at": "2026-10-26T13:45:29.177210984Z",
+  "num_messages": 12,
+  "num_chat_messages": 14,
+  "current_model_id": "grok-4.7-build-fast",
+  "next_trace_turn": 1,
+  "chat_format_version": 1,
+  "session_kind": "headless",
+  "git_root_dir": "/home/samiya/tmp/trellis-grok-val-20261026/recheck-start/",
+  "head_commit": "e1206eb3280833007a5b4251cbcbcc3935019493",
+  "head_branch": "main",
+  "request_id": "a60319a9-d52f-4e8d-aa2c-7f177d7e6cba",
+  "grok_home": "/home/samiya/.grok",
+  "last_active_at": "2026-10-26T13:45:29.177210984Z",
+  "generated_title": "Trellis Start Session Initialization Command",
+  "agent_name": "grok-build-plan",
+  "sandbox_profile": "off",
+  "reasoning_effort": "xhigh"
+}

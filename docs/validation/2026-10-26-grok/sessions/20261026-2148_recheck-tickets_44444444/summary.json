@@ -1,0 +1,27 @@
+{
+  "info": {
+    "id": "44444444-4444-4444-8444-444444444444",
+    "cwd": "/home/samiya/tmp/trellis-grok-val-20261026/recheck-tickets"
+  },
+  "agent_id": "ag1.f75a24a91c354d368d28abdb47391911",
+  "attempt_id": "at1.c5106152e1bc48c983770aa14f69c558",
+  "session_summary": "Implement textstats-top Trellis spec uncommitted",
+  "created_at": "2026-10-26T13:48:56.701429122Z",
+  "updated_at": "2026-10-26T13:54:15.857722147Z",
+  "num_messages": 209,
+  "num_chat_messages": 87,
+  "current_model_id": "grok-4.7-build-fast",
+  "next_trace_turn": 1,
+  "chat_format_version": 1,
+  "session_kind": "headless",
+  "git_root_dir": "/home/samiya/tmp/trellis-grok-val-20261026/recheck-tickets/",
+  "head_commit": "e1206eb3280833007a5b4251cbcbcc3935019493",
+  "head_branch": "main",
+  "request_id": "9bc7536c-25dd-4ee0-b1e8-35f63a98ca4e",
+  "grok_home": "/home/samiya/.grok",
+  "last_active_at": "2026-10-26T13:54:15.857722147Z",
+  "generated_title": "Implement textstats-top Trellis spec uncommitted",
+  "agent_name": "grok-build-plan",
+  "sandbox_profile": "off",
+  "reasoning_effort": "xhigh"
+}

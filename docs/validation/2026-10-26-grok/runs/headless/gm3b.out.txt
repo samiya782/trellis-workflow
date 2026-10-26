@@ -1,0 +1,14 @@
+Shared understanding is confirmed. Every open branch takes the recommended answer. `grill-me` does not edit the program; a recoverable record would be `grill-with-docs`.
+
+**Settled contract**
+
+- `--top N` ranks the same whitespace-separated words as today's word count (`str.split()`). Punctuation, apostrophes, and hyphens stay on the token.
+- Grouping ignores case with `str.casefold()`. The printed word is that casefolded form, and the count is how many tokens fold to it. Different Unicode normal forms stay distinct. There is no locale and no extra flag.
+- With `--top`, stdout is only the ranking: `{count} {word}` on each line, highest count first. Equal counts sort by the casefolded spelling in code-point order. Input order does not matter.
+- `N` is the next argument and is an integer greater than or equal to 1. Fewer distinct words than `N` prints every word. Empty stdin prints nothing and exits 0.
+- A run with no `--top` still prints `words: N` and `lines: M` and exits 0. Totals stay raw token counts.
+- `--help` alone still exits 0, and the usage line documents `--top N` and case-insensitive ranking. Any other argv shape (missing `N`, `--top=N`, `N` below 1, a repeated `--top`, or `--top` with another argument) writes usage to stderr and exits 2.
+
+`/implement Add textstats --top N: rank str.split() words by frequency, group and print with str.casefold() as "<count> <word>" (count desc, spelling asc); N is an integer >= 1; no-flag words/lines output unchanged; bad args exit 2`
+
+Codex: `$implement Add textstats --top N: rank str.split() words by frequency, group and print with str.casefold() as "<count> <word>" (count desc, spelling asc); N is an integer >= 1; no-flag words/lines output unchanged; bad args exit 2`

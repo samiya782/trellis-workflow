@@ -1,0 +1,27 @@
+{
+  "info": {
+    "id": "01a17852-9165-7bc0-93b0-cd7b8e4c6d1f",
+    "cwd": "/home/samiya/tmp/trellis-grok-val-20261026/continue"
+  },
+  "agent_id": "ag1.5cc23948f2964677b724e4a7c5900bee",
+  "attempt_id": "at1.1d274eaa242c419f97db15b6369a3df1",
+  "session_summary": "Implement textstats-top spec task",
+  "created_at": "2026-10-26T13:07:19.532718255Z",
+  "updated_at": "2026-10-26T13:17:03.006931518Z",
+  "num_messages": 251,
+  "num_chat_messages": 135,
+  "current_model_id": "grok-4.7-build-fast",
+  "next_trace_turn": 1,
+  "chat_format_version": 1,
+  "session_kind": "headless",
+  "git_root_dir": "/home/samiya/tmp/trellis-grok-val-20261026/continue/",
+  "head_commit": "e1206eb3280833007a5b4251cbcbcc3935019493",
+  "head_branch": "main",
+  "request_id": "b2e419e8-7344-4f0b-91b0-042616a5194f",
+  "grok_home": "/home/samiya/.grok",
+  "last_active_at": "2026-10-26T13:17:03.006931518Z",
+  "generated_title": "Implement textstats-top spec task",
+  "agent_name": "grok-build-plan",
+  "sandbox_profile": "off",
+  "reasoning_effort": "xhigh"
+}

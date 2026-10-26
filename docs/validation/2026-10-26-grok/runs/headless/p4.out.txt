@@ -1,0 +1,102 @@
+I’ll re-check the fixes in fresh fixture copies only, and I won’t edit `~/trellis`. First I’m confirming the updated files and how to trust a new fixture.The recheck is still at setup: the patched files are confirmed, and no `recheck-*` session has run. I will copy fresh fixtures, overlay only those five files from `~/trellis`, block commits, then run the four headless checks.`grok --trust` is not a real command, so I will trust the new folders in `trusted_folders.toml` and block `git commit` with a deny rule plus a git wrapper. Next I will copy the three fixtures and start the independent sessions.The start session finished cleanly. Ticket publishing and the grill-me resume have both exited, so I am checking those results before starting implementation.Three of the four rechecks passed. `/grill-me` did not edit product code, and after the one allowed resume it kept quizzing instead of ending with `/implement`. Nothing here needs you.
+
+`grok --trust` is not a command in this CLI. The three new folders were marked trusted in `~/.grok/trusted_folders.toml`. Commits were blocked with `--deny 'Bash(git commit:*)'`, a git wrapper, and a fixture `pre-commit` hook. Every fixture stayed on `e1206eb` (`fix multi-space word count and add regression test`). `~/trellis` was not edited.
+
+## 1. `/trellis-start` — Pass
+
+Session `11111111-1111-4111-8111-111111111111` in `recheck-start`. Hooks were restored from git before the run. The copied `.claude` tree was clean.
+
+Prompt: `/trellis-start`
+
+Tool calls were only `python3 ./.trellis/scripts/get_context.py` and `python3 ./.trellis/scripts/get_context.py --mode phase`. The reply named the current task as none, listed `00-bootstrap-guidelines` as an unselected active task, said that task stays untouched until asked for, and asked what to do next.
+
+Expected task: none. Actual: none. `git status` shows only the five overlaid fix files. `HEAD` is `e1206eb`.
+
+## 2. `/to-tickets` then `/implement-spec` — Pass
+
+Fixture `recheck-tickets`, copied from `grill-docs`.
+
+**Tickets.** Session `22222222-2222-4222-8222-222222222222`.
+
+Prompt: `/to-tickets .trellis/tasks/10-26-textstats-top`
+
+`ask_user_question` offered "One ticket (Recommended)". Headless mode could not return a choice. The agent published that recommended ticket itself. Command: `task.py create "Print the N most frequent Words" --slug print-top-words ... --parent .trellis/tasks/10-26-textstats-top --no-start`.
+
+Expected: one planning child, no start, no product edit, no commit. Actual: `10-26-print-top-words`, status `planning`, parent `children` updated, `matt_ready_for_agent: true`. `task.py validate` exited 0 for the child (3 entries) and the parent (2 entries). `textstats.py` was untouched. `HEAD` stayed `e1206eb`. It handed off with `/implement .trellis/tasks/10-26-print-top-words`.
+
+**Implement.** Session `44444444-4444-4444-8444-444444444444`.
+
+Prompt:
+
+```
+/implement-spec .trellis/tasks/10-26-textstats-top
+
+You are authorized to implement this spec now. Do not commit. Leave every change uncommitted.
+```
+
+One worker, `spawn_subagent` arguments `subagent_type: trellis-implement`, `background: false`, first line `Active task: .trellis/tasks/10-26-print-top-words`. Child session `01a1787a-568f-7961-9d86-057c5b0775f2`. No `trellis-check` call. The agent left review pending because `git diff e1206eb...HEAD` is empty and the installed code-review skill reads that range.
+
+`task.py start .trellis/tasks/10-26-print-top-words` inside that shell printed:
+
+```
+✓ Current task set to: .trellis/tasks/10-26-print-top-words
+Source: session:grok_44444444-4444-4444-8444-444444444444
+✓ Status: planning → in_progress
+✓ Branch recorded: integrate/10-26-textstats-top
+```
+
+Pointer file `.trellis/.runtime/sessions/grok_44444444-4444-4444-8444-444444444444.json` has `"platform": "grok"` and that child path. Child validate still exited 0. Branch `integrate/10-26-textstats-top`, `HEAD` `e1206eb`, `textstats.py` and `tests/test_textstats.py` modified and uncommitted. The agent reported 9 unit tests passed. The parent stayed `planning`.
+
+## 3. `/trellis-finish-work` — Pass
+
+Same fixture. Session `55555555-5555-4555-8555-555555555555`.
+
+Prompt:
+
+```
+/trellis-finish-work
+
+Do not commit. Archive with --no-commit and leave the product changes uncommitted.
+```
+
+Inside this new shell, `task.py current --source` printed `Current task: (none)` / `Source: none`, because the pointer is bound to the implement session. Archive then removed it.
+
+The archive command was child then parent:
+
+`task.py archive 10-26-print-top-words --no-commit` then `task.py archive 10-26-textstats-top --no-commit`.
+
+Journal command was `add_session.py ... --no-commit` (idempotency key `10-26-textstats-top-closeout-1`). Session 1 is in `.trellis/workspace/fixture/journal-1.md` with commit `-`. `.trellis/.runtime/sessions/` is empty. `HEAD` is still `e1206eb`. Product edits remain uncommitted. `00-bootstrap-guidelines` was left active.
+
+Expected new task: none. Actual: none. Both spec tasks are under `.trellis/tasks/archive/2026-10/` and marked completed.
+
+## 4. `/grill-me` — Fail
+
+Session `33333333-3333-4333-8333-333333333333` in `recheck-grill-me`.
+
+Prompt: `/grill-me Should textstats --top ignore case?`
+
+It read `.grok/skills/grill-me/SKILL.md` and `.grok/skills/grilling/SKILL.md`, then `textstats.py` and the tests. It did not open `docs/agents/matt-flow.md`. It stopped on three recommended questions.
+
+Resume prompt, once: `Yes, that's settled.`
+
+That turn opened four more questions (casefold, printed key, always-on folding, tie break) and stopped there. There is no `/implement` command. `git status` is only the five overlaid files. `HEAD` is `e1206eb`. No task was created. Expected: no task and an `/implement <scope>` close. Actual: no task, interview still open.
+
+## Final table
+
+| Check | Session | Task expected | Task actual | Result |
+|---|---|---|---|---|
+| `/trellis-start` | `11111111-1111-4111-8111-111111111111` | none | none | Pass |
+| `/to-tickets` + `/implement-spec` | `22222222-2222-4222-8222-222222222222`, `44444444-4444-4444-8444-444444444444` (worker `01a1787a-568f-7961-9d86-057c5b0775f2`) | one planning child, then start that child | `10-26-print-top-words` created `--no-start`, then `planning` → `in_progress` with `grok_44444444-4444-4444-8444-444444444444` | Pass |
+| `/trellis-finish-work` | `55555555-5555-4555-8555-555555555555` | archive child then parent, no new task | both archived `--no-commit`, pointer cleared | Pass |
+| `/grill-me` | `33333333-3333-4333-8333-333333333333` | none, end with `/implement` | none, another quiz round | Fail |
+
+## Remaining defects
+
+1. **Archive does not rewrite jsonl paths.** After scenario 3, `task.py validate .trellis/tasks/archive/2026-10/10-26-print-top-words` exits 1. `implement.jsonl` and `check.jsonl` still say `"file": ".trellis/tasks/10-26-textstats-top/prd.md"`. The parent validates. Minimal fix in `.trellis/scripts/common/task_store.py`: after a successful archive move, replace the old task prefix with the archive path in every `implement.jsonl` and `check.jsonl` under `.trellis/tasks`, including `archive/`.
+
+2. **The grill-me handoff is not on the path Grok reads.** `docs/agents/matt-flow.md` says confirmed understanding ends with `implement` and does not authorize edits. This run followed `.grok/skills/grilling/SKILL.md`, which keeps asking while the frontier is open and only says not to act until a shared understanding is confirmed. `.grok/skills/grill-me/SKILL.md` is still just `Call the Skill tool with "grilling"`. Minimal fix: put the end-with-`/implement <scope>` and do-not-edit rule in `.grok/skills/grill-me/SKILL.md` and `.agents/skills/grill-me/SKILL.md`, so the interview stops when the user confirms.
+
+3. **Subagent hook still does not recognize Grok's tool name.** `.claude/hooks/inject-subagent-context.py` `_parse_hook_input` accepts `task`, `agent`, and `subagent` only (around line 1069). This implement run's `PreToolUse` hook fired for `spawn_subagent` and returned success. The worker still ran because `.grok/agents/trellis-implement.md` tells it to load context itself. Leave injection off while that self-load stays, or the worker will load twice.
+
+The leftover one-minute wait finished with exit code 0. It does not change the recheck: three checks passed, and `/grill-me` failed because the interview stayed open after `Yes, that's settled.`
+EXIT=0

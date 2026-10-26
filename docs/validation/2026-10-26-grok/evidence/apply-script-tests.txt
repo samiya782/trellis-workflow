@@ -1,0 +1,175 @@
+### apply-script tests (WSL 2026-10-26T07:41:50-07:00)
+
+## 1. stock smoke on fresh trellis init (expect FAIL)
+[FAIL] GROK_SESSION_ID -> .runtime/sessions/grok_smoke-sess.json
+       pointer file present=False current_task=''
+[FAIL] task.py current --source names session:grok_smoke-sess
+       Current task: (none)
+Source: none
+[PASS] --no-commit archive created no commit
+[PASS] child and parent moved under archive/
+[FAIL] archived child implement.jsonl points at archived parent
+       {"file": ".trellis/tasks/10-26-smoke-parent/prd.md", "reason": "parent spec"}
+{"file": ".trellis/tasks/10-26-smoke-child/prd.md", "reason": "own spec"}
+[FAIL] task.py validate passes on the archived child
+       [0;34m=== Validating Context Files ===[0m
+Target dir: /tmp/trellis-grok-smoke-dkrkn53o/.trellis/tasks/archive/2026-10/10-26-smoke-child
+
+  [0;31mimplement.jsonl:1: File not found: .trellis/tasks/10-26-smoke-parent/prd.md[0m
+  [0;31mimplement.jsonl: ✗ (1 errors)[0m
+  [0;31mcheck.jsonl:1: File not found: .trellis/tasks/10-26-smoke-parent/prd.md[0m
+  [0;31mcheck.jsonl: ✗ (1 errors)[0m
+
+[0;31m✗ Validation failed (2 errors)[0m
+[PASS] archive cleared the grok pointer
+smoke: 3/7 passed
+exit=1
+
+## 2. --dry-run on fresh init
+target:  /home/samiya/tmp/trellis-grok-val-20261026/install-fresh
+trellis: 0.7.0-beta.4 (patches made for 0.7.0-beta.4)
+mode:    dry-run
+  0001-active-task-grok-session-id.patch     pending   .trellis/scripts/common/active_task.py:stock
+  0002-task-store-archive-repoint.patch      pending   .trellis/scripts/common/task_store.py:stock
+  0003-grok-commands-aligned.patch           pending   .grok/commands/trellis-continue.md:- .grok/commands/trellis-finish-work.md:- .grok/commands/trellis-start.md:-
+dry-run: 3 patch(es) would be applied; backups would go to /home/samiya/trellis-backups/grok-fixes/install-fresh-20261026-074151
+exit=0
+
+## 3. apply on fresh init
+target:  /home/samiya/tmp/trellis-grok-val-20261026/install-fresh
+trellis: 0.7.0-beta.4 (patches made for 0.7.0-beta.4)
+mode:    apply
+  0001-active-task-grok-session-id.patch     pending   .trellis/scripts/common/active_task.py:stock
+  0002-task-store-archive-repoint.patch      pending   .trellis/scripts/common/task_store.py:stock
+  0003-grok-commands-aligned.patch           pending   .grok/commands/trellis-continue.md:- .grok/commands/trellis-finish-work.md:- .grok/commands/trellis-start.md:-
+  applied: 0001-active-task-grok-session-id.patch
+  applied: 0002-task-store-archive-repoint.patch
+  applied: 0003-grok-commands-aligned.patch
+backups: /tmp/grokval/apply-bk-fresh
+--- smoke test (throwaway copy of .trellis; the target is not touched)
+[PASS] GROK_SESSION_ID -> .runtime/sessions/grok_smoke-sess.json
+[PASS] task.py current --source names session:grok_smoke-sess
+[PASS] --no-commit archive created no commit
+[PASS] child and parent moved under archive/
+[PASS] archived child implement.jsonl points at archived parent
+[PASS] task.py validate passes on the archived child
+[PASS] archive cleared the grok pointer
+smoke: 7/7 passed
+exit=0
+
+## 4. apply again (idempotent)
+target:  /home/samiya/tmp/trellis-grok-val-20261026/install-fresh
+trellis: 0.7.0-beta.4 (patches made for 0.7.0-beta.4)
+mode:    apply
+  0001-active-task-grok-session-id.patch     applied   .trellis/scripts/common/active_task.py:patched
+  0002-task-store-archive-repoint.patch      applied   .trellis/scripts/common/task_store.py:patched
+  0003-grok-commands-aligned.patch           applied   .grok/commands/trellis-continue.md:- .grok/commands/trellis-finish-work.md:- .grok/commands/trellis-start.md:-
+nothing to do (already applied).
+exit=0
+dfa406b755527c2f49785853025a0d93d3b6c8385262c40e186ef448acb33337  /home/samiya/tmp/trellis-grok-val-20261026/install-fresh/.trellis/scripts/common/active_task.py
+bab9e441d9a4c50766dbfebd58c4a51a85e192745f8f267186a8e55e4d9485e8  /home/samiya/tmp/trellis-grok-val-20261026/install-fresh/.trellis/scripts/common/task_store.py
+
+## 5. --revert
+target:  /home/samiya/tmp/trellis-grok-val-20261026/install-fresh
+trellis: 0.7.0-beta.4 (patches made for 0.7.0-beta.4)
+mode:    revert
+  0003-grok-commands-aligned.patch           applied   .grok/commands/trellis-continue.md:- .grok/commands/trellis-finish-work.md:- .grok/commands/trellis-start.md:-
+  0002-task-store-archive-repoint.patch      applied   .trellis/scripts/common/task_store.py:patched
+  0001-active-task-grok-session-id.patch     applied   .trellis/scripts/common/active_task.py:patched
+  reverted: 0003-grok-commands-aligned.patch
+  reverted: 0002-task-store-archive-repoint.patch
+  reverted: 0001-active-task-grok-session-id.patch
+backups: /tmp/grokval/apply-bk-fresh-rev
+exit=0
+1dcba0c191bc61c49f873e7da636f7c605e0961f6abf02df2dd7cee6d122785f  /home/samiya/tmp/trellis-grok-val-20261026/install-fresh/.trellis/scripts/common/active_task.py
+73b0e07345f282986f7dfdd6760caa64d4bd6dbff41e8a624d71853260c7f828  /home/samiya/tmp/trellis-grok-val-20261026/install-fresh/.trellis/scripts/common/task_store.py
+?? .claude/
+?? .gitattributes
+?? .grok/
+?? .trellis/
+?? AGENTS.md
+
+## 6. version guard
+target:  /home/samiya/tmp/trellis-grok-val-20261026/install-fresh
+trellis: 0.7.0-beta.5 (patches made for 0.7.0-beta.4)
+mode:    dry-run
+error: version mismatch. Re-check the patches against the new templates (see docs/grok-fixes/INSTALL.md), then rerun with --force-version.
+exit=3
+
+## 7. conflict guard (customized task_store.py)
+target:  /home/samiya/tmp/trellis-grok-val-20261026/install-fresh
+trellis: 0.7.0-beta.4 (patches made for 0.7.0-beta.4)
+mode:    apply
+  0001-active-task-grok-session-id.patch     pending   .trellis/scripts/common/active_task.py:stock
+  0002-task-store-archive-repoint.patch      pending   .trellis/scripts/common/task_store.py:custom(a67e73b0c7a92dfbf1143f6fa639de37719ecb28dd61bb927f50d30205a64abe)
+  0003-grok-commands-aligned.patch           pending   .grok/commands/trellis-continue.md:- .grok/commands/trellis-finish-work.md:- .grok/commands/trellis-start.md:-
+  applied: 0001-active-task-grok-session-id.patch
+  applied: 0002-task-store-archive-repoint.patch
+  applied: 0003-grok-commands-aligned.patch
+backups: /home/samiya/trellis-backups/grok-fixes/install-fresh-20261026-074152
+exit=0
+e927aeb08ef424dc63e06e62588a7dc0b6cd8fd5e9e008886e43d1ba94b5ffa9  /home/samiya/tmp/trellis-grok-val-20261026/install-fresh/.trellis/scripts/common/task_store.py
+
+## 7b. conflict guard, rerun on a fresh init (task_store.py edited inside the patch context)
+target:  /home/samiya/tmp/trellis-grok-val-20261026/install-fresh
+trellis: 0.7.0-beta.4 (patches made for 0.7.0-beta.4)
+mode:    apply
+  0001-active-task-grok-session-id.patch     pending   .trellis/scripts/common/active_task.py:stock
+  0002-task-store-archive-repoint.patch      conflict  .trellis/scripts/common/task_store.py:custom(ac6bfec65fc8939cf1b64fb9de7dd2137090e84f5dcff233ef0da2d62240489e)
+  0003-grok-commands-aligned.patch           pending   .grok/commands/trellis-continue.md:- .grok/commands/trellis-finish-work.md:- .grok/commands/trellis-start.md:-
+error: at least one patch neither applies nor is already applied (locally customized file?); nothing was changed. Merge it by hand (see docs/grok-fixes/INSTALL.md).
+exit=4
+1dcba0c191bc61c49f873e7da636f7c605e0961f6abf02df2dd7cee6d122785f  .trellis/scripts/common/active_task.py
+(active_task.py still stock = nothing written)
+73b0e07345f282986f7dfdd6760caa64d4bd6dbff41e8a624d71853260c7f828  .trellis/scripts/common/task_store.py
+
+## 8. cp -a copy of ~/trellis reset to stock (835396a scripts + pre-fix .grok/commands, matt-flow.md), then apply incl. repo tests
+-- repo tests before apply
+Ran 30 tests in 8.222s
+
+FAILED (failures=5)
+target:  /home/samiya/tmp/trellis-grok-val-20261026/install-repo-copy
+trellis: 0.7.0-beta.4 (patches made for 0.7.0-beta.4)
+mode:    apply
+  0001-active-task-grok-session-id.patch     pending   .trellis/scripts/common/active_task.py:stock
+  0002-task-store-archive-repoint.patch      pending   .trellis/scripts/common/task_store.py:stock
+  0003-grok-commands-aligned.patch           pending   .grok/commands/trellis-continue.md:- .grok/commands/trellis-finish-work.md:- .grok/commands/trellis-start.md:-
+  0004-matt-flow-grok.patch                  pending   docs/agents/matt-flow.md:-
+  applied: 0001-active-task-grok-session-id.patch
+  applied: 0002-task-store-archive-repoint.patch
+  applied: 0003-grok-commands-aligned.patch
+  applied: 0004-matt-flow-grok.patch
+backups: /tmp/grokval/apply-bk-repo-copy
+--- smoke test (throwaway copy of .trellis; the target is not touched)
+[PASS] GROK_SESSION_ID -> .runtime/sessions/grok_smoke-sess.json
+[PASS] task.py current --source names session:grok_smoke-sess
+[PASS] --no-commit archive created no commit
+[PASS] child and parent moved under archive/
+[PASS] archived child implement.jsonl points at archived parent
+[PASS] task.py validate passes on the archived child
+[PASS] archive cleared the grok pointer
+smoke: 7/7 passed
+--- repo tests: python3 -m unittest discover -s tests
+----------------------------------------------------------------------
+Ran 30 tests in 8.564s
+
+OK
+exit=0
+-- diff vs ~/trellis working tree for patched files (expect none)
+same: .trellis/scripts/common/active_task.py
+same: .trellis/scripts/common/task_store.py
+same: .grok/commands/trellis-start.md
+same: .grok/commands/trellis-continue.md
+same: .grok/commands/trellis-finish-work.md
+same: docs/agents/matt-flow.md
+
+## 9. --dry-run on ~/trellis (only mode run there)
+target:  /home/samiya/trellis
+trellis: 0.7.0-beta.4 (patches made for 0.7.0-beta.4)
+mode:    dry-run
+  0001-active-task-grok-session-id.patch     applied   .trellis/scripts/common/active_task.py:patched
+  0002-task-store-archive-repoint.patch      applied   .trellis/scripts/common/task_store.py:patched
+  0003-grok-commands-aligned.patch           applied   .grok/commands/trellis-continue.md:- .grok/commands/trellis-finish-work.md:- .grok/commands/trellis-start.md:-
+  0004-matt-flow-grok.patch                  applied   docs/agents/matt-flow.md:-
+dry-run: 0 patch(es) would be applied; backups would go to /home/samiya/trellis-backups/grok-fixes/trellis-20261026-074241
+exit=0

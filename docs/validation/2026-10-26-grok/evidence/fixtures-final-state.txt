@@ -1,0 +1,191 @@
+===== bug
+HEAD: e1206eb fix multi-space word count and add regression test
+git status --short:
+tasks:
+   .trellis/tasks/00-bootstrap-guidelines in_progress parent=None
+pointers:
+===== continue
+HEAD: e1206eb fix multi-space word count and add regression test
+git status --short:
+ M .trellis/workspace/fixture/index.md
+ M .trellis/workspace/fixture/journal-1.md
+ M tests/test_textstats.py
+ M textstats.py
+?? .trellis/tasks/archive/
+tasks:
+   .trellis/tasks/00-bootstrap-guidelines in_progress parent=None
+pointers:
+===== grill-docs
+HEAD: e1206eb fix multi-space word count and add regression test
+git status --short:
+?? .trellis/tasks/10-26-textstats-top/
+?? GLOSSARY.md
+?? docs/adr/
+tasks:
+   .trellis/tasks/00-bootstrap-guidelines in_progress parent=None
+   .trellis/tasks/10-26-textstats-top planning parent=None
+pointers:
+===== grill-me
+HEAD: e1206eb fix multi-space word count and add regression test
+git status --short:
+tasks:
+   .trellis/tasks/00-bootstrap-guidelines in_progress parent=None
+pointers:
+===== implement
+HEAD: e1206eb fix multi-space word count and add regression test
+git status --short:
+ M tests/test_textstats.py
+ M textstats.py
+tasks:
+   .trellis/tasks/00-bootstrap-guidelines in_progress parent=None
+pointers:
+===== install-fresh
+HEAD: 
+git status --short:
+?? .claude/
+?? .gitattributes
+?? .grok/
+?? .trellis/
+?? AGENTS.md
+tasks:
+   .trellis/tasks/00-bootstrap-guidelines in_progress parent=None
+pointers:
+===== install-repo-copy
+HEAD: 393c488 fix(trellis): Grok session identity and archive jsonl repointing
+git status --short:
+ M .agents/skills/ask-matt/SKILL.md
+ M .agents/skills/chief-of-staff/SKILL.md
+ M .agents/skills/claude-handoff/SKILL.md
+ M .agents/skills/code-review/SKILL.md
+ M .agents/skills/diagnosing-bugs/SKILL.md
+ M .agents/skills/grilling/SKILL.md
+ M .agents/skills/handoff/SKILL.md
+ M .agents/skills/implement/SKILL.md
+ M .agents/skills/setup-matt-pocock-skills/SKILL.md
+ M .agents/skills/setup-matt-pocock-skills/issue-tracker-github.md
+ M .agents/skills/setup-matt-pocock-skills/issue-tracker-gitlab.md
+ M .agents/skills/setup-matt-pocock-skills/triage-labels.md
+ M .agents/skills/tdd/SKILL.md
+ M .agents/skills/teach/SKILL.md
+ M .agents/skills/to-tickets/SKILL.md
+ M .agents/skills/wayfinder/SKILL.md
+ M .agents/skills/wizard/template.sh
+ M .trellis/.template-hashes.json
+MM .trellis/scripts/common/active_task.py
+MM .trellis/scripts/common/task_store.py
+ M AGENTS.md
+ M README.md
+ M docs/agents/matt-flow.md
+ M skills-lock.json
+?? .grok/
+?? docs/grok-fixes/
+?? scripts/
+tasks:
+   .trellis/tasks/00-bootstrap-guidelines in_progress parent=None
+pointers:
+   codex_01a0ee0f-f565-78a3-9a9a-755209c19c74.json
+===== ispec-none
+HEAD: e1206eb fix multi-space word count and add regression test
+git status --short:
+tasks:
+   .trellis/tasks/00-bootstrap-guidelines in_progress parent=None
+pointers:
+===== normal
+HEAD: e1206eb fix multi-space word count and add regression test
+git status --short:
+ M tests/test_textstats.py
+ M textstats.py
+tasks:
+   .trellis/tasks/00-bootstrap-guidelines in_progress parent=None
+pointers:
+===== recheck-grill-me
+HEAD: e1206eb fix multi-space word count and add regression test
+git status --short:
+ M .grok/commands/trellis-continue.md
+ M .grok/commands/trellis-finish-work.md
+ M .grok/commands/trellis-start.md
+ M .trellis/scripts/common/active_task.py
+ M AGENTS.md
+ M docs/agents/matt-flow.md
+tasks:
+   .trellis/tasks/00-bootstrap-guidelines in_progress parent=None
+pointers:
+===== recheck-start
+HEAD: e1206eb fix multi-space word count and add regression test
+git status --short:
+ M .grok/commands/trellis-continue.md
+ M .grok/commands/trellis-finish-work.md
+ M .grok/commands/trellis-start.md
+ M .trellis/scripts/common/active_task.py
+ M docs/agents/matt-flow.md
+tasks:
+   .trellis/tasks/00-bootstrap-guidelines in_progress parent=None
+pointers:
+===== recheck-tickets
+HEAD: e1206eb fix multi-space word count and add regression test
+git status --short:
+ M .grok/commands/trellis-continue.md
+ M .grok/commands/trellis-finish-work.md
+ M .grok/commands/trellis-start.md
+ M .trellis/scripts/common/active_task.py
+ M .trellis/workspace/fixture/index.md
+ M .trellis/workspace/fixture/journal-1.md
+ M docs/agents/matt-flow.md
+ M tests/test_textstats.py
+ M textstats.py
+?? .trellis/tasks/archive/
+?? GLOSSARY.md
+?? docs/adr/
+tasks:
+   .trellis/tasks/00-bootstrap-guidelines in_progress parent=None
+pointers:
+===== recheck-tui
+HEAD: 9164a53 fixture: overlay grok-branch fixes and planning task
+git status --short:
+ D .trellis/tasks/10-26-textstats-top/check.jsonl
+ D .trellis/tasks/10-26-textstats-top/implement.jsonl
+ D .trellis/tasks/10-26-textstats-top/implement.md
+ D .trellis/tasks/10-26-textstats-top/prd.md
+ D .trellis/tasks/10-26-textstats-top/task.json
+ M .trellis/workspace/fixture/index.md
+ M .trellis/workspace/fixture/journal-1.md
+ M tests/test_textstats.py
+ M textstats.py
+?? .trellis/tasks/archive/
+tasks:
+   .trellis/tasks/00-bootstrap-guidelines in_progress parent=None
+pointers:
+===== resume
+HEAD: e1206eb fix multi-space word count and add regression test
+git status --short:
+?? .trellis/tasks/10-26-textstats-top/
+tasks:
+   .trellis/tasks/00-bootstrap-guidelines in_progress parent=None
+   .trellis/tasks/10-26-textstats-top planning parent=None
+pointers:
+===== start
+HEAD: e1206eb fix multi-space word count and add regression test
+git status --short:
+ M .claude/hooks/inject-spec-context.py
+ M .claude/hooks/inject-subagent-context.py
+ M .claude/hooks/inject-workflow-state.py
+ M .claude/hooks/session-start.py
+ M .claude/settings.json
+?? .claude/hooks/log-stdin.py
+tasks:
+   .trellis/tasks/00-bootstrap-guidelines in_progress parent=None
+pointers:
+===== wayfinder
+HEAD: e1206eb fix multi-space word count and add regression test
+git status --short:
+?? .trellis/tasks/10-26-cli-beside-library/
+?? .trellis/tasks/10-26-importable-library-meaning/
+?? .trellis/tasks/10-26-library-contract/
+?? .trellis/tasks/10-26-textstats-library-map/
+tasks:
+   .trellis/tasks/00-bootstrap-guidelines in_progress parent=None
+   .trellis/tasks/10-26-cli-beside-library planning parent=10-26-textstats-library-map
+   .trellis/tasks/10-26-importable-library-meaning planning parent=10-26-textstats-library-map
+   .trellis/tasks/10-26-library-contract planning parent=10-26-textstats-library-map
+   .trellis/tasks/10-26-textstats-library-map planning parent=None
+pointers:

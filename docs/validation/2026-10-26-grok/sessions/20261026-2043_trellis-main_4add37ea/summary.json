@@ -1,0 +1,30 @@
+{
+  "info": {
+    "id": "4add37ea-87a0-47dc-bc2b-3d68c4910a30",
+    "cwd": "/home/samiya/trellis"
+  },
+  "agent_id": "ag1.24a4101d851c468d9b4553b3cd68aaa0",
+  "attempt_id": "at1.12b03f873043ce8c12331508741a79",
+  "session_summary": "Validate Trellis and Matt workflow scenarios",
+  "created_at": "2026-10-26T12:43:26.767735994Z",
+  "updated_at": "2026-10-26T14:00:06.341630539Z",
+  "num_messages": 1797,
+  "num_chat_messages": 239,
+  "current_model_id": "grok-4.7-build-fast",
+  "next_trace_turn": 4,
+  "chat_format_version": 1,
+  "session_kind": "headless",
+  "git_root_dir": "/home/samiya/trellis/",
+  "git_remotes": [
+    "https://github.com/samiya782/trellis-workflow.git"
+  ],
+  "head_commit": "835396ace416910f640668db1de1d76aa209dbe1",
+  "head_branch": "main",
+  "request_id": "856ad407-3404-4366-a2eb-a45df0dfef1c",
+  "grok_home": "/home/samiya/.grok",
+  "last_active_at": "2026-10-26T14:00:06.341630539Z",
+  "generated_title": "Validate Trellis and Matt workflow scenarios",
+  "agent_name": "grok-build-plan",
+  "sandbox_profile": "off",
+  "reasoning_effort": "xhigh"
+}
