@@ -70,6 +70,8 @@ its Notes/implement.md; record only what happened.
 Keep one source for each fact. Resume reads this record and current files, retains
 approved decisions and honors any pending invocation boundary. A Trellis resume
 command does not invoke a pending user-only Matt skill.
+When the user invokes the skill for a Trellis task still in `planning`, activate
+first (workflow 1.4, `task.py start <task>`); the skill's own steps follow.
 
 ## Delegate and join
 

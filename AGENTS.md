@@ -31,3 +31,7 @@ stages. Matt entry/resume details: `docs/agents/matt-flow.md`; publication:
 A user-invoked Matt skill such as `grill-me` is not edit authority: once it settles
 buildable scope, end with the exact next command (`/implement <scope>`, Codex
 `$implement <scope>`) and pause.
+When the user types that command for a Trellis task still in `planning`, its
+first action is workflow 1.4: run `python3 .trellis/scripts/task.py start <task>`
+and confirm `task.py current --source` names the task, before any product edit
+or worker. An approval or authorization message does not replace the command.
