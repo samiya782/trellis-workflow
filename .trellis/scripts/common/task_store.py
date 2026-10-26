@@ -874,6 +874,46 @@ def _plan_jsonl_rewrites(
     return rewrites
 
 
+def _repoint_archived_jsonl_refs(
+    tasks_dir: Path, repo_root: Path, old_rel: str, new_rel: str
+) -> list[Path]:
+    """Repoint context entries that named files under a task archive just moved.
+
+    Archive moves ``<tasks>/<name>`` to ``<tasks>/archive/<YYYY-MM>/<name>``.
+    Entries in any task's implement/check jsonl (the task itself, its children,
+    or an already-archived child) that still name the old location would fail
+    ``task.py validate``. Reuses rename's matcher, so only ``<old path>/``
+    prefixes change. Returns the task dirs whose jsonl was rewritten.
+    """
+    candidates = [
+        child for child in sorted(tasks_dir.iterdir())
+        if child.is_dir() and child.name != DIR_ARCHIVE
+    ]
+    archive_root = tasks_dir / DIR_ARCHIVE
+    if archive_root.is_dir():
+        for month in sorted(archive_root.iterdir()):
+            if month.is_dir():
+                candidates.extend(t for t in sorted(month.iterdir()) if t.is_dir())
+
+    changed: list[Path] = []
+    for candidate in candidates:
+        for jsonl_path, _linenos, text in _plan_jsonl_rewrites(candidate, old_rel, new_rel):
+            try:
+                jsonl_path.write_text(text, encoding="utf-8")
+            except OSError as exc:
+                print(
+                    colored(
+                        f"Warning: could not repoint {_repo_relative_path(jsonl_path, repo_root)}: {exc}",
+                        Colors.YELLOW,
+                    ),
+                    file=sys.stderr,
+                )
+                continue
+            if candidate not in changed:
+                changed.append(candidate)
+    return changed
+
+
 def _plan_backrefs(
     tasks_dir: Path, task_dir: Path, old_name: str, new_name: str
 ) -> tuple[list[tuple[Path, dict, list[str]]], list[Path]]:
@@ -1466,6 +1506,14 @@ def cmd_archive(args: argparse.Namespace) -> int:
         archive_dest = Path(result["archived_to"])
         year_month = archive_dest.parent.name
         print(colored(f"Archived: {dir_name} -> archive/{year_month}/", Colors.GREEN), file=sys.stderr)
+
+        # Context entries that named files under the old path would now fail
+        # `task.py validate`; repoint them (this task, children, archived kin).
+        old_rel = f"{DIR_WORKFLOW}/{DIR_TASKS}/{dir_name}"
+        new_rel = _repo_relative_path(archive_dest, repo_root)
+        for repointed in _repoint_archived_jsonl_refs(tasks_dir, repo_root, old_rel, new_rel):
+            if repointed.parent == tasks_dir and repointed.name not in modified_children:
+                modified_children.append(repointed.name)
 
         # Auto-commit unless --no-commit
         if not getattr(args, "no_commit", False):

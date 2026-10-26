@@ -83,6 +83,9 @@ _ENV_SESSION_KEYS: tuple[tuple[str, tuple[str, ...]], ...] = (
     # into shell children, absent from the parent env; openai/codex#19937).
     # CODEX_SESSION_ID was removed — absent from a live `codex exec` env.
     ("codex", ("CODEX_THREAD_ID",)),
+    # REAL (verified 2026-10-26 in a live Grok Build 1.0.70 tool shell: exports
+    # GROK_SESSION_ID and GROK_AGENT). Without it task.py start ran degraded.
+    ("grok", ("GROK_SESSION_ID",)),
     # REAL but HOOK-SCOPE ONLY (verified 2026-08-05): set by Gemini's
     # hookRunner.ts. Its shell tool builds the child env in
     # shellExecutionService.ts and adds only GEMINI_CLI/TERM/PAGER/GIT_PAGER, so

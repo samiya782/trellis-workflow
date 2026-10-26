@@ -307,7 +307,7 @@ class InstalledRuntimeTests(unittest.TestCase):
         archived = self.archive(task, "--skip-branch-validation")
         self.assertEqual(self.record(archived)["status"], "completed")
 
-    def test_archival_does_not_rewrite_context_file_references(self) -> None:
+    def test_archival_rewrites_context_file_references(self) -> None:
         parent = self.create_task("context-parent")
         child = self.create_task("context-child", parent)
         old_path = str((parent / "prd.md").relative_to(self.root))
@@ -318,10 +318,15 @@ class InstalledRuntimeTests(unittest.TestCase):
         archived_parent = self.archive(parent)
         self.assertTrue((archived_parent / "prd.md").is_file())
         self.assertFalse((self.root / old_path).exists())
-        # Stable publication IDs survive, but JSONL filesystem paths need
-        # resolution/curation on resume; the runtime must not silently PASS.
-        result = self.task("validate", str(archived_child), success=False)
-        self.assertIn(old_path, result.stdout)
+        # Archive repoints JSONL entries that named files under a moved task
+        # (grok branch fix), so the archived child validates against the
+        # parent's archived location instead of a vanished path.
+        new_path = str((archived_parent / "prd.md").relative_to(self.root))
+        for phase in ("implement", "check"):
+            text = (archived_child / f"{phase}.jsonl").read_text()
+            self.assertIn(new_path, text)
+            self.assertNotIn(f'"{old_path}"', text)
+        self.task("validate", str(archived_child))
 
 
 if __name__ == "__main__":
