@@ -1,0 +1,286 @@
+diff --git a/.grok/commands/trellis-continue.md b/.grok/commands/trellis-continue.md
+index cd79caa..a4c813a 100644
+--- a/.grok/commands/trellis-continue.md
++++ b/.grok/commands/trellis-continue.md
+@@ -1,56 +1,19 @@
+ # Continue Current Task
+ 
+-Resume work on the current task — pick up at the right phase/step in `.trellis/workflow.md`.
+-
+----
+-
+-## Step 1: Load Current Context
+-
+-```bash
+-python3 ./.trellis/scripts/get_context.py
+-```
+-
+-Confirms: current task, git state, recent commits.
+-
+-## Step 2: Load the Phase Index
+-
+-```bash
+-python3 ./.trellis/scripts/get_context.py --mode phase
+-```
+-
+-Shows the Phase Index (Plan / Execute / Finish) with routing + skill mapping.
+-
+-## Step 3: Decide Where You Are
+-
+-`get_context.py` shows the active task's `status` field. Route by `status` + artifact presence. This command replaces the user needing to remember the Trellis flow; it does not itself approve implementation.
+-
+-- `status=planning` + no `prd.md` → **1.1** (load `trellis-brainstorm`)
+-- `status=planning` + `prd.md` only → decide whether the task is lightweight or complex. Lightweight can move to **1.4** review; complex returns to **1.1** to add `design.md` + `implement.md`.
+-- `status=planning` + complex artifacts complete + sub-agent jsonl not curated (empty, or only a legacy `_example` placeholder row) → **1.3**
+-- `status=planning` + required artifacts complete + required jsonl curated or inline mode → **1.4** (ask for start review; only run `task.py start` after user confirms)
+-- `status=in_progress` + implementation not started → **2.1**
+-- `status=in_progress` + implementation done, not yet checked → **2.2**
+-- `status=in_progress` + check passed → **3.3** (spec update) → **3.4** (commit)
+-- `status=completed` (rare; usually archived immediately) → archive flow
+-
+-Phase rules (full detail in `.trellis/workflow.md`):
+-
+-1. Run steps **in order** within a phase — `[required]` steps must not be skipped
+-2. `[once]` steps are already done if the required output exists. `prd.md` alone can be enough only for lightweight tasks; complex tasks also need `design.md` and `implement.md`.
+-3. You may go back to an earlier phase if discoveries require it
+-
+-## Step 4: Load the Specific Step
+-
+-Once you know which step to resume at:
+-
+-```bash
+-python3 ./.trellis/scripts/get_context.py --mode phase --step <X.X> --platform grok
+-```
+-
+-Follow the loaded instructions. After each `[required]` step completes, move to the next.
+-
+----
+-
+-## Reference
+-
+-Full workflow and detailed phase steps live in `.trellis/workflow.md`. This command is only an entry point — the canonical guidance is there.
++Run `python3 ./.trellis/scripts/get_context.py` and
++`python3 ./.trellis/scripts/get_context.py --mode phase`. The loaded project
++workflow owns routing; this command supplies recovery, not a second phase policy.
++
++Resolve the exact active task with `task.py current --source` or the user's
++reference. Read its contract, authorization, latest progress and current Git
++state. Resolve archived references before loading moved context pointers.
++Missing identity or a material decision warrants clarification; missing optional
++artifacts, completed stage names, or an unchanged authorization do not.
++
++Resume the first unfinished responsibility. For Matt, load
++`docs/agents/matt-flow.md`, preserving recorded route and scope. Honor the needed
++skill's stock invocation policy; persist context and give the exact next command
++at a user-only boundary. This resume command does not invoke that skill.
++Load `get_context.py --mode phase --step <X.Y> --platform grok`
++only when its detail is needed. Never restart finished interviews or execute
++blocked work because a lifecycle status suggests a numbered step.
+diff --git a/.grok/commands/trellis-finish-work.md b/.grok/commands/trellis-finish-work.md
+index 54c2f67..aea74dd 100644
+--- a/.grok/commands/trellis-finish-work.md
++++ b/.grok/commands/trellis-finish-work.md
+@@ -1,66 +1,76 @@
+ # Finish Work
+ 
+-Wrap up the current session: archive the active task (and any other completed-but-unarchived tasks the user wants to clean up) and record the session journal. Code commits are NOT done here — those happen in workflow Phase 3.4 before you invoke this command.
++Complete the authorized work and reconcile closeout, including direct calls and
++interrupted or repeated attempts. Load `get_context.py --mode phase` and steps
++3.4/3.5; the project workflow owns authorization and commit policy.
+ 
+-## Step 1: Survey current state
++## 1. Reconcile before writing
+ 
+ ```bash
+ python3 ./.trellis/scripts/get_context.py --mode record
+ ```
+ 
+-This prints:
++Resolve the exact task from the current session or the user's reference, including
++its stable identity under `.trellis/tasks/archive/` if already moved. Read its
++contract, recorded authorization and progress, then inspect current Git status,
++relevant commits and the developer journal/index. Lifecycle status alone proves
++neither permission nor completion. Limit closeout to this scope and its children.
+ 
+-- **My active tasks** — review whether any besides the current one are actually done (code merged, AC met) and should be archived this round.
+-- **Git status** — quick visual on what's dirty.
+-- **Recent commits** — you'll need their hashes in Step 4 for `--commit`.
++Continue the first unfinished authorized responsibility within stock skill and
++runtime limits. For a pending Matt skill, follow `docs/agents/matt-flow.md` and
++pause with the exact next command if user invocation is required.
++Reuse checks only for unchanged revisions and scope; run missing checks or
++fix verified failures within the recorded repair budget. Preserve planning-only,
++no-commit and review boundaries. If acceptance or permission is still missing,
++record the precise pending boundary; keep incomplete tasks active.
+ 
+-If `--mode record` surfaces other completed tasks not tied to the current session, surface them to the user with a one-shot confirmation: "These N tasks look done — archive them too in this round? [y/N]". Default is no; the current active task is always archived in Step 3 regardless.
++## 2. Resolve commits within scope
+ 
+-## Step 2: Sanity check — classify dirty paths
++Classify all dirty paths, including task/workspace files, against the task's scope.
++When commits are authorized, complete workflow 3.4 here: inspect changes, stage
++only exact owned paths and commit with an explicit pathspec so unrelated staged
++work stays out. Reconcile existing commits before retrying. If permission excludes
++commits, leave changes for review and report that boundary; this does not prevent
++other authorized work. A finish request never overrides an explicit no-commit rule.
+ 
+-Run:
++## 3. Archive accepted work
+ 
+-```bash
+-git status --porcelain
+-```
+-
+-Filter out paths under `.trellis/workspace/` and `.trellis/tasks/` — those are managed by `add_session.py` and `task.py archive` auto-commits and will appear dirty as part of this skill's own work.
+-
+-For each remaining dirty path, decide whether it belongs to **the current task** or to **other parallel work** (e.g., another terminal window editing the same repo). Heuristics:
+-
+-- Paths referenced in the current task's `prd.md` / `implement.jsonl` / `check.jsonl` → current task
+-- Paths in code areas matching the task's stated scope, or that you remember editing this session → current task
+-- Paths in unrelated areas you have no recollection of touching this session → other parallel work
+-
+-Then route:
+-
+-- **Any remaining path looks like current-task work** — bail out with:
+-  > "Working tree has uncommitted code changes from this task: `<list>`. Return to workflow Phase 3.4 to commit them before running `/trellis-finish-work`."
+-
+-  Do NOT run `git commit` here. Do NOT prompt the user to commit. The user goes back to Phase 3.4 and the AI drives the batched commit there.
+-- **All remaining paths look unrelated** (other parallel-window work) — report them once and continue to Step 3:
+-  > "FYI, dirty files outside this task's scope — leaving them for the other window: `<list>`."
+-- **Genuinely unsure** — ask the user once: "Are `<list>` this task's work I forgot to commit, or another window's? (commit / ignore)" — then route per their answer.
+-
+-## Step 3: Archive task(s)
++After acceptance is verified and closeout is authorized, inspect command help and
++branch preconditions. Archive children before their parent:
+ 
+ ```bash
+-python3 ./.trellis/scripts/task.py archive <task-name>
++python3 ./.trellis/scripts/task.py archive <task-path> --no-commit
+ ```
+ 
+-At minimum: the current active task (if any). Plus any extra tasks the user confirmed in Step 1. Each archive produces a `chore(task): archive ...` commit via the script's auto-commit.
++Resolve each stable task identity first. Skip an already archived child or parent;
++resume the remaining archives. Leave unrelated tasks alone. Retain the resolved
++archive path for journaling even after the active pointer is cleared. Report a
++failed precondition; use a documented exception only when its conditions apply.
+ 
+-If there is no active task and the user did not confirm any cleanup archives, skip this step.
++## 4. Record or resume the journal
+ 
+-## Step 4: Record session journal
++Find any existing entry for this closeout in both journal and index before writing.
++Use the same inputs and stable retry key for the same logical closeout, including
++a retry after its journal was committed. Recover those inputs from task progress
++or the existing entry; don't create a second entry for a repeated finish. Inspect
++`add_session.py --help` for supported arguments.
+ 
+ ```bash
+ python3 ./.trellis/scripts/add_session.py \
+   --title "Session Title" \
+   --commit "hash1,hash2" \
+-  --summary "Brief summary"
++  --summary "Verified outcome and remaining boundaries" \
++  --idempotency-key "task-slug-closeout-1" \
++  --no-commit
+ ```
+ 
+-Use the work-commit hashes produced in Phase 3.4 (visible in Step 1's `Recent commits` list, or via `git log --oneline`) for `--commit`. Do not include the archive commit hashes from Step 3. This produces a `chore: record journal` commit.
++Use actual work-commit hashes, or `--commit "-"` when none were made. The retry key
++identifies one closeout operation (1–64 letters, digits, dots, underscores or
++hyphens); choose a new key for distinct later work. If the journal append succeeded
++but its index update failed, rerun the identical command to repair the index.
++An already complete entry needs no append.
+ 
+-Final git log order: `<work commits from 3.4>` → `chore(task): archive ...` (one or more) → `chore: record journal`.
++Both lifecycle commands always use `--no-commit`. If authorization includes
++committing closeout records, inspect their final diff and commit only their exact
++owned paths explicitly under step 3.4. Check Git, archive identities and the
++journal/index again before reporting completion, evidence and any pending boundary.
+diff --git a/.grok/commands/trellis-start.md b/.grok/commands/trellis-start.md
+index e76f9a5..fa247be 100644
+--- a/.grok/commands/trellis-start.md
++++ b/.grok/commands/trellis-start.md
+@@ -1,59 +1,26 @@
+ # Start Session
+ 
+-Initialize a Trellis-managed development session. This platform has no session-start hook, so manually load the equivalent compact context by following these steps.
+-
+----
+-
+-## Step 1: Current state
+-Identity, git status, current task, active tasks, journal location.
+-
+-```bash
+-python3 ./.trellis/scripts/get_context.py
+-```
+-
+-If this output includes a line beginning `Trellis update available:`, copy the full line verbatim when summarizing session context. Do not shorten operational command hints.
+-
+-## Step 2: Workflow overview
+-Compact Phase Index, request triage rules, planning artifact contract, and the step-detail command.
+-
+-```bash
+-python3 ./.trellis/scripts/get_context.py --mode phase
+-```
+-
+-Full guide in `.trellis/workflow.md` (read on demand).
+-
+-## Step 3: Guideline indexes
+-Discover packages + spec layers, then read each relevant index file.
+-
+-```bash
+-python3 ./.trellis/scripts/get_context.py --mode packages
+-cat .trellis/spec/guides/index.md
+-cat .trellis/spec/<package>/<layer>/index.md   # for each relevant layer
+-```
+-
+-Index files list the specific guideline docs to read when you actually start coding.
+-
+-## Step 4: Decide next action
+-From Step 1 you know the current task and status. Check the task directory:
+-
+-- **Active task status `planning` + no `prd.md`** → Phase 1.1. Load the `trellis-brainstorm` skill.
+-- **Active task status `planning` + `prd.md` exists** → stay in Phase 1. Lightweight tasks can be PRD-only; complex tasks need `design.md` + `implement.md`. Load the relevant Phase 1 step detail before `task.py start`.
+-- **Active task status `in_progress`** → Phase 2 step 2.1. Load the step detail:
+-  ```bash
+-  python3 ./.trellis/scripts/get_context.py --mode phase --step 2.1 --platform grok
+-  ```
+-- **No active task** → classify first. For simple conversation / small task, ask only whether this turn should create a Trellis task. For complex work, ask whether you may create a Trellis task and enter planning. If the user says no, skip Trellis for this session.
+-
+----
+-
+-## Skill routing (quick reference)
+-
+-| User intent | Skill |
+-|---|---|
+-| New feature / unclear requirements | `trellis-brainstorm` |
+-| About to write code | `trellis-before-dev` |
+-| Done coding / quality check | `trellis-check` |
+-| Stuck / fixed same bug multiple times | `trellis-break-loop` |
+-| Learned something worth capturing | `trellis-update-spec` |
+-
+-Full rules + anti-rationalization table in `.trellis/workflow.md`.
++Grok Build does not run the `SessionStart` hook, so load the compact context
++yourself. Grok does run the project's `.claude/settings.json`
++`UserPromptSubmit`/`PreToolUse`/`PostToolUse` hooks, but their
++`additionalContext` is not guaranteed to reach the model; treat the commands
++below as the authoritative context load.
++
++Run `python3 ./.trellis/scripts/get_context.py` for identity, active task and Git
++state, then `python3 ./.trellis/scripts/get_context.py --mode phase` for this
++project's authoritative routing and authorization rules. Report any full
++`Trellis update available:` line verbatim.
++
++Use an exact task path when continuing existing work; read its contract,
++authorization and latest progress. Do not infer permission or next action from
++status alone; a task listed as active or `in_progress` (for example the
++`00-bootstrap-guidelines` task written by `trellis init`) is not a request to
++work on it. No active task is normal for small settled work. Use the loaded
++workflow to decide whether a task or discovery is needed.
++
++Before coding, discover applicable spec layers with `get_context.py --mode
++packages`, then use `trellis-before-dev` or a context-loaded `trellis-implement`
++sub-agent (`spawn_subagent`, first prompt line `Active task: <path>`). Load step
++details with `get_context.py --mode phase --step <X.Y> --platform grok` only when
++needed. Do not preload the full workflow, README, every guide or validation
++history.

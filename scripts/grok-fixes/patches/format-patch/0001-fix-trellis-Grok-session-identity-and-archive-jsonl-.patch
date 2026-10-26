@@ -1,0 +1,255 @@
+From 393c488bda223c4b0b54671374b43f914e5285a3 Mon Sep 17 00:00:00 2001
+From: samiya782 <63526204+samiya782@users.noreply.github.com>
+Date: Mon, 26 Oct 2026 07:25:00 -0700
+Subject: [PATCH] fix(trellis): Grok session identity and archive jsonl
+ repointing
+
+- active_task.py: map GROK_SESSION_ID (exported by Grok Build tool shells)
+  to the grok platform, so task.py start writes a grok_<session> pointer
+  instead of running degraded.
+- task_store.py: after task.py archive moves a task, repoint implement/check
+  jsonl entries under any active or archived task that named files inside it
+  (reuses the rename helper _plan_jsonl_rewrites); repointed active tasks are staged
+  with the archive commit; --no-commit unchanged.
+- tests: add test_grok_fixes.py; flip the integration test that pinned the
+  old non-rewriting archive behavior.
+---
+ .trellis/scripts/common/active_task.py |   3 +
+ .trellis/scripts/common/task_store.py  |  48 +++++++++++
+ tests/test_grok_fixes.py               | 110 +++++++++++++++++++++++++
+ tests/test_integration.py              |  15 ++--
+ 4 files changed, 171 insertions(+), 5 deletions(-)
+ create mode 100755 tests/test_grok_fixes.py
+
+diff --git a/.trellis/scripts/common/active_task.py b/.trellis/scripts/common/active_task.py
+index 7280ec2..7c07f71 100755
+--- a/.trellis/scripts/common/active_task.py
++++ b/.trellis/scripts/common/active_task.py
+@@ -83,6 +83,9 @@ _ENV_SESSION_KEYS: tuple[tuple[str, tuple[str, ...]], ...] = (
+     # into shell children, absent from the parent env; openai/codex#19937).
+     # CODEX_SESSION_ID was removed — absent from a live `codex exec` env.
+     ("codex", ("CODEX_THREAD_ID",)),
++    # REAL (verified 2026-10-26 in a live Grok Build 1.0.70 tool shell: exports
++    # GROK_SESSION_ID and GROK_AGENT). Without it task.py start ran degraded.
++    ("grok", ("GROK_SESSION_ID",)),
+     # REAL but HOOK-SCOPE ONLY (verified 2026-08-05): set by Gemini's
+     # hookRunner.ts. Its shell tool builds the child env in
+     # shellExecutionService.ts and adds only GEMINI_CLI/TERM/PAGER/GIT_PAGER, so
+diff --git a/.trellis/scripts/common/task_store.py b/.trellis/scripts/common/task_store.py
+index 92de642..f217fa4 100755
+--- a/.trellis/scripts/common/task_store.py
++++ b/.trellis/scripts/common/task_store.py
+@@ -874,6 +874,46 @@ def _plan_jsonl_rewrites(
+     return rewrites
+ 
+ 
++def _repoint_archived_jsonl_refs(
++    tasks_dir: Path, repo_root: Path, old_rel: str, new_rel: str
++) -> list[Path]:
++    """Repoint context entries that named files under a task archive just moved.
++
++    Archive moves ``<tasks>/<name>`` to ``<tasks>/archive/<YYYY-MM>/<name>``.
++    Entries in any task's implement/check jsonl (the task itself, its children,
++    or an already-archived child) that still name the old location would fail
++    ``task.py validate``. Reuses rename's matcher, so only ``<old path>/``
++    prefixes change. Returns the task dirs whose jsonl was rewritten.
++    """
++    candidates = [
++        child for child in sorted(tasks_dir.iterdir())
++        if child.is_dir() and child.name != DIR_ARCHIVE
++    ]
++    archive_root = tasks_dir / DIR_ARCHIVE
++    if archive_root.is_dir():
++        for month in sorted(archive_root.iterdir()):
++            if month.is_dir():
++                candidates.extend(t for t in sorted(month.iterdir()) if t.is_dir())
++
++    changed: list[Path] = []
++    for candidate in candidates:
++        for jsonl_path, _linenos, text in _plan_jsonl_rewrites(candidate, old_rel, new_rel):
++            try:
++                jsonl_path.write_text(text, encoding="utf-8")
++            except OSError as exc:
++                print(
++                    colored(
++                        f"Warning: could not repoint {_repo_relative_path(jsonl_path, repo_root)}: {exc}",
++                        Colors.YELLOW,
++                    ),
++                    file=sys.stderr,
++                )
++                continue
++            if candidate not in changed:
++                changed.append(candidate)
++    return changed
++
++
+ def _plan_backrefs(
+     tasks_dir: Path, task_dir: Path, old_name: str, new_name: str
+ ) -> tuple[list[tuple[Path, dict, list[str]]], list[Path]]:
+@@ -1467,6 +1507,14 @@ def cmd_archive(args: argparse.Namespace) -> int:
+         year_month = archive_dest.parent.name
+         print(colored(f"Archived: {dir_name} -> archive/{year_month}/", Colors.GREEN), file=sys.stderr)
+ 
++        # Context entries that named files under the old path would now fail
++        # `task.py validate`; repoint them (this task, children, archived kin).
++        old_rel = f"{DIR_WORKFLOW}/{DIR_TASKS}/{dir_name}"
++        new_rel = _repo_relative_path(archive_dest, repo_root)
++        for repointed in _repoint_archived_jsonl_refs(tasks_dir, repo_root, old_rel, new_rel):
++            if repointed.parent == tasks_dir and repointed.name not in modified_children:
++                modified_children.append(repointed.name)
++
+         # Auto-commit unless --no-commit
+         if not getattr(args, "no_commit", False):
+             if not _auto_commit_archive(dir_name, repo_root, modified_children):
+diff --git a/tests/test_grok_fixes.py b/tests/test_grok_fixes.py
+new file mode 100755
+index 0000000..22ed8aa
+--- /dev/null
++++ b/tests/test_grok_fixes.py
+@@ -0,0 +1,110 @@
++"""Regressions for the two Grok-validation script fixes.
++
++1. Grok Build tool shells export GROK_SESSION_ID; `task.py start` must write a
++   `grok_<session>` pointer instead of running degraded.
++2. `task.py archive` must repoint implement/check jsonl entries that named files
++   under the moved task, so archived children still pass `task.py validate`.
++"""
++
++import json
++import os
++import sys
++import unittest
++
++import test_integration
++
++
++class GrokFixTests(unittest.TestCase):
++    def setUp(self):
++        self.fixture = test_integration.InstalledRuntimeTests()
++        self.fixture.setUp()
++        self.addCleanup(self.fixture.doCleanups)
++        self.root = self.fixture.root
++
++    def grok_env(self, session):
++        for key in list(self.fixture.env):
++            if key.startswith("GROK_") or key == "TRELLIS_CONTEXT_ID":
++                del self.fixture.env[key]
++        self.fixture.env["GROK_SESSION_ID"] = session
++        self.fixture.env["GROK_AGENT"] = "1"
++
++    def test_grok_session_id_writes_and_clears_grok_pointer(self):
++        task = self.fixture.create_task("grok-pointer")
++        self.grok_env("sess-1234")
++        self.fixture.task("start", str(task), "--allow-empty-context")
++        pointer = self.root / ".trellis/.runtime/sessions/grok_sess-1234.json"
++        self.assertTrue(pointer.is_file(), "start must write a grok_<session> pointer")
++        self.assertEqual(json.loads(pointer.read_text())["current_task"],
++                         str(task.relative_to(self.root)))
++        current = self.fixture.task("current", "--source").stdout
++        self.assertIn(str(task.relative_to(self.root)), current)
++        self.assertIn("session:grok_sess-1234", current)
++        # A different Grok session must not see this pointer.
++        self.fixture.env["GROK_SESSION_ID"] = "other-session"
++        self.assertIn("(none)", self.fixture.task("current", "--source", success=False).stdout)
++        self.fixture.env["GROK_SESSION_ID"] = "sess-1234"
++        self.fixture.archive(task, "--skip-branch-validation")
++        self.assertFalse(pointer.exists(), "archive must clear the session pointer")
++        self.assertIn("(none)", self.fixture.task("current", "--source", success=False).stdout)
++
++    def add_context(self, task, target, kind="implement"):
++        self.fixture.task("add-context", str(task), kind,
++                          str(target.relative_to(self.root)), "fixture context")
++
++    def commits(self):
++        return self.fixture.run_command("git", "rev-list", "--count", "HEAD").stdout.strip()
++
++    def test_child_then_parent_archive_keeps_archived_child_valid(self):
++        parent = self.fixture.create_task("rank-parent")
++        child = self.fixture.create_task("rank-child", parent=parent)
++        for kind in ("implement", "check"):
++            self.add_context(child, parent / "prd.md", kind)
++            self.add_context(child, child / "prd.md", kind)
++        before = self.commits()
++        archived_child = self.fixture.archive(child)
++        archived_parent = self.fixture.archive(parent)
++        self.assertEqual(self.commits(), before, "--no-commit must not commit")
++        text = (archived_child / "implement.jsonl").read_text()
++        self.assertIn(str(archived_parent.relative_to(self.root)) + "/prd.md", text)
++        self.assertIn(str(archived_child.relative_to(self.root)) + "/prd.md", text)
++        self.fixture.task("validate", str(archived_child.relative_to(self.root)))
++
++    def test_parent_archived_first_repoints_active_child(self):
++        parent = self.fixture.create_task("solo-parent")
++        child = self.fixture.create_task("solo-child", parent=parent)
++        self.add_context(child, parent / "prd.md")
++        self.add_context(child, parent / "prd.md", "check")
++        archived_parent = self.fixture.archive(parent)
++        text = (child / "implement.jsonl").read_text()
++        self.assertIn(str(archived_parent.relative_to(self.root)) + "/prd.md", text)
++        self.fixture.task("validate", str(child.relative_to(self.root)))
++
++    def test_lone_task_archive_repoints_own_entries_and_spares_siblings(self):
++        task = self.fixture.create_task("lone")
++        sibling = self.fixture.create_task("lone-extra")
++        for kind in ("implement", "check"):
++            self.add_context(task, task / "prd.md", kind)
++            self.add_context(sibling, sibling / "prd.md", kind)
++        archived = self.fixture.archive(task)
++        self.fixture.task("validate", str(archived.relative_to(self.root)))
++        self.assertIn(str(sibling.relative_to(self.root)) + "/prd.md",
++                      (sibling / "implement.jsonl").read_text())
++        self.fixture.task("validate", str(sibling.relative_to(self.root)))
++
++    def test_committed_archive_stages_repointed_child(self):
++        parent = self.fixture.create_task("commit-parent")
++        child = self.fixture.create_task("commit-child", parent=parent)
++        self.add_context(child, parent / "prd.md")
++        self.add_context(child, parent / "prd.md", "check")
++        self.fixture.run_command("git", "add", ".trellis/tasks")
++        self.fixture.run_command("git", "commit", "--quiet", "-m", "tasks")
++        self.fixture.task("archive", str(parent))
++        dirty = self.fixture.run_command(
++            "git", "status", "--porcelain", "--", str(child.relative_to(self.root))
++        ).stdout
++        self.assertEqual(dirty, "", "repointed child jsonl must be in the archive commit")
++        self.fixture.task("validate", str(child.relative_to(self.root)))
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/tests/test_integration.py b/tests/test_integration.py
+index bad21f8..3f6ca13 100644
+--- a/tests/test_integration.py
++++ b/tests/test_integration.py
+@@ -307,7 +307,7 @@ class InstalledRuntimeTests(unittest.TestCase):
+         archived = self.archive(task, "--skip-branch-validation")
+         self.assertEqual(self.record(archived)["status"], "completed")
+ 
+-    def test_archival_does_not_rewrite_context_file_references(self) -> None:
++    def test_archival_rewrites_context_file_references(self) -> None:
+         parent = self.create_task("context-parent")
+         child = self.create_task("context-child", parent)
+         old_path = str((parent / "prd.md").relative_to(self.root))
+@@ -318,10 +318,15 @@ class InstalledRuntimeTests(unittest.TestCase):
+         archived_parent = self.archive(parent)
+         self.assertTrue((archived_parent / "prd.md").is_file())
+         self.assertFalse((self.root / old_path).exists())
+-        # Stable publication IDs survive, but JSONL filesystem paths need
+-        # resolution/curation on resume; the runtime must not silently PASS.
+-        result = self.task("validate", str(archived_child), success=False)
+-        self.assertIn(old_path, result.stdout)
++        # Archive repoints JSONL entries that named files under a moved task
++        # (grok branch fix), so the archived child validates against the
++        # parent's archived location instead of a vanished path.
++        new_path = str((archived_parent / "prd.md").relative_to(self.root))
++        for phase in ("implement", "check"):
++            text = (archived_child / f"{phase}.jsonl").read_text()
++            self.assertIn(new_path, text)
++            self.assertNotIn(f'"{old_path}"', text)
++        self.task("validate", str(archived_child))
+ 
+ 
+ if __name__ == "__main__":
+-- 
+2.43.0
+
