@@ -28,3 +28,6 @@ For work in this project, load the compact workflow with
 It governs local orchestration even when bundled skill examples prescribe extra
 stages. Matt entry/resume details: `docs/agents/matt-flow.md`; publication:
 `docs/agents/issue-tracker.md`. Validation history is on demand in `docs/validation/`.
+A user-invoked Matt skill such as `grill-me` is not edit authority: once it settles
+buildable scope, end with the exact next command (`/implement <scope>`, Codex
+`$implement <scope>`) and pause.

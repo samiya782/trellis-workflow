@@ -7,7 +7,9 @@ and runtime adaptation; methodology stays in the genuine installed skills.
 
 Use the genuine installed skills with their stock invocation policy. Claude Code
 uses its skill mechanism; Codex uses its supported skill loading, including
-ordinary file reads when permitted. Record the source path. A catalog listing
+ordinary file reads when permitted. Grok Build has no Skill tool: it loads a skill
+by reading its `SKILL.md` under `.grok/skills/`; a `disable-model-invocation: true`
+skill stays a user-typed slash command. Record the source path. A catalog listing
 isn't execution, and task-context loading doesn't authorize skill invocation.
 For policy inspection, Codex uses `agents/openai.yaml`, not Claude's frontmatter;
 Claude Code uses `disable-model-invocation`. Keep both installer-produced files intact.
@@ -21,6 +23,8 @@ The entry skill sets the record size; add no Trellis task unless it says so:
   decision ticket isn't an implementation ticket.
 - `grill-me` is stateless: no task, glossary or ADR. Its result stays in the
   conversation; suggest `grill-with-docs` when a recoverable record is wanted.
+  Confirmed understanding is not edit authority: end with the `implement` command
+  for the agreed one-line scope and pause; do not edit product code as part of grill-me itself.
 - `implement` builds small work from the request or conversation. No spec,
   tickets or task unless the work must survive the session.
 - `implement-spec` needs a published spec with tickets. Without them, say so and
@@ -52,7 +56,7 @@ Continue while the installed skill and harness permit it. When the next skill
 requires user invocation, save the current context: for a stateful entry, create
 (workflow 1.0, `--no-start`) or reuse the minimal task; for same-session small work,
 the conversation suffices. Give the exact next command: `$<skill> <reference>` in
-Codex or `/<skill> <reference>` in Claude Code, replacing the placeholders with the
+Codex or `/<skill> <reference>` in Claude Code or Grok Build, replacing the placeholders with the
 selected skill and the actual task path or a one-line agreed scope. Explain
 the stock policy boundary and pause. Scope authorization remains valid, but
 doesn't replace the required invocation. Do not bypass that boundary
@@ -72,9 +76,12 @@ command does not invoke a pending user-only Matt skill.
 Delegate within the invoked skill's permitted scope; dispatch cannot satisfy a
 different skill's user-only boundary. Use actual runtime tools. When useful,
 spawn independent ready tickets before waiting for either (Claude Code: several
-`Agent` calls in one message). Give each worker an exact task path as a line
+`Agent` calls in one message; Grok Build: several `spawn_subagent` calls with
+`subagent_type` `trellis-implement`, `trellis-check` or `trellis-research`, not a
+generic executor). Give each worker an exact task path as a line
 `Active task: <path>`, real skill path, acceptance, blockers, owned files and
-applicable spec pointers. Claude's hook resolves that marker. Codex's native
+applicable spec pointers. Claude's hook resolves that marker; Grok workers load it themselves as their
+`.grok/agents/trellis-*.md` definitions instruct. Codex's native
 start event lacks the dispatch prompt: it supplies loading instructions only;
 the worker validates and explicitly loads its task after receiving the dispatch.
 Invalid or conflicting identity stops loading, never falls back to another task.
