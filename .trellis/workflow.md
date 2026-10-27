@@ -4,8 +4,10 @@
 
 Normal Trellis is the default. Use Matt only when the user explicitly invokes a
 Matt skill (e.g. `grill-with-docs`, `grill-me`, `wayfinder`, `implement`) or resumes
-a recorded Matt task; then load `docs/agents/matt-flow.md`. Publication uses
-`docs/agents/issue-tracker.md`.
+a recorded Matt task; then load `docs/agents/matt-flow.md`. On `grill-with-docs`,
+bootstrap workflow 1.0 (`task.py create … --no-start`) and load `get_context`
+before the first interview question; write into that task as you grill.
+Publication uses `docs/agents/issue-tracker.md`.
 That selection governs its work item: settled requirements, small size or general
 implementation authorization never switch it to the normal route; only the user
 can. Unrelated later work defaults to normal Trellis.

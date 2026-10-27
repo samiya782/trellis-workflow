@@ -20,6 +20,7 @@ PDT (UTC−7), so raw logs and TUI clocks read 15 h earlier.
 | `runs/headless/p1–p4.*`, `gm*.txt`, `run.sh.txt` | The validation runs in `~/trellis` (P1–P4): prompt files, stdout and stderr, plus the `/grill-me` recheck outputs. Session `4add37ea` was compacted, so these files are the primary record. |
 | `runs/tui/` | Interactive TUI run: `interactions.md` (keystrokes), `cap-*.txt` (tmux captures), `ev-*.txt` (state after each step), `raw-pipe.clean.txt` (pipe-pane log without ANSI noise). |
 | `evidence/` | `apply-script-tests.txt`, `upstream-repro.txt` (stock vs patched), `fixtures-final-state.txt` (HEAD, status, tasks and pointers for every fixture), `install-fresh-init.log.txt` |
+| `AUDIT-grill-pass-vs-lhzhsq.md` | 2026-10-27 audit: how grill "pass" was decided, which hooks fired, vs LHZHSQ `01a17d2d`; plus bootstrap revalidation |
 | `CHANGES.md` | Every changed file, with its backup and diff reference |
 | `DECISIONS.md` | Decisions the assistant made on the user's behalf |
 

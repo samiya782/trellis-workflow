@@ -43,6 +43,26 @@
             "timeout": 30
           }
         ]
+      },
+      {
+        "matcher": "new",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 .claude/hooks/session-start.py",
+            "timeout": 30
+          }
+        ]
+      },
+      {
+        "matcher": "load",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 .claude/hooks/session-start.py",
+            "timeout": 30
+          }
+        ]
       }
     ],
     "PreToolUse": [

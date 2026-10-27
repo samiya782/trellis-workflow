@@ -17,10 +17,16 @@ Setup and installation evidence are linked from README.
 
 The entry skill sets the record size; add no Trellis task unless it says so:
 
-- `grill-with-docs` (discovery in a repo) and `wayfinder` (uncertainty spanning
-  sessions) are stateful: use the task record below at user-only boundaries.
-  Wayfinder is planning-only until the user authorizes delivery; a resolved
-  decision ticket isn't an implementation ticket.
+- `grill-with-docs` (discovery in a repo) is stateful and **bootstraps at entry**:
+  before the first interview question, run `get_context.py` and
+  `get_context.py --mode phase`, then `task.py create "…" --slug … --description "…" --no-start`
+  (or reuse the task path the user named). Grill into that task: persist settled
+  decisions in `prd.md` / Notes as you go. Do not run a recoverable grill with no
+  task. At a later user-only boundary, refresh the same record and give the exact
+  next command.
+- `wayfinder` (uncertainty spanning sessions) is stateful: use the task record
+  below at user-only boundaries. Wayfinder is planning-only until the user
+  authorizes delivery; a resolved decision ticket isn't an implementation ticket.
 - `grill-me` is stateless: no task, glossary or ADR. Its result stays in the
   conversation; suggest `grill-with-docs` when a recoverable record is wanted.
   Confirmed understanding is not edit authority: end with the `implement` command
@@ -53,9 +59,11 @@ for qualitative review. A small settled contract may go directly to `implement`.
 Avoid duplicate Trellis interviews, specifications and reviews.
 
 Continue while the installed skill and harness permit it. When the next skill
-requires user invocation, save the current context: for a stateful entry, create
-(workflow 1.0, `--no-start`) or reuse the minimal task; for same-session small work,
-the conversation suffices. Give the exact next command: `$<skill> <reference>` in
+requires user invocation, save the current context: for a stateful entry that has
+not yet bootstrapped (`wayfinder`, or a resumed grill), create (workflow 1.0,
+`--no-start`) or reuse the minimal task; `grill-with-docs` should already hold a
+task from entry. For same-session small work after `grill-me`, the conversation
+suffices. Give the exact next command: `$<skill> <reference>` in
 Codex or `/<skill> <reference>` in Claude Code or Grok Build, replacing the placeholders with the
 selected skill and the actual task path or a one-line agreed scope. Explain
 the stock policy boundary and pause. Scope authorization remains valid, but

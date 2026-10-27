@@ -1,10 +1,9 @@
 # Start Session
 
-Grok Build does not run the `SessionStart` hook, so load the compact context
-yourself. Grok does run the project's `.claude/settings.json`
-`UserPromptSubmit`/`PreToolUse`/`PostToolUse` hooks, but their
-`additionalContext` is not guaranteed to reach the model; treat the commands
-below as the authoritative context load.
+Grok Build SessionStart matchers include `new`/`load` (as well as Claude's
+`startup`/`clear`/`compact`). Still load the compact context yourself: UserPromptSubmit
+/`PreToolUse`/`PostToolUse` `additionalContext` is not guaranteed to reach the
+model on Grok. Treat the commands below as the authoritative context load.
 
 Run `python3 ./.trellis/scripts/get_context.py` for identity, active task and Git
 state, then `python3 ./.trellis/scripts/get_context.py --mode phase` for this
