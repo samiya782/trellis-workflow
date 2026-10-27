@@ -19,3 +19,6 @@ The user told the assistant to act as the human in interactive steps ("代替我
 | 13 | `.trellis/workflow.md` left as-is | — | The user said keeping it out of `trellis update` is fine. INSTALL.md documents `-s`/`-n`. |
 | 14 | Upstream patch and issue text drafted, not submitted | `docs/grok-fixes/UPSTREAM.md` | Submitting is the user's call |
 | 15 | Redacted secrets in this audit. A `CONTEXT7_API_KEY` (`ctx7sk-…`) appeared in Grok session logs as MCP server env. | `transcripts/`, `sessions/` | The key is still in plain text in `~/.grok/sessions/…` on the machine. Consider rotating it. |
+
+| 16 | Added `trellis-grok` shell shortcut + `install-shortcut.sh` + `/trellis-grok-deploy` command; pushed to `origin/grok` after local commit | `scripts/grok-fixes/trellis-grok`, `install-shortcut.sh`, `.grok/commands/trellis-grok-deploy.md`, INSTALL/README Quick deploy | User asked for a quick-deploy shortcut for the modified Trellis + Matt Grok version (2026-10-27). Did not run a real overwrite `trellis update` on `~/trellis`. |
+

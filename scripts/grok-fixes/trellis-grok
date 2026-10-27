@@ -1,0 +1,326 @@
+#!/usr/bin/env bash
+# trellis-grok — quick deploy / manage the Trellis + Matt Grok fixes.
+#
+#   trellis-grok status  [DIR]
+#   trellis-grok dry-run [DIR]
+#   trellis-grok apply   [DIR]
+#   trellis-grok revert  [DIR]
+#   trellis-grok init    [DIR] [-u NAME] [--claude] [--codex] [...]
+#   trellis-grok update  [DIR] [--allow-workflow]
+#   trellis-grok --help
+#
+# TRELLIS_GROK_HOME overrides the source checkout (default: resolve to the
+# clone that contains scripts/grok-fixes, usually ~/trellis).
+#
+# Exit codes (aligned with apply-grok-fixes.sh where applicable):
+#   0  OK
+#   2  usage / not a Trellis project / missing home
+#   3  version mismatch (from apply script)
+#   4  patch conflict (from apply script)
+#   other  apply/smoke/tests/trellis CLI failure
+set -euo pipefail
+
+resolve_self() {
+  local src="${BASH_SOURCE[0]}"
+  while [[ -L "$src" ]]; do
+    local dir; dir="$(cd "$(dirname "$src")" && pwd)"
+    src="$(readlink "$src")"
+    [[ "$src" != /* ]] && src="$dir/$src"
+  done
+  cd "$(dirname "$src")" && pwd
+}
+
+SCRIPT_DIR="$(resolve_self)"
+
+resolve_home() {
+  if [[ -n "${TRELLIS_GROK_HOME:-}" ]]; then
+    local h; h="$(cd "$TRELLIS_GROK_HOME" && pwd)"
+    [[ -x "$h/scripts/grok-fixes/apply-grok-fixes.sh" ]] || {
+      echo "error: TRELLIS_GROK_HOME=$h has no scripts/grok-fixes/apply-grok-fixes.sh" >&2
+      exit 2
+    }
+    echo "$h"; return
+  fi
+  # Script lives at <home>/scripts/grok-fixes/trellis-grok
+  if [[ -x "$SCRIPT_DIR/apply-grok-fixes.sh" ]]; then
+    cd "$SCRIPT_DIR/../.." && pwd; return
+  fi
+  if [[ -x "$HOME/trellis/scripts/grok-fixes/apply-grok-fixes.sh" ]]; then
+    echo "$HOME/trellis"; return
+  fi
+  echo "error: cannot find Trellis+Grok checkout. Set TRELLIS_GROK_HOME or install via scripts/grok-fixes/install-shortcut.sh" >&2
+  exit 2
+}
+
+HOME_SRC="$(resolve_home)"
+APPLY="$HOME_SRC/scripts/grok-fixes/apply-grok-fixes.sh"
+
+usage() {
+  cat <<USAGE
+trellis-grok — quick deploy the modified Trellis + Matt Grok version
+
+Source: $HOME_SRC
+Override with TRELLIS_GROK_HOME=/path/to/checkout
+
+Usage:
+  trellis-grok status  [DIR]     Trellis version + which patches are applied
+  trellis-grok dry-run [DIR]     Preview apply (no writes)
+  trellis-grok apply   [DIR]     Apply fixes + smoke test
+  trellis-grok revert  [DIR]     Revert applied patches
+  trellis-grok init    [DIR] [-u NAME] [trellis-init-flags...]
+                                 New project: trellis init --grok, copy Matt docs
+                                 + workflow, apply fixes
+  trellis-grok update  [DIR] [--allow-workflow]
+                                 Safe update: trellis update -n, re-apply fixes,
+                                 list .new merges; protect .trellis/workflow.md
+                                 unless --allow-workflow
+  trellis-grok --help
+
+DIR defaults to the current directory (or git toplevel when inside a repo).
+Idempotent: re-apply is a no-op when already patched.
+USAGE
+  exit "${1:-0}"
+}
+
+resolve_dir() {
+  local d="${1:-}"
+  if [[ -z "$d" ]]; then
+    d="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+  fi
+  [[ -d "$d" ]] || { echo "error: directory not found: $d" >&2; exit 2; }
+  cd "$d" && pwd
+}
+
+require_trellis() {
+  local d="$1"
+  [[ -f "$d/.trellis/scripts/task.py" ]] || {
+    echo "error: $d is not a Trellis project (.trellis/scripts/task.py missing)" >&2
+    exit 2
+  }
+}
+
+cmd_status() {
+  local d; d="$(resolve_dir "${1:-}")"
+  require_trellis "$d"
+  local version
+  version="$(tr -d ' \n\r' < "$d/.trellis/.version" 2>/dev/null || echo unknown)"
+  echo "target:  $d"
+  echo "trellis: $version"
+  echo "source:  $HOME_SRC"
+  echo "patches:"
+  local p name state
+  for p in "$HOME_SRC"/scripts/grok-fixes/patches/000*.patch; do
+    [[ -f "$p" ]] || continue
+    name="$(basename "$p")"
+    case "$name" in
+      0003*)
+        if [[ ! -d "$d/.grok/commands" ]]; then
+          printf '  %-42s %s\n' "$name" "skipped (no .grok/commands)"
+          continue
+        fi
+        ;;
+      0004*)
+        if [[ ! -f "$d/docs/agents/matt-flow.md" ]]; then
+          printf '  %-42s %s\n' "$name" "skipped (no matt-flow.md)"
+          continue
+        fi
+        ;;
+    esac
+    if git -C "$d" apply --check -R --whitespace=nowarn "$p" 2>/dev/null; then
+      state=applied
+    elif git -C "$d" apply --check --whitespace=nowarn "$p" 2>/dev/null; then
+      state=pending
+    else
+      state=conflict
+    fi
+    printf '  %-42s %s\n' "$name" "$state"
+  done
+}
+
+cmd_dry_run() {
+  local d; d="$(resolve_dir "${1:-}")"
+  require_trellis "$d"
+  "$APPLY" --dry-run --target "$d"
+}
+
+cmd_apply() {
+  local d; d="$(resolve_dir "${1:-}")"
+  require_trellis "$d"
+  "$APPLY" --target "$d"
+}
+
+cmd_revert() {
+  local d; d="$(resolve_dir "${1:-}")"
+  require_trellis "$d"
+  "$APPLY" --revert --target "$d" --no-tests
+}
+
+copy_integration() {
+  local d="$1"
+  local f
+  for f in .trellis/workflow.md docs/agents/matt-flow.md docs/agents/issue-tracker.md; do
+    mkdir -p "$d/$(dirname "$f")"
+    cp -p "$HOME_SRC/$f" "$d/$f"
+    echo "  copied: $f"
+  done
+  # Aligned .grok/commands (also covered by patch 0003; copying makes apply a no-op for 0003)
+  if [[ -d "$d/.grok/commands" ]]; then
+    for f in trellis-start.md trellis-continue.md trellis-finish-work.md; do
+      if [[ -f "$HOME_SRC/.grok/commands/$f" ]]; then
+        cp -p "$HOME_SRC/.grok/commands/$f" "$d/.grok/commands/$f"
+        echo "  copied: .grok/commands/$f"
+      fi
+    done
+  fi
+  local marker="docs/agents/matt-flow.md"
+  if [[ -f "$d/AGENTS.md" ]] && ! grep -qF "$marker" "$d/AGENTS.md" 2>/dev/null; then
+    cat >> "$d/AGENTS.md" <<'AGENTS'
+
+For work in this project, load the compact workflow with
+`python3 .trellis/scripts/get_context.py --mode phase` before choosing a route.
+It governs local orchestration even when bundled skill examples prescribe extra
+stages. Matt entry/resume details: `docs/agents/matt-flow.md`; publication:
+`docs/agents/issue-tracker.md`.
+A user-invoked Matt skill such as `grill-me` is not edit authority: once it settles
+buildable scope, end with the exact next command (`/implement <scope>`, Codex
+`$implement <scope>`) and pause.
+AGENTS
+    echo "  appended: AGENTS.md Matt paragraph"
+  else
+    echo "  skip AGENTS.md (already mentions matt-flow or missing)"
+  fi
+}
+
+cmd_init() {
+  local d="" user="" extra=()
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -u|--user)
+        [[ $# -ge 2 ]] || { echo "error: $1 needs a value" >&2; exit 2; }
+        user="$2"; shift 2; continue
+        ;;
+      -h|--help) usage 0 ;;
+      -t|--template|-r|--registry|--workflow|--workflow-source)
+        [[ $# -ge 2 ]] || { echo "error: $1 needs a value" >&2; exit 2; }
+        extra+=("$1" "$2"); shift 2; continue
+        ;;
+      -*)
+        extra+=("$1"); shift; continue
+        ;;
+      *)
+        if [[ -z "$d" ]]; then d="$1"; else extra+=("$1"); fi
+        shift; continue
+        ;;
+    esac
+  done
+  if [[ -n "$d" ]]; then
+    mkdir -p "$d"
+    d="$(cd "$d" && pwd)"
+  else
+    d="$(pwd)"
+  fi
+  if [[ -z "$user" ]]; then
+    user="${TRELLIS_GROK_USER:-${USER:-developer}}"
+    echo "init: using -u $user (override with -u NAME or TRELLIS_GROK_USER)"
+  fi
+  if [[ -d "$d/.trellis" ]]; then
+    echo "error: $d already has .trellis/; use apply/update, or pass -f/-s through to trellis init" >&2
+    exit 2
+  fi
+  if ! git -C "$d" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    git -C "$d" init
+    echo "  git init: $d"
+  fi
+  echo "--- trellis init -u $user --grok -y ${extra[*]:-}"
+  (cd "$d" && trellis init -u "$user" --grok -y ${extra[@]+"${extra[@]}"})
+  echo "--- copy Matt + workflow integration from $HOME_SRC"
+  copy_integration "$d"
+  echo "--- apply grok fixes"
+  "$APPLY" --target "$d"
+  echo "init done: $d"
+  echo "Next: npx skills@latest add mattpocock/skills --agent grok --yes"
+  echo "      then: grok --trust   (once, in the project)"
+}
+
+cmd_update() {
+  local d="" allow_workflow=0
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --allow-workflow) allow_workflow=1; shift ;;
+      -h|--help) usage 0 ;;
+      -*)
+        echo "unknown option for update: $1" >&2; usage 2 ;;
+      *)
+        if [[ -z "$d" ]]; then d="$1"; shift
+        else echo "unexpected: $1" >&2; usage 2; fi
+        ;;
+    esac
+  done
+  d="$(resolve_dir "${d:-}")"
+  require_trellis "$d"
+  local wf="$d/.trellis/workflow.md"
+  local wf_bak=""
+  if [[ -f "$wf" && $allow_workflow -eq 0 ]]; then
+    wf_bak="$(mktemp)"
+    cp -p "$wf" "$wf_bak"
+  fi
+  echo "--- trellis update -n (create .new; no overwrite) in $d"
+  echo "    workflow.md protection: $([[ $allow_workflow -eq 1 ]] && echo off || echo on)"
+  if ! (cd "$d" && trellis update -n); then
+    [[ -n "$wf_bak" ]] && rm -f "$wf_bak"
+    echo "error: trellis update -n failed" >&2
+    exit 1
+  fi
+  if [[ -n "$wf_bak" ]]; then
+    if ! cmp -s "$wf_bak" "$wf" 2>/dev/null; then
+      echo "warning: .trellis/workflow.md changed; restoring protected copy" >&2
+      cp -p "$wf_bak" "$wf"
+      echo "  restored: .trellis/workflow.md"
+    fi
+    rm -f "$wf_bak"
+  fi
+  echo "--- .new files needing manual merge:"
+  local found=0
+  while IFS= read -r -d '' f; do
+    found=1
+    local rel="${f#"$d"/}"
+    echo "  $rel"
+    case "$rel" in
+      .trellis/workflow.md.new)
+        echo "    (workflow.md protected by default; compare then delete .new)"
+        ;;
+    esac
+  done < <(find "$d" \( -name '*.new' -o -name '*.NEW' \) -print0 2>/dev/null)
+  if [[ $found -eq 0 ]]; then
+    echo "  (none)"
+  fi
+  echo "--- re-apply grok fixes"
+  set +e
+  "$APPLY" --target "$d"
+  local rc=$?
+  set -e
+  if [[ $rc -eq 3 ]]; then
+    echo "note: version mismatch after update. See docs/grok-fixes/INSTALL.md;" >&2
+    echo "      dry-run then apply-grok-fixes.sh --force-version if context still matches." >&2
+    exit 3
+  elif [[ $rc -ne 0 ]]; then
+    exit "$rc"
+  fi
+  echo "update path done. Merge any .new files by hand, then delete them."
+}
+
+[[ $# -eq 0 ]] && usage 2
+cmd="${1:-}"; shift || true
+case "$cmd" in
+  -h|--help|help) usage 0 ;;
+  status)  cmd_status "$@" ;;
+  dry-run|dryrun) cmd_dry_run "$@" ;;
+  apply)   cmd_apply "$@" ;;
+  revert)  cmd_revert "$@" ;;
+  init)    cmd_init "$@" ;;
+  update)  cmd_update "$@" ;;
+  *)
+    echo "unknown command: $cmd" >&2
+    usage 2
+    ;;
+esac

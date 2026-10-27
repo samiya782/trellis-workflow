@@ -22,6 +22,32 @@ against Trellis **0.7.0-beta.4** with Grok Build **1.0.70**.
 
 It commits nothing, and running it twice is safe.
 
+## Quick deploy (`trellis-grok` shortcut)
+
+Install the shell shortcut once (symlink into `~/.local/bin`):
+
+```bash
+~/trellis/scripts/grok-fixes/install-shortcut.sh
+# uninstall: ~/trellis/scripts/grok-fixes/install-shortcut.sh --uninstall
+```
+
+Then, in any Trellis project (or pass `DIR`):
+
+```bash
+trellis-grok status              # version + applied/pending/conflict per patch
+trellis-grok dry-run [DIR]       # preview
+trellis-grok apply [DIR]         # apply + smoke test (idempotent)
+trellis-grok revert [DIR]        # undo patches
+trellis-grok init [DIR] -u NAME  # new project: trellis init --grok, copy Matt
+                                 # docs + workflow + aligned .grok/commands, apply
+trellis-grok update [DIR]        # safe: trellis update -n, re-apply, list .new;
+                                 # protects .trellis/workflow.md by default
+```
+
+Override the source checkout with `TRELLIS_GROK_HOME=/path/to/checkout`.
+Grok Build slash command: `.grok/commands/trellis-grok-deploy.md` (`/trellis-grok-deploy`)
+runs status → dry-run → wait for confirm → apply.
+
 ## Quick start (this checkout or any beta.4 project)
 
 ```bash

@@ -108,6 +108,19 @@ custom hooks and instructions and merge entry points rather than replacing them.
 `trellis update` reports the files above as user modifications. Review its
 changes and keep the local edits.
 
+## Quick deploy (Grok shortcut)
+
+```bash
+~/trellis/scripts/grok-fixes/install-shortcut.sh   # once → ~/.local/bin/trellis-grok
+trellis-grok status
+trellis-grok dry-run
+trellis-grok apply                 # or: trellis-grok init -u your-name
+trellis-grok update                # safe upgrade path (creates .new; keeps workflow.md)
+```
+
+Details: [docs/grok-fixes/INSTALL.md](docs/grok-fixes/INSTALL.md#quick-deploy-trellis-grok-shortcut).
+Slash command in Grok: `/trellis-grok-deploy`.
+
 ## Update the Matt skills
 
 Rerun the same `npx skills@latest add mattpocock/skills …` command for current
