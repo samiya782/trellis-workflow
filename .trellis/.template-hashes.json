@@ -91,7 +91,7 @@
     ".trellis/scripts/hooks/linear_sync.py": "e09cc4ce4699aada908808718698f33f705a3edf55c4dcf8f777ad892f80ca79",
     ".trellis/scripts/init_developer.py": "f9e6c0d882406e81c8cd6b1c5abb204b0befc0069ff89cf650cd536a80f8c60e",
     ".trellis/scripts/task.py": "04893c196dede59654e9042ffc066a1052297ba59128f089f7d121193aaa0f85",
-    ".trellis/workflow.md": "66cb580b350abe22113dc3c8a4140e3570710b372cea940836c333fc27575e36",
+    ".trellis/workflow.md": "684460a578dbe1e47d8dfff2b1ab2770dbb3a0d4d471d767a1213181f81c1470",
     ".claude/agents/trellis-check.md": "9e48342243f311d55386f8fb42933945e87aba73d5ade547133aa98345a06128",
     ".claude/agents/trellis-implement.md": "73b56b3047c0e852382c4630aa181fb847d1e5ea1f63459dac4bf728f43fd097",
     ".claude/agents/trellis-research.md": "add4aa4259ded425b04ec992802c646490352bb4eb3730a7ab450beea87d4faa",
@@ -146,17 +146,6 @@
     ".claude/hooks/inject-workflow-state.py": "7b91481a722f32d72dbcdc26a803eb9cb7d973f94ae5eed00cf27a233f4ff40c",
     ".claude/hooks/session-start.py": "457c02e5769f2550755dffe1efd0e9c0f0b41e7907ca4dd200f45851f2595b98",
     ".claude/hooks/statusline.py": "edbd8d1443ac8e7bb4f8cce61cb21812a8b0e17c59e1bc5c0e3ad03ea1f69adb",
-    ".trellis/.runtime/matt-policy.json": "eeeb68a896882401506a17297b14ed597733eb5e2faf915e7e576278d5d9d07d",
-    ".trellis/.runtime/sessions/codex_01a0ee0f-f565-78a3-9a9a-755209c19c74.json": "94b11f7d033d094c35e5a3a6c0ec0e7c60ecd6677e59f28dc147f2d439718fc9",
-    ".trellis/.runtime/update-check-codex_019fe64f-b10f-7d41-9b65-ac4fef1dd52f.marker": "77c2ca150b61c7330da139378ffd3940d093f1bd74a1294689345d27e15b5124",
-    ".trellis/.runtime/update-check-codex_019ff493-cca2-7d81-b60d-3353d072195c.marker": "77c2ca150b61c7330da139378ffd3940d093f1bd74a1294689345d27e15b5124",
-    ".trellis/.runtime/update-check-codex_019ff57a-6a1b-7c51-80c1-94e14dfc50b1.marker": "77c2ca150b61c7330da139378ffd3940d093f1bd74a1294689345d27e15b5124",
-    ".trellis/.runtime/update-check-codex_01a0ee0f-f565-78a3-9a9a-755209c19c74.marker": "77c2ca150b61c7330da139378ffd3940d093f1bd74a1294689345d27e15b5124",
-    ".trellis/.runtime/update-check-codex_01a0ee11-c8e9-7502-8419-7394ec3204bc.marker": "77c2ca150b61c7330da139378ffd3940d093f1bd74a1294689345d27e15b5124",
-    ".trellis/.runtime/update-check-codex_01a0ee11-edff-7030-b8ec-c76985635f6a.marker": "77c2ca150b61c7330da139378ffd3940d093f1bd74a1294689345d27e15b5124",
-    ".trellis/.runtime/update-check-codex_01a0ee17-b680-7f83-913d-20e05a8b5acb.marker": "77c2ca150b61c7330da139378ffd3940d093f1bd74a1294689345d27e15b5124",
-    ".trellis/.runtime/update-check-codex_01a0ee19-0d87-7df0-82fe-20639f3ba5cd.marker": "77c2ca150b61c7330da139378ffd3940d093f1bd74a1294689345d27e15b5124",
-    ".trellis/.runtime/update-check-codex_01a0ee19-89cf-7ba1-abe6-379d3268e159.marker": "77c2ca150b61c7330da139378ffd3940d093f1bd74a1294689345d27e15b5124",
     ".trellis/scripts/common/__pycache__/__init__.cpython-313.pyc": "92349d2d218debc1f9851ab62fa91eaabf2da734b400bdfa4db131eebedae498",
     ".trellis/scripts/common/__pycache__/active_task.cpython-313.pyc": "2da863fd2a514249314de8dc011b35b015650753d409fd2587bdbda8753abd4e",
     ".trellis/scripts/common/__pycache__/config.cpython-313.pyc": "a8255486d02e6a523f6d61fe8bbdeec6e01bf450e3adb327de4b6fe54a8bb077",
@@ -178,6 +167,9 @@
     ".trellis/scripts/common/__pycache__/trellis_config.cpython-313.pyc": "9439cb5b034d6136f53093b226597840e7781ef817a6076e99be76e854060ebd",
     ".trellis/scripts/common/__pycache__/types.cpython-313.pyc": "825332a5abca8238a8a98fa970faf55dda8d11b2425af6a797d9efbf0aaf14a5",
     ".trellis/scripts/common/__pycache__/workflow_phase.cpython-313.pyc": "e43a0f2762088fccffa58f352c085f94ade0bb8f5a6ec4debf5a0791ad26ad3d",
-    ".trellis/scripts/common/__pycache__/workflow_selection.cpython-313.pyc": "b81d4d093da87376ad27e41e8368ddc5c590a9f55c954950712d123519024afc"
+    ".trellis/scripts/common/__pycache__/workflow_selection.cpython-313.pyc": "b81d4d093da87376ad27e41e8368ddc5c590a9f55c954950712d123519024afc",
+    ".grok/commands/trellis-continue.md": "3df230459575ac888c4fbfc020355d9ee2c363a6a769f9d935baa9bcc922f80e",
+    ".grok/commands/trellis-finish-work.md": "5a8a72fd87d009c15068bae75165af97f1b03e975b24f5dc3b901b01c6914160",
+    ".grok/commands/trellis-start.md": "9826aaafd8cbf236e45f7de1ea4b3d362cff4ef61837782bd382557d59fd1436"
   }
 }
