@@ -175,3 +175,19 @@ uncommitted customizations.
   output, and before/after test results.
 - `tests/test_grok_fixes.py` holds the regression tests: 5 fail on stock beta.4
   and all 30 pass with both fixes.
+
+## Apply syncs the Grok/Matt layer (2026-10-28)
+
+`trellis-grok apply` now **copies** from the source checkout before applying
+script patches 0001–0002:
+
+- `.trellis/workflow.md`, `docs/agents/matt-flow.md`, `docs/agents/issue-tracker.md`
+- `.grok/commands/trellis-{start,continue,finish-work}.md`
+- SessionStart `new`/`load` matchers into `.claude/settings.json`
+- Upserts an `AGENTS.md` Matt/grill block (`<!-- TRELLIS-GROK:MATT-START -->`)
+  including `/grill-with-docs` entry bootstrap (`get_context` + `task.py create --no-start`)
+
+Patches 0003–0004 remain for reference / older installs, but apply no longer
+depends on them for the grok-layer files (those patches go stale when the
+source docs evolve, which previously made apply report "already applied"
+while bootstrap text was still missing).

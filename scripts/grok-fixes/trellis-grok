@@ -65,7 +65,7 @@ Override with TRELLIS_GROK_HOME=/path/to/checkout
 Usage:
   trellis-grok status  [DIR]     Trellis version + which patches are applied
   trellis-grok dry-run [DIR]     Preview apply (no writes)
-  trellis-grok apply   [DIR]     Apply fixes + smoke test
+  trellis-grok apply   [DIR]     Sync Matt/workflow/commands + script patches
   trellis-grok revert  [DIR]     Revert applied patches
   trellis-grok init    [DIR] [-u NAME] [trellis-init-flags...]
                                  New project: trellis init --grok, copy Matt docs
@@ -135,18 +135,47 @@ cmd_status() {
     fi
     printf '  %-42s %s\n' "$name" "$state"
   done
+  echo "sync (source vs target; apply copies these):"
+  local rel
+  for rel in .trellis/workflow.md docs/agents/matt-flow.md docs/agents/issue-tracker.md \
+             .grok/commands/trellis-start.md .grok/commands/trellis-continue.md \
+             .grok/commands/trellis-finish-work.md; do
+    if [[ ! -f "$HOME_SRC/$rel" ]]; then
+      continue
+    fi
+    if [[ ! -f "$d/$rel" ]]; then
+      printf '  %-42s %s\n' "$rel" "missing"
+    elif cmp -s "$HOME_SRC/$rel" "$d/$rel"; then
+      printf '  %-42s %s\n' "$rel" "in-sync"
+    else
+      printf '  %-42s %s\n' "$rel" "stale"
+    fi
+  done
+  if [[ -f "$d/AGENTS.md" ]] && grep -qF "On \`/grill-with-docs\`" "$d/AGENTS.md" 2>/dev/null; then
+    printf '  %-42s %s\n' "AGENTS.md Matt/grill block" "present"
+  else
+    printf '  %-42s %s\n' "AGENTS.md Matt/grill block" "missing"
+  fi
 }
 
 cmd_dry_run() {
   local d; d="$(resolve_dir "${1:-}")"
   require_trellis "$d"
-  "$APPLY" --dry-run --target "$d"
+  echo "--- sync preview (no writes)"
+  sync_integration "$d" --dry-run
+  echo "--- patch dry-run (scripts only; grok-layer is copy-synced on apply)"
+  "$APPLY" --dry-run --target "$d" --only scripts
 }
 
 cmd_apply() {
   local d; d="$(resolve_dir "${1:-}")"
   require_trellis "$d"
-  "$APPLY" --target "$d"
+  echo "--- sync Grok/Matt integration from $HOME_SRC"
+  sync_integration "$d"
+  # Script patches only: grok-layer files are copy-synced above. Evolving
+  # 0003/0004 against already-synced files would false-conflict.
+  echo "--- apply script patches (0001-0002)"
+  "$APPLY" --target "$d" --only scripts
 }
 
 cmd_revert() {
@@ -155,27 +184,99 @@ cmd_revert() {
   "$APPLY" --revert --target "$d" --no-tests
 }
 
-copy_integration() {
+sync_integration() {
   local d="$1"
+  local dry=0
+  [[ "${2:-}" == "--dry-run" ]] && dry=1
   local f
   for f in .trellis/workflow.md docs/agents/matt-flow.md docs/agents/issue-tracker.md; do
+    if [[ ! -f "$HOME_SRC/$f" ]]; then
+      echo "  skip missing source: $f"
+      continue
+    fi
+    if [[ -f "$d/$f" ]] && cmp -s "$HOME_SRC/$f" "$d/$f"; then
+      echo "  in-sync: $f"
+      continue
+    fi
+    if [[ $dry -eq 1 ]]; then
+      echo "  would copy: $f"
+      continue
+    fi
     mkdir -p "$d/$(dirname "$f")"
     cp -p "$HOME_SRC/$f" "$d/$f"
     echo "  copied: $f"
   done
-  # Aligned .grok/commands (also covered by patch 0003; copying makes apply a no-op for 0003)
   if [[ -d "$d/.grok/commands" ]]; then
     for f in trellis-start.md trellis-continue.md trellis-finish-work.md; do
-      if [[ -f "$HOME_SRC/.grok/commands/$f" ]]; then
-        cp -p "$HOME_SRC/.grok/commands/$f" "$d/.grok/commands/$f"
-        echo "  copied: .grok/commands/$f"
+      if [[ ! -f "$HOME_SRC/.grok/commands/$f" ]]; then
+        continue
       fi
+      if [[ -f "$d/.grok/commands/$f" ]] && cmp -s "$HOME_SRC/.grok/commands/$f" "$d/.grok/commands/$f"; then
+        echo "  in-sync: .grok/commands/$f"
+        continue
+      fi
+      if [[ $dry -eq 1 ]]; then
+        echo "  would copy: .grok/commands/$f"
+        continue
+      fi
+      cp -p "$HOME_SRC/.grok/commands/$f" "$d/.grok/commands/$f"
+      echo "  copied: .grok/commands/$f"
     done
   fi
-  local marker="docs/agents/matt-flow.md"
-  if [[ -f "$d/AGENTS.md" ]] && ! grep -qF "$marker" "$d/AGENTS.md" 2>/dev/null; then
-    cat >> "$d/AGENTS.md" <<'AGENTS'
-
+  if [[ -f "$d/.claude/settings.json" && -f "$HOME_SRC/.claude/settings.json" ]]; then
+    if [[ $dry -eq 1 ]]; then
+      if python3 - "$d/.claude/settings.json" "$HOME_SRC/.claude/settings.json" <<'PY'
+import json,sys
+t=json.load(open(sys.argv[1])); s=json.load(open(sys.argv[2]))
+tm={h.get("matcher") for h in t.get("hooks",{}).get("SessionStart",[])}
+need={"new","load"}
+raise SystemExit(0 if need <= tm else 1)
+PY
+      then echo "  in-sync: .claude/settings.json SessionStart new|load"
+      else echo "  would merge: .claude/settings.json SessionStart new|load"
+      fi
+    else
+      python3 - "$d/.claude/settings.json" "$HOME_SRC/.claude/settings.json" <<'PY'
+import json,sys
+from pathlib import Path
+target, source = Path(sys.argv[1]), Path(sys.argv[2])
+t=json.loads(target.read_text()); s=json.loads(source.read_text())
+th=t.setdefault("hooks",{}).setdefault("SessionStart",[])
+sh=s.get("hooks",{}).get("SessionStart",[])
+have={h.get("matcher") for h in th}
+added=[]
+for block in sh:
+    m=block.get("matcher")
+    if m in ("new","load") and m not in have:
+        th.append(block); have.add(m); added.append(m)
+if added:
+    target.write_text(json.dumps(t, indent=2) + "\n")
+    print("  merged: .claude/settings.json SessionStart " + "|".join(added))
+else:
+    print("  in-sync: .claude/settings.json SessionStart new|load")
+PY
+    fi
+  fi
+  local agents="$d/AGENTS.md"
+  if [[ ! -f "$agents" ]]; then
+    echo "  skip AGENTS.md (missing)"
+  elif [[ $dry -eq 1 ]]; then
+    if grep -qF "<!-- TRELLIS-GROK:MATT-START -->" "$agents" 2>/dev/null && grep -qF "On \`/grill-with-docs\`" "$agents" 2>/dev/null; then
+      echo "  in-sync: AGENTS.md Matt/grill block"
+    elif grep -qF "On \`/grill-with-docs\`" "$agents" 2>/dev/null; then
+      echo "  in-sync: AGENTS.md (already has grill-with-docs bootstrap)"
+    else
+      echo "  would upsert: AGENTS.md Matt/grill block"
+    fi
+  else
+    python3 - "$agents" <<'PY'
+import sys
+from pathlib import Path
+path = Path(sys.argv[1])
+text = path.read_text()
+start = "<!-- TRELLIS-GROK:MATT-START -->"
+end = "<!-- TRELLIS-GROK:MATT-END -->"
+block = """<!-- TRELLIS-GROK:MATT-START -->
 For work in this project, load the compact workflow with
 `python3 .trellis/scripts/get_context.py --mode phase` before choosing a route.
 It governs local orchestration even when bundled skill examples prescribe extra
@@ -184,13 +285,40 @@ stages. Matt entry/resume details: `docs/agents/matt-flow.md`; publication:
 A user-invoked Matt skill such as `grill-me` is not edit authority: once it settles
 buildable scope, end with the exact next command (`/implement <scope>`, Codex
 `$implement <scope>`) and pause.
-AGENTS
-    echo "  appended: AGENTS.md Matt paragraph"
-  else
-    echo "  skip AGENTS.md (already mentions matt-flow or missing)"
+On `/grill-with-docs`, before the first interview question: run
+`python3 .trellis/scripts/get_context.py` and `--mode phase`, then create or reuse
+a planning task with `task.py create … --no-start`, and write settled decisions
+into that task as you grill (see `docs/agents/matt-flow.md`). Do not grill with
+no task when a recoverable record is wanted.
+When the user types `/implement` for a Trellis task still in `planning`, its
+first action is workflow 1.4: run `python3 .trellis/scripts/task.py start <task>`
+and confirm `task.py current --source` names the task, before any product edit
+or worker. An approval or authorization message does not replace the command.
+<!-- TRELLIS-GROK:MATT-END -->"""
+if start in text and end in text:
+    pre, rest = text.split(start, 1)
+    _, post = rest.split(end, 1)
+    new = pre.rstrip() + "\n\n" + block + "\n" + post.lstrip("\n")
+    action = "updated"
+elif "On `/grill-with-docs`" in text and "docs/agents/matt-flow.md" in text:
+    print("  in-sync: AGENTS.md (already has grill-with-docs bootstrap)")
+    raise SystemExit(0)
+else:
+    new = text.rstrip() + "\n\n" + block + "\n"
+    action = "appended"
+if new != text:
+    path.write_text(new)
+    print(f"  {action}: AGENTS.md Matt/grill block")
+else:
+    print("  in-sync: AGENTS.md Matt/grill block")
+PY
   fi
 }
 
+# Back-compat name used by init
+copy_integration() {
+  sync_integration "$@"
+}
 cmd_init() {
   local d="" user="" extra=()
   while [[ $# -gt 0 ]]; do
@@ -235,8 +363,8 @@ cmd_init() {
   (cd "$d" && trellis init -u "$user" --grok -y ${extra[@]+"${extra[@]}"})
   echo "--- copy Matt + workflow integration from $HOME_SRC"
   copy_integration "$d"
-  echo "--- apply grok fixes"
-  "$APPLY" --target "$d"
+  echo "--- apply script patches (0001-0002)"
+  "$APPLY" --target "$d" --only scripts
   echo "init done: $d"
   echo "Next: npx skills@latest add mattpocock/skills --agent grok --yes"
   echo "      then: grok --trust   (once, in the project)"
@@ -294,9 +422,10 @@ cmd_update() {
   if [[ $found -eq 0 ]]; then
     echo "  (none)"
   fi
-  echo "--- re-apply grok fixes"
+  echo "--- sync + re-apply grok fixes"
   set +e
-  "$APPLY" --target "$d"
+  sync_integration "$d"
+  "$APPLY" --target "$d" --only scripts
   local rc=$?
   set -e
   if [[ $rc -eq 3 ]]; then
