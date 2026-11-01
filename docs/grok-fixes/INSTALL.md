@@ -184,10 +184,22 @@ script patches 0001–0002:
 - `.trellis/workflow.md`, `docs/agents/matt-flow.md`, `docs/agents/issue-tracker.md`
 - `.grok/commands/trellis-{start,continue,finish-work}.md`
 - SessionStart `new`/`load` matchers into `.claude/settings.json`
-- Upserts an `AGENTS.md` Matt/grill block (`<!-- TRELLIS-GROK:MATT-START -->`)
-  including `/grill-with-docs` entry bootstrap (`get_context` + `task.py create --no-start`)
+- Upserts a Matt/grill block (`<!-- TRELLIS-GROK:MATT-START -->`) into **both**
+  `AGENTS.md` (Claude Code) and project `CLAUDE.md` (Grok Build loads this via
+  `agents_md_files`, not `AGENTS.md`), including `/grill-with-docs` entry
+  bootstrap (`get_context` + `task.py create --no-start`). Creates `CLAUDE.md`
+  when missing so Grok has somewhere to inject the block.
 
 Patches 0003–0004 remain for reference / older installs, but apply no longer
 depends on them for the grok-layer files (those patches go stale when the
 source docs evolve, which previously made apply report "already applied"
 while bootstrap text was still missing).
+
+## Grok loads CLAUDE.md not AGENTS.md (2026-11-01)
+
+Grok Build session `prompt_context.agents_md_files` only includes project
+`CLAUDE.md` (and optional `~/.claude/CLAUDE.md`). The Matt/grill bootstrap that
+lives in `AGENTS.md` was invisible to Grok until `trellis-grok apply` also
+upserted the same `<!-- TRELLIS-GROK:MATT-START -->` block into `CLAUDE.md`.
+Keep both files in sync; do not remove the AGENTS.md copy (Claude Code still
+reads it).
