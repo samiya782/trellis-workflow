@@ -104,13 +104,49 @@ then runs that clone's installer. The cache is `TRELLIS_GROK_CLONE_DIR`, or
 on Linux, or `%LOCALAPPDATA%\trellis-grok\workflow` on Windows. A dirty cache
 is left alone and the command stops.
 
-Platforms (any combination; omit all three to install all of them):
+Platforms (any combination). Omit every platform flag to install Claude Code,
+Codex, and Grok Build. `--codefree-o` and `--codefree-space` are opt-in and
+are not included in that default. Official `trellis init` has no flag for
+codefree-o or CodeFree Space, so those names are not passed through to it.
 
-| Flag | `trellis init` | Overlay copied from the source checkout | Matt skills agent |
+| Flag | `trellis init` | What the overlay writes | Matt skills agent |
 |---|---|---|---|
 | `--claude` | `--claude` | `.claude/hooks/session-start.py`, `.claude/hooks/inject-subagent-context.py`, `.claude/commands/trellis/{continue,finish-work}.md`, plus the SessionStart `new`/`load` merge into `.claude/settings.json` | `claude-code` |
 | `--codex` | `--codex` | `.codex/config.toml`, `.codex/hooks/{session-start,inject-subagent-context}.py`, `.codex/agents/trellis-{check,implement,research}.toml`, `.agents/skills/trellis-{start,continue,finish-work}/SKILL.md` | `codex` |
 | `--grok` | `--grok` | `.grok/commands/trellis-*.md` (start, continue, finish-work, and `trellis-grok-deploy`) | `grok` |
+| `--codefree-o` | not passed | `.agents/skills/trellis-{start,continue,finish-work}/SKILL.md` and `.codefree-o/command/trellis-{start,continue,finish-work}.md`. The grill block is upserted into `AGENTS.md` and `CLAUDE.md` on every install | `codex` (the skills CLI writes `.agents/skills` for that name; this is not a Codex install) |
+| `--codefree-space` | not passed | the same `.agents/skills/trellis-*` files, plus the grill block in `AGENTS.md` and `CLAUDE.md`. CodeFree Space has no project command directory | `codex` (same directory; one `--agent codex` if either new client or `--codex` is requested) |
+
+An install that names only `--codefree-o` and/or `--codefree-space` still
+needs a `.trellis/` tree. The installer runs `trellis init --codex` in a
+throwaway directory, copies `.trellis/`, `AGENTS.md` (only if the target has
+none), `.gitattributes` (only if the target has none), and `.agents/` files
+that are not already present, then deletes `.codex/` keys from
+`.trellis/.template-hashes.json`. It does not copy `.codex/`. Existing files
+under `.agents/` are left in place, then the three aligned Trellis skills are
+overwritten from this checkout. `--opencode` is not used.
+
+codefree-o reads the first existing file among `AGENTS.md`, `CLAUDE.md`, and
+`CONTEXT.md`. The grill / `get_context.py` / `task.py create … --no-start`
+block is written into `AGENTS.md`, so that is the file codefree-o loads.
+CodeFree Space reads `AGENTS.md` and `CLAUDE.md`. Neither client has a
+SessionStart hook in this overlay. Do not add a project `codefree.json`.
+
+From this checkout, with no `trellis-grok` command on PATH:
+
+```bash
+scripts/grok-fixes/oneclick.sh ~/my-project -u your-name --codefree-o --codefree-space
+```
+
+```powershell
+.\scripts\grok-fixes\oneclick.ps1 "$env:USERPROFILE\my-project" -u your-name --codefree-o --codefree-space
+```
+
+The GitHub `curl` and `irm` examples above publish whatever is on branch
+`grok`. They still show `--claude --codex --grok`. Run the CodeFree flags
+from this checkout until that branch is pushed. Windows launchers forward
+the new flags in `$args` / `%*`. `oneclick.ps1` has no `param()` block, and
+it still calls Git for Windows `bash.exe`, not `C:\Windows\System32\bash.exe`.
 
 Every install also copies `.trellis/workflow.md`, `docs/agents/matt-flow.md`,
 `docs/agents/issue-tracker.md`, and the patched

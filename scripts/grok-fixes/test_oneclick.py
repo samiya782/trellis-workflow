@@ -412,6 +412,8 @@ def main() -> int:
         check("claude-only has the Claude hook", (claude_only / ".claude/hooks/session-start.py").is_file())
         check("claude-only does not create .grok", not (claude_only / ".grok").exists())
         check("claude-only does not create .codex", not (claude_only / ".codex").exists())
+        check("claude-only does not create .codefree-o", not (claude_only / ".codefree-o").exists())
+        check("claude-only does not create .opencode", not (claude_only / ".opencode").exists())
         check("claude-only skips Matt skills", not (claude_only / "skills-lock.json").exists())
         assert_bootstrap(claude_only, "claude-only")
 

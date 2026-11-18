@@ -1,7 +1,10 @@
 # One-click Trellis + Matt setup for Claude Code, Codex, and Grok Build.
+# Opt-in: --codefree-o and --codefree-space (CodeFree Space). They are not
+# part of the no-flag default.
 #
 # From this checkout, in PowerShell:
 #   .\oneclick.ps1 $env:USERPROFILE\my-project -u NAME --claude --codex --grok
+#   .\oneclick.ps1 $env:USERPROFILE\my-project -u NAME --codefree-o --codefree-space
 #
 # From GitHub, with no checkout and no trellis-grok command:
 #   & ([scriptblock]::Create((irm https://raw.githubusercontent.com/samiya782/trellis-workflow/grok/scripts/grok-fixes/oneclick.ps1))) "$env:USERPROFILE\my-project" -u your-name --claude --codex --grok
@@ -11,8 +14,9 @@
 # clone's oneclick.sh through Git for Windows bash.exe. It does not call
 # C:\Windows\System32\bash.exe. Cache: TRELLIS_GROK_CLONE_DIR, or
 # %LOCALAPPDATA%\trellis-grok\workflow.
-# Do not add a param() block: install flags such as -u and --claude must
-# stay in $args.
+# Do not add a param() block: install flags such as -u, --claude,
+# --codefree-o, and --codefree-space must stay in $args. The launcher
+# forwards @args to invoke-git-bash.cmd.
 $ErrorActionPreference = "Stop"
 
 function Get-ScriptHere {

@@ -1,11 +1,16 @@
 #!/usr/bin/env bash
 # One-click Trellis + Matt setup for Claude Code, Codex, and Grok Build.
+# Opt-in clients, not part of the no-flag default: --codefree-o and
+# --codefree-space (CodeFree Space). Official trellis init has no flag for
+# those clients; trellis-grok install writes the files they load.
 #
 # From this checkout, or from a clone of branch grok:
 #   scripts/grok-fixes/oneclick.sh [DIR] [-u NAME] [--claude] [--codex] [--grok]
+#       [--codefree-o] [--codefree-space]
 #
 # Flags are the same as `trellis-grok install`, including --from-github and
-# --no-skills. No platform flags installs all three.
+# --no-skills, and are forwarded with "$@". No platform flags installs
+# Claude Code, Codex, and Grok Build.
 #
 # A downloaded copy of this file (no neighboring trellis-grok) clones
 # https://github.com/samiya782/trellis-workflow branch grok, then runs that

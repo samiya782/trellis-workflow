@@ -37,6 +37,10 @@ class TrellisGrokCliTests(unittest.TestCase):
         self.assertIn("--claude", text)
         self.assertIn("--codex", text)
         self.assertIn("--grok", text)
+        self.assertIn("--codefree-o", text)
+        self.assertIn("--codefree-space", text)
+        self.assertIn("opt-in", text)
+        self.assertIn("Official trellis init has no flag", text)
         self.assertIn("--from-github", text)
         self.assertIn("--no-skills", text)
         self.assertIn("Windows", text)
@@ -57,6 +61,24 @@ class TrellisGrokCliTests(unittest.TestCase):
         result = run("install", str(ROOT), "--no-skills", "-u", "refuse-test")
         self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
         self.assertIn("refusing to install", result.stderr)
+
+    def test_windows_launcher_forwards_new_flags_without_a_param_block(self):
+        ps1 = (FIX / "oneclick.ps1").read_text(encoding="utf-8")
+        for line in ps1.splitlines():
+            stripped = line.strip()
+            if stripped.startswith("#"):
+                continue
+            self.assertNotIn("param(", stripped.lower())
+        self.assertIn("@args", ps1)
+        self.assertIn("invoke-git-bash.cmd", ps1)
+        self.assertIn("System32\\bash.exe", ps1)
+        sh = (FIX / "oneclick.sh").read_text(encoding="utf-8")
+        self.assertIn('"$@"', sh)
+        self.assertIn("--codefree-o", sh)
+        self.assertIn("--codefree-space", sh)
+        cmd = (FIX / "oneclick.cmd").read_text(encoding="utf-8")
+        self.assertIn("%*", cmd)
+        self.assertIn("invoke-git-bash.cmd", cmd)
 
 
 if __name__ == "__main__":

@@ -7,6 +7,7 @@
 #   trellis-grok revert  [DIR]
 #   trellis-grok init    [DIR] [-u NAME] [--claude] [--codex] [...]
 #   trellis-grok install [DIR] [-u NAME] [--claude] [--codex] [--grok]
+#                        [--codefree-o] [--codefree-space]
 #                        [--from-github] [--no-skills]
 #   trellis-grok update  [DIR] [--allow-workflow]
 #   trellis-grok --help
@@ -86,12 +87,17 @@ Usage:
                                  skills. Extra flags (including --claude/--codex)
                                  are passed through to trellis init.
   trellis-grok install [DIR] [-u NAME] [--claude] [--codex] [--grok]
+                                 [--codefree-o] [--codefree-space]
                                  [--from-github] [--no-skills]
                                  [trellis-init-flags...]
                                  One-click: trellis init for the requested
-                                 platforms, copy this checkout's overlays,
+                                 official platforms, copy this checkout's overlays,
                                  install Matt skills, apply script fixes.
-                                 No platform flags means all three.
+                                 No platform flags means Claude Code, Codex, and
+                                 Grok Build. --codefree-o and --codefree-space
+                                 are opt-in. Official trellis init has no flag
+                                 for those clients; the overlay writes the files
+                                 they load.
                                  --from-github clones branch grok and copies
                                  from that clone. --no-skills skips npx skills.
   trellis-grok update  [DIR] [--allow-workflow]
@@ -424,11 +430,136 @@ copy_overlay_file() {
   echo "  copied: $rel"
 }
 
+# codefree-o slash commands live in .codefree-o/command/<name>.md.
+# The body is the installed skill, so /trellis-start matches trellis-start.
+write_codefree_o_commands() {
+  local d="$1"
+  py_exec - "$d" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+root = Path(sys.argv[1])
+names = ("trellis-start", "trellis-continue", "trellis-finish-work")
+out_dir = root / ".codefree-o" / "command"
+out_dir.mkdir(parents=True, exist_ok=True)
+for name in names:
+    skill = root / ".agents" / "skills" / name / "SKILL.md"
+    if not skill.is_file():
+        print(f"error: missing {skill}", file=sys.stderr)
+        raise SystemExit(2)
+    text = skill.read_text(encoding="utf-8")
+    desc = name
+    body = text
+    if text.startswith("---\n"):
+        end = text.find("\n---\n", 4)
+        if end != -1:
+            front = text[4:end]
+            body = text[end + 5 :]
+            for line in front.splitlines():
+                if line.startswith("description:"):
+                    raw = line.split(":", 1)[1].strip()
+                    if len(raw) >= 2 and raw[0] == raw[-1] and raw[0] in "\"'":
+                        inner = raw[1:-1]
+                        desc = json.loads(raw) if raw[0] == '"' else inner.replace("\\'", "'")
+                    else:
+                        desc = raw
+                    break
+    body = body.lstrip("\n")
+    if "$ARGUMENTS" not in body:
+        body = "User arguments: $ARGUMENTS\n\n" + body
+    content = "---\ndescription: " + json.dumps(desc, ensure_ascii=False) + "\n---\n\n" + body
+    if not content.endswith("\n"):
+        content += "\n"
+    dest = out_dir / f"{name}.md"
+    rel = f".codefree-o/command/{name}.md"
+    if dest.is_file() and dest.read_text(encoding="utf-8") == content:
+        print(f"  in-sync: {rel}")
+    else:
+        dest.write_text(content, encoding="utf-8")
+        print(f"  wrote: {rel}")
+PY
+}
+
+# Throwaway `trellis init --codex` used only to obtain the shared .agents
+# skill tree and, when no official platform was requested, the .trellis core.
+# The temporary Codex directory is not copied into the target.
+seed_tmp=""
+cleanup_seed() {
+  if [[ -n "${seed_tmp:-}" && -d "$seed_tmp" ]]; then
+    rm -rf "$seed_tmp"
+  fi
+}
+
+ensure_codex_seed() {
+  local user="$1"
+  shift
+  local -a extra=()
+  if [[ $# -gt 0 ]]; then
+    extra=("$@")
+  fi
+  if [[ -n "${seed_tmp:-}" && -d "$seed_tmp/.trellis" ]]; then
+    return 0
+  fi
+  seed_tmp="$(mktemp -d)"
+  git -C "$seed_tmp" init -q
+  echo "--- throwaway trellis init --codex for the shared .agents skill tree (Codex files are not copied)"
+  (cd "$seed_tmp" && trellis init -u "$user" -y --codex ${extra[@]+"${extra[@]}"})
+}
+
+import_agents_no_clobber() {
+  local src="$1" dest_root="$2"
+  py_exec - "$src" "$dest_root" <<'PY'
+import os
+import shutil
+import sys
+
+src, dest_root = sys.argv[1], sys.argv[2]
+agents = os.path.join(src, ".agents")
+if not os.path.isdir(agents):
+    print("error: seed has no .agents", file=sys.stderr)
+    raise SystemExit(2)
+copied = 0
+for root, dirs, files in os.walk(agents):
+    rel = os.path.relpath(root, src)
+    target_root = os.path.join(dest_root, rel)
+    os.makedirs(target_root, exist_ok=True)
+    for name in files:
+        source = os.path.join(root, name)
+        target = os.path.join(target_root, name)
+        if os.path.lexists(target):
+            continue
+        shutil.copy2(source, target)
+        copied += 1
+print(f"  seeded .agents files: {copied}")
+PY
+}
+
+strip_codex_hashes() {
+  local manifest="$1/.trellis/.template-hashes.json"
+  [[ -f "$manifest" ]] || return 0
+  py_exec - "$manifest" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+path = Path(sys.argv[1])
+data = json.loads(path.read_text(encoding="utf-8"))
+hashes = data.get("hashes", {})
+removed = [key for key in hashes if key.startswith(".codex/") or key.startswith(".codex\\")]
+for key in removed:
+    del hashes[key]
+path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+print(f"  dropped {len(removed)} .codex template hashes")
+PY
+}
+
 # Platform overlays from the README copy list. Shared script fixes are always
 # copied. Claude / Codex / Grok files are copied only for the platforms named
-# on this install. .agents/skills/trellis-* are the Codex skill surface.
+# on this install. .agents/skills/trellis-* is the shared skill tree read by
+# Codex, codefree-o, and CodeFree Space.
 copy_platform_overlay() {
-  local d="$1" claude="$2" codex="$3" grok="$4"
+  local d="$1" claude="$2" codex="$3" grok="$4" codefree_o="$5" space="$6"
   local rel base f
   for rel in \
     .trellis/scripts/common/active_task.py \
@@ -453,13 +584,22 @@ copy_platform_overlay() {
       .codex/hooks/inject-subagent-context.py \
       .codex/agents/trellis-check.toml \
       .codex/agents/trellis-implement.toml \
-      .codex/agents/trellis-research.toml \
+      .codex/agents/trellis-research.toml
+    do
+      copy_overlay_file "$rel" "$d"
+    done
+  fi
+  if [[ "$codex" -eq 1 || "$codefree_o" -eq 1 || "$space" -eq 1 ]]; then
+    for rel in \
       .agents/skills/trellis-start/SKILL.md \
       .agents/skills/trellis-continue/SKILL.md \
       .agents/skills/trellis-finish-work/SKILL.md
     do
       copy_overlay_file "$rel" "$d"
     done
+  fi
+  if [[ "$codefree_o" -eq 1 ]]; then
+    write_codefree_o_commands "$d"
   fi
   if [[ "$grok" -eq 1 && -d "$HOME_SRC/.grok/commands" ]]; then
     for f in "$HOME_SRC"/.grok/commands/trellis-*.md; do
@@ -510,7 +650,7 @@ clone_github_source() {
 }
 
 install_matt_skills() {
-  local d="$1" no_skills="$2" claude="$3" codex="$4" grok="$5"
+  local d="$1" no_skills="$2" claude="$3" codex="$4" grok="$5" codefree_o="$6" space="$7"
   local -a agents=()
   if [[ "$no_skills" -eq 1 ]]; then
     echo "--- skip Matt skills (--no-skills)"
@@ -521,19 +661,26 @@ install_matt_skills() {
     exit 2
   }
   [[ "$claude" -eq 1 ]] && agents+=(claude-code)
-  [[ "$codex" -eq 1 ]] && agents+=(codex)
+  # codefree-o and CodeFree Space both read .agents/skills. The skills CLI
+  # writes that directory for the agent name "codex".
+  if [[ "$codex" -eq 1 || "$codefree_o" -eq 1 || "$space" -eq 1 ]]; then
+    agents+=(codex)
+  fi
   [[ "$grok" -eq 1 ]] && agents+=(grok)
   if [[ ${#agents[@]} -eq 0 ]]; then
     echo "--- skip Matt skills (no platforms)"
     return 0
   fi
   echo "--- npx skills@latest add mattpocock/skills --agent ${agents[*]} --yes"
+  if [[ "$codefree_o" -eq 1 || "$space" -eq 1 ]]; then
+    echo "    .agents/skills is what codefree-o and CodeFree Space scan"
+  fi
   (cd "$d" && npx --yes skills@latest add mattpocock/skills --agent "${agents[@]}" --yes)
 }
 
 cmd_install() {
   local d="" user="" from_github=0 no_skills=0
-  local want_claude=0 want_codex=0 want_grok=0 platform_set=0
+  local want_claude=0 want_codex=0 want_grok=0 want_codefree_o=0 want_space=0 platform_set=0
   local -a extra=() replay=()
   while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -544,6 +691,8 @@ cmd_install() {
       --claude) want_claude=1; platform_set=1; replay+=("$1"); shift; continue ;;
       --codex) want_codex=1; platform_set=1; replay+=("$1"); shift; continue ;;
       --grok) want_grok=1; platform_set=1; replay+=("$1"); shift; continue ;;
+      --codefree-o) want_codefree_o=1; platform_set=1; replay+=("$1"); shift; continue ;;
+      --codefree-space) want_space=1; platform_set=1; replay+=("$1"); shift; continue ;;
       --from-github) from_github=1; shift; continue ;;
       --no-skills) no_skills=1; replay+=("$1"); shift; continue ;;
       -h|--help) usage 0 ;;
@@ -566,6 +715,7 @@ cmd_install() {
     echo "github source: $src"
     exec env TRELLIS_GROK_HOME="$src" "$0" install "${replay[@]}"
   fi
+  trap cleanup_seed EXIT
   if [[ $platform_set -eq 0 ]]; then
     want_claude=1; want_codex=1; want_grok=1
     echo "install: no platform flags; using --claude --codex --grok"
@@ -598,9 +748,13 @@ cmd_install() {
   echo "source checkout: $HOME_SRC"
   echo "target: $d"
   local -a platforms=()
-  [[ $want_claude -eq 1 ]] && platforms+=(--claude)
-  [[ $want_codex -eq 1 ]] && platforms+=(--codex)
-  [[ $want_grok -eq 1 ]] && platforms+=(--grok)
+  local -a clients=()
+  [[ $want_claude -eq 1 ]] && platforms+=(--claude) && clients+=(claude)
+  [[ $want_codex -eq 1 ]] && platforms+=(--codex) && clients+=(codex)
+  [[ $want_grok -eq 1 ]] && platforms+=(--grok) && clients+=(grok)
+  [[ $want_codefree_o -eq 1 ]] && clients+=(codefree-o)
+  [[ $want_space -eq 1 ]] && clients+=(codefree-space)
+  local seeded_agents=0
   if [[ -d "$d/.trellis" ]]; then
     echo "--- .trellis exists; skipping trellis init"
   else
@@ -608,21 +762,51 @@ cmd_install() {
       git -C "$d" init
       echo "  git init: $d"
     fi
-    echo "--- trellis init -u $user -y ${platforms[*]:-} ${extra[*]:-}"
-    (cd "$d" && trellis init -u "$user" -y ${platforms[@]+"${platforms[@]}"} ${extra[@]+"${extra[@]}"})
+    if [[ ${#platforms[@]} -gt 0 ]]; then
+      echo "--- trellis init -u $user -y ${platforms[*]:-} ${extra[*]:-}"
+      (cd "$d" && trellis init -u "$user" -y ${platforms[@]+"${platforms[@]}"} ${extra[@]+"${extra[@]}"})
+    else
+      echo "--- official trellis init has no codefree-o or CodeFree Space flag; seeding .trellis without those clients' trees"
+      ensure_codex_seed "$user" ${extra[@]+"${extra[@]}"}
+      cp -a "$seed_tmp/.trellis" "$d/.trellis"
+      if [[ ! -e "$d/AGENTS.md" && -f "$seed_tmp/AGENTS.md" ]]; then
+        cp -p "$seed_tmp/AGENTS.md" "$d/AGENTS.md"
+        echo "  seeded: AGENTS.md"
+      fi
+      if [[ ! -e "$d/.gitattributes" && -f "$seed_tmp/.gitattributes" ]]; then
+        cp -p "$seed_tmp/.gitattributes" "$d/.gitattributes"
+        echo "  seeded: .gitattributes"
+      fi
+      strip_codex_hashes "$d"
+      import_agents_no_clobber "$seed_tmp" "$d"
+      seeded_agents=1
+    fi
+  fi
+  if [[ ($want_codefree_o -eq 1 || $want_space -eq 1) && $want_codex -eq 0 && $seeded_agents -eq 0 ]]; then
+    if [[ ! -f "$d/.agents/skills/trellis-before-dev/SKILL.md" ]]; then
+      ensure_codex_seed "$user"
+      import_agents_no_clobber "$seed_tmp" "$d"
+    fi
   fi
   echo "--- Matt skills"
-  install_matt_skills "$d" "$no_skills" "$want_claude" "$want_codex" "$want_grok"
+  install_matt_skills "$d" "$no_skills" "$want_claude" "$want_codex" "$want_grok" "$want_codefree_o" "$want_space"
   echo "--- copy platform overlays from $HOME_SRC"
-  copy_platform_overlay "$d" "$want_claude" "$want_codex" "$want_grok"
+  copy_platform_overlay "$d" "$want_claude" "$want_codex" "$want_grok" "$want_codefree_o" "$want_space"
   echo "--- sync workflow, Matt docs, Grok commands, AGENTS.md, CLAUDE.md"
   sync_integration "$d"
   echo "--- apply script patches (0001-0002)"
   "$APPLY" --target "$d" --only scripts
   echo "install done: $d"
   echo "platforms: ${platforms[*]:-(none)}"
+  echo "clients: ${clients[*]:-(none)}"
   if [[ $want_grok -eq 1 ]]; then
     echo "Next for Grok: grok --trust   (once, in the project)"
+  fi
+  if [[ $want_codefree_o -eq 1 ]]; then
+    echo "Next for codefree-o: AGENTS.md, .agents/skills, and .codefree-o/command are project-local. Slash commands: /trellis-start /trellis-continue /trellis-finish-work."
+  fi
+  if [[ $want_space -eq 1 ]]; then
+    echo "Next for CodeFree Space: open this folder in the app. It reads AGENTS.md, CLAUDE.md, and .agents/skills."
   fi
 }
 
