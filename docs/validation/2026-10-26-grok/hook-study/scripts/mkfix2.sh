@@ -1,5 +1,5 @@
 set -e
-B=/home/samiya/tmp/trellis-grok-val-20261026
+B=/home/samiya/tmp/trellis-matt-val-20261026
 cp -a $B/hs-tpl-ours $B/hs-tpl-fix2
 cd $B/hs-tpl-fix2
 python3 /tmp/grokval/hs/apply_fix2.py .

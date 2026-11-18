@@ -1,5 +1,5 @@
 
-  textstats-top ~/t/trellis-grok-val-20261026/recheck-tui                                                                                                                     91K / 256K │ [Dashboard]
+  textstats-top ~/t/trellis-matt-val-20261026/recheck-tui                                                                                                                     91K / 256K │ [Dashboard]
 
 
      ❯ /implement-spec .trellis/tasks/10-26-textstats-top — you are authorized to implement both tickets in blocker order. Do not commit.                                                    7:30 AM

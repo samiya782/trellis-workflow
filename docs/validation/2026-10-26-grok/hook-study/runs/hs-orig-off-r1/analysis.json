@@ -1,7 +1,7 @@
 {
   "run": "hs-orig-off-r1",
   "session_id": "5faca25e-7c3d-498a-9b84-866f440195de",
-  "session_dir": "/home/samiya/.grok/sessions/%2Fhome%2Fsamiya%2Ftmp%2Ftrellis-grok-val-20261026%2Fhs-orig-off-r1/5faca25e-7c3d-498a-9b84-866f440195de",
+  "session_dir": "/home/samiya/.grok/sessions/%2Fhome%2Fsamiya%2Ftmp%2Ftrellis-matt-val-20261026%2Fhs-orig-off-r1/5faca25e-7c3d-498a-9b84-866f440195de",
   "tool_names": {
     "CMD": 8,
     "read_file": 24,
@@ -169,12 +169,12 @@
     [
       "EDIT",
       1,
-      "search_replace /home/samiya/tmp/trellis-grok-val-20261026/hs-orig-off-r1/.trellis/tasks/10-26-textstats-top/prd.md"
+      "search_replace /home/samiya/tmp/trellis-matt-val-20261026/hs-orig-off-r1/.trellis/tasks/10-26-textstats-top/prd.md"
     ],
     [
       "EDIT",
       1,
-      "search_replace /home/samiya/tmp/trellis-grok-val-20261026/hs-orig-off-r1/.trellis/tasks/10-26-textstats-top/task.json"
+      "search_replace /home/samiya/tmp/trellis-matt-val-20261026/hs-orig-off-r1/.trellis/tasks/10-26-textstats-top/task.json"
     ],
     [
       "USER",
@@ -289,17 +289,17 @@
     [
       "EDIT",
       2,
-      "search_replace /home/samiya/tmp/trellis-grok-val-20261026/hs-orig-off-r1/.trellis/spec/backend/textstats-cli.md"
+      "search_replace /home/samiya/tmp/trellis-matt-val-20261026/hs-orig-off-r1/.trellis/spec/backend/textstats-cli.md"
     ],
     [
       "EDIT",
       2,
-      "search_replace /home/samiya/tmp/trellis-grok-val-20261026/hs-orig-off-r1/.trellis/spec/backend/index.md"
+      "search_replace /home/samiya/tmp/trellis-matt-val-20261026/hs-orig-off-r1/.trellis/spec/backend/index.md"
     ],
     [
       "EDIT",
       2,
-      "search_replace /home/samiya/tmp/trellis-grok-val-20261026/hs-orig-off-r1/.trellis/tasks/10-26-textstats-top/task.json"
+      "search_replace /home/samiya/tmp/trellis-matt-val-20261026/hs-orig-off-r1/.trellis/tasks/10-26-textstats-top/task.json"
     ],
     [
       "CMD",

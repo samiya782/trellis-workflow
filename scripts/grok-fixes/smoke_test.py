@@ -17,7 +17,7 @@ target = Path(sys.argv[1] if len(sys.argv) > 1 else ".").resolve()
 if not (target / ".trellis" / "scripts" / "task.py").is_file():
     sys.exit(f"smoke: {target} has no .trellis/scripts/task.py")
 
-tmp = Path(tempfile.mkdtemp(prefix="trellis-grok-smoke-"))
+tmp = Path(tempfile.mkdtemp(prefix="trellis-matt-smoke-"))
 keep = os.environ.get("SMOKE_KEEP") == "1"
 env = {k: v for k, v in os.environ.items()
        if not k.startswith(("TRELLIS_", "CODEX_", "CLAUDE_", "DSH_", "GROK_", "GIT_"))}

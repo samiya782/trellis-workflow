@@ -62,10 +62,10 @@ def shell_path(path: Path) -> str:
 def base_env(**overrides: str) -> dict[str, str]:
     env = os.environ.copy()
     for key in (
-        "TRELLIS_GROK_PLATFORM",
-        "TRELLIS_GROK_CLONE_DIR",
-        "TRELLIS_GROK_PYTHON",
-        "TRELLIS_GROK_HOME",
+        "TRELLIS_MATT_PLATFORM",
+        "TRELLIS_MATT_CLONE_DIR",
+        "TRELLIS_MATT_PYTHON",
+        "TRELLIS_MATT_HOME",
         "XDG_CACHE_HOME",
         "XDG_BIN_HOME",
     ):
@@ -82,20 +82,20 @@ def write_stub(directory: Path, name: str, body: str) -> None:
 
 class PlatformSupportTests(unittest.TestCase):
     def test_linux_clone_dir_uses_xdg_or_home_cache(self):
-        home = "/tmp/trellis-grok-platform-home"
-        env = base_env(HOME=home, TRELLIS_GROK_PLATFORM="unix", PATH=os.environ.get("PATH", ""))
+        home = "/tmp/trellis-matt-platform-home"
+        env = base_env(HOME=home, TRELLIS_MATT_PLATFORM="unix", PATH=os.environ.get("PATH", ""))
         result = run_platform("clone-dir", env)
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual(result.stdout.strip(), f"{home}/.cache/trellis-grok/workflow")
+        self.assertEqual(result.stdout.strip(), f"{home}/.cache/trellis-matt/workflow")
 
-        env["XDG_CACHE_HOME"] = "/var/tmp/trellis-grok-xdg"
+        env["XDG_CACHE_HOME"] = "/var/tmp/trellis-matt-xdg"
         result = run_platform("clone-dir", env)
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual(result.stdout.strip(), "/var/tmp/trellis-grok-xdg/trellis-grok/workflow")
+        self.assertEqual(result.stdout.strip(), "/var/tmp/trellis-matt-xdg/trellis-matt/workflow")
 
     def test_windows_clone_dir_uses_localappdata(self):
         env = base_env(
-            TRELLIS_GROK_PLATFORM="windows",
+            TRELLIS_MATT_PLATFORM="windows",
             LOCALAPPDATA=r"C:\Users\Example\AppData\Local",
             HOME="/tmp/unused-home",
             PATH=os.environ.get("PATH", ""),
@@ -103,14 +103,14 @@ class PlatformSupportTests(unittest.TestCase):
         result = run_platform("clone-dir", env)
         self.assertEqual(result.returncode, 0, result.stderr)
         text = result.stdout.strip().replace("\\", "/")
-        self.assertTrue(text.endswith("/trellis-grok/workflow"), text)
+        self.assertTrue(text.endswith("/trellis-matt/workflow"), text)
         self.assertIn("AppData/Local", text)
         self.assertNotIn("/home/samiya", text)
 
     def test_clone_dir_override_wins(self):
         env = base_env(
-            TRELLIS_GROK_PLATFORM="unix",
-            TRELLIS_GROK_CLONE_DIR="/override/trellis-workflow",
+            TRELLIS_MATT_PLATFORM="unix",
+            TRELLIS_MATT_CLONE_DIR="/override/trellis-workflow",
             HOME="/tmp/unused",
             PATH=os.environ.get("PATH", ""),
         )
@@ -123,7 +123,7 @@ class PlatformSupportTests(unittest.TestCase):
             stub = Path(raw)
             write_stub(stub, "python3", "#!/bin/sh\nexit 0\n")
             write_stub(stub, "python", "#!/bin/sh\necho should-not-run >&2\nexit 0\n")
-            env = base_env(PATH=str(stub), TRELLIS_GROK_PLATFORM="unix")
+            env = base_env(PATH=str(stub), TRELLIS_MATT_PLATFORM="unix")
             result = run_platform("python", env)
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertEqual(result.stdout.strip(), "python3")
@@ -161,7 +161,7 @@ class PlatformSupportTests(unittest.TestCase):
             tools = home / "tools"
             tools.mkdir(parents=True)
             env = base_env(
-                TRELLIS_GROK_PLATFORM="windows",
+                TRELLIS_MATT_PLATFORM="windows",
                 HOME=str(home_shell),
                 USERPROFILE=str(home),
                 PATH=os.pathsep.join([str(local_bin), "/usr/bin"]),
@@ -189,7 +189,7 @@ class PlatformSupportTests(unittest.TestCase):
             bindir = home / ".local" / "bin"
             bindir.mkdir(parents=True)
             env = base_env(
-                TRELLIS_GROK_PLATFORM="windows",
+                TRELLIS_MATT_PLATFORM="windows",
                 HOME=str(home),
                 USERPROFILE=str(home),
                 PATH=os.pathsep.join([str(bindir), os.environ.get("PATH", "")]),
@@ -204,23 +204,23 @@ class PlatformSupportTests(unittest.TestCase):
                 env=env,
             )
             self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
-            cmd = bindir / "trellis-grok.cmd"
-            ps1 = bindir / "trellis-grok.ps1"
+            cmd = bindir / "trellis-matt.cmd"
+            ps1 = bindir / "trellis-matt.ps1"
             self.assertTrue(cmd.is_file(), proc.stdout)
             self.assertTrue(ps1.is_file(), proc.stdout)
-            self.assertFalse((bindir / "trellis-grok").exists())
+            self.assertFalse((bindir / "trellis-matt").exists())
             text = cmd.read_bytes().replace(b"\r\n", b"\n").decode()
             self.assertIn("invoke-git-bash.cmd", text)
-            self.assertIn("trellis-grok", text)
+            self.assertIn("trellis-matt", text)
             self.assertNotIn("System32", text)
             self.assertNotIn("ln -s", text)
 
-    @unittest.skipIf(os.name == "nt", "Linux shortcut is a symlink; Windows writes trellis-grok.cmd")
+    @unittest.skipIf(os.name == "nt", "Linux shortcut is a symlink; Windows writes trellis-matt.cmd")
     def test_unix_shortcut_remains_a_symlink(self):
         with tempfile.TemporaryDirectory(prefix="trellis-unix-shim-") as raw:
             bindir = Path(raw) / "bin"
             env = base_env(
-                TRELLIS_GROK_PLATFORM="unix",
+                TRELLIS_MATT_PLATFORM="unix",
                 HOME=str(Path(raw) / "home"),
                 XDG_BIN_HOME=str(bindir),
                 PATH=os.environ.get("PATH", ""),
@@ -234,9 +234,9 @@ class PlatformSupportTests(unittest.TestCase):
                 env=env,
             )
             self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
-            link = bindir / "trellis-grok"
+            link = bindir / "trellis-matt"
             self.assertTrue(link.is_symlink(), proc.stdout)
-            self.assertEqual(link.resolve(), (FIX / "trellis-grok").resolve())
+            self.assertEqual(link.resolve(), (FIX / "trellis-matt").resolve())
 
     def test_launcher_refuses_system32_bash_and_keeps_default_repo(self):
         launcher = (FIX / "invoke-git-bash.cmd").read_bytes().replace(b"\r\n", b"\n").decode()
@@ -245,7 +245,7 @@ class PlatformSupportTests(unittest.TestCase):
         self.assertIn("refusing", launcher)
         self.assertIn("SCRIPT_RUN=%SCRIPT:\\=/%", launcher)
         oneclick = (FIX / "oneclick.sh").read_text(encoding="utf-8")
-        cli = (FIX / "trellis-grok").read_text(encoding="utf-8")
+        cli = (FIX / "trellis-matt").read_text(encoding="utf-8")
         for text in (oneclick, cli):
             self.assertIn("https://github.com/samiya782/trellis-workflow.git", text)
             self.assertIn("LOCALAPPDATA", text)

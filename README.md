@@ -8,8 +8,8 @@ command and pause. See the evidence note below for what has actually been run.
 
 ## Set up a new project
 
-You do not need a `trellis-grok` command already installed. The one-liners
-below download this repository's `grok` branch and run the installer.
+You do not need a `trellis-matt` command already installed. The one-liners
+below download this repository's `main` branch and run the installer.
 
 Requirements: Git, Python 3, Node/npx, and the `trellis` CLI at exactly
 **0.7.0-beta.4**, plus the clients you install: Claude Code, Codex, Grok
@@ -30,19 +30,19 @@ files instead of copying over them.
 ### Linux or WSL
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/samiya782/trellis-workflow/grok/scripts/grok-fixes/oneclick.sh \
+curl -fsSL https://raw.githubusercontent.com/samiya782/trellis-workflow/main/scripts/grok-fixes/oneclick.sh \
   | bash -s -- ~/my-project -u your-name --claude --codex --grok
 ```
 
 ### Windows (PowerShell)
 
 ```powershell
-& ([scriptblock]::Create((irm https://raw.githubusercontent.com/samiya782/trellis-workflow/grok/scripts/grok-fixes/oneclick.ps1))) "$env:USERPROFILE\my-project" -u your-name --claude --codex --grok
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/samiya782/trellis-workflow/main/scripts/grok-fixes/oneclick.ps1))) "$env:USERPROFILE\my-project" -u your-name --claude --codex --grok
 ```
 
-The script clones branch `grok` on first run (cache:
-`~/.cache/trellis-grok/workflow` on Linux, `%LOCALAPPDATA%\trellis-grok\workflow`
-on Windows, or `TRELLIS_GROK_CLONE_DIR`). Pass any combination of
+The script clones branch `main` on first run (cache:
+`~/.cache/trellis-matt/workflow` on Linux, `%LOCALAPPDATA%\trellis-matt\workflow`
+on Windows, or `TRELLIS_MATT_CLONE_DIR`). Pass any combination of
 `--claude`, `--codex`, and `--grok`. With no platform flags, it installs all
 three. `--codefree-o` and `--codefree-space` are extra and opt-in; they are
 not part of that default. `--no-skills` skips `npx skills@latest add mattpocock/skills`.
@@ -75,8 +75,7 @@ project files they already load:
   passed `--codex`.
 
 The `curl` and PowerShell one-liners above call the scripts published on
-branch `grok`. Use this checkout until those published scripts include the
-new flags:
+branch `main`. For CodeFree Space and codefree-o, from this checkout:
 
 ```bash
 scripts/grok-fixes/oneclick.sh ~/my-project -u your-name --codefree-o --codefree-space
@@ -96,34 +95,34 @@ the new flags still creates `.trellis/` and does not leave a `.codex/`,
 On Linux or WSL, from this checkout or after `scripts/grok-fixes/install-shortcut.sh`:
 
 ```bash
-trellis-grok install ~/my-project -u your-name --claude --codex --grok
+trellis-matt install ~/my-project -u your-name --claude --codex --grok
 ```
 
 On Windows, from cmd or PowerShell, without opening a Git Bash window:
 
 ```bat
-scripts\grok-fixes\trellis-grok.cmd install %USERPROFILE%\my-project -u your-name --claude --codex --grok
+scripts\grok-fixes\trellis-matt.cmd install %USERPROFILE%\my-project -u your-name --claude --codex --grok
 scripts\grok-fixes\install-shortcut.cmd
-trellis-grok install %USERPROFILE%\my-project -u your-name --claude --codex --grok
+trellis-matt install %USERPROFILE%\my-project -u your-name --claude --codex --grok
 ```
 
-`install-shortcut` writes `trellis-grok.cmd` and `trellis-grok.ps1` into a
+`install-shortcut` writes `trellis-matt.cmd` and `trellis-matt.ps1` into a
 user-writable directory that is already on PATH, or `%USERPROFILE%\.local\bin`.
 It does not need Administrator. If that directory is not on PATH, the command
 prints the directory to add. PowerShell can also run
-`scripts\grok-fixes\trellis-grok.ps1` or `scripts\grok-fixes\oneclick.ps1`.
+`scripts\grok-fixes\trellis-matt.ps1` or `scripts\grok-fixes\oneclick.ps1`.
 
 To force the file source to be a fresh GitHub clone even when a local
 checkout exists:
 
 ```bash
-trellis-grok install ~/my-project -u your-name --from-github --claude --codex --grok
+trellis-matt install ~/my-project -u your-name --from-github --claude --codex --grok
 ```
 
 `--from-github` clones `https://github.com/samiya782/trellis-workflow` branch
-`grok`. A dirty cache is left alone and the command stops.
+`main`. A dirty cache is left alone and the command stops.
 
-`trellis-grok init` is unchanged: it always passes `--grok`, forwards extra
+`trellis-matt init` is unchanged: it always passes `--grok`, forwards extra
 `trellis init` flags, and does not install Matt skills. `status`, `dry-run`,
 `apply`, `revert`, and `update` are unchanged. Details:
 [docs/grok-fixes/INSTALL.md](docs/grok-fixes/INSTALL.md#one-click-install-claude-code-codex-and-grok-build).
@@ -230,24 +229,24 @@ changes and keep the local edits.
 ## Quick deploy (Grok shortcut)
 
 ```bash
-~/trellis/scripts/grok-fixes/install-shortcut.sh   # Linux: ~/.local/bin/trellis-grok
-trellis-grok status
-trellis-grok dry-run
-trellis-grok apply                 # or: trellis-grok init -u your-name
-trellis-grok install ~/my-project -u your-name --claude --codex --grok
-trellis-grok update                # safe upgrade path (creates .new; keeps workflow.md)
+~/trellis/scripts/grok-fixes/install-shortcut.sh   # Linux: ~/.local/bin/trellis-matt
+trellis-matt status
+trellis-matt dry-run
+trellis-matt apply                 # or: trellis-matt init -u your-name
+trellis-matt install ~/my-project -u your-name --claude --codex --grok
+trellis-matt update                # safe upgrade path (creates .new; keeps workflow.md)
 ```
 
 Windows, from cmd or PowerShell:
 
 ```bat
 scripts\grok-fixes\install-shortcut.cmd
-trellis-grok status
-trellis-grok install %USERPROFILE%\my-project -u your-name --claude --codex --grok
+trellis-matt status
+trellis-matt install %USERPROFILE%\my-project -u your-name --claude --codex --grok
 ```
 
-Details: [docs/grok-fixes/INSTALL.md](docs/grok-fixes/INSTALL.md#quick-deploy-trellis-grok-shortcut).
-Slash command in Grok: `/trellis-grok-deploy`.
+Details: [docs/grok-fixes/INSTALL.md](docs/grok-fixes/INSTALL.md#quick-deploy-trellis-matt-shortcut).
+Slash command in Grok: `/trellis-matt-deploy`.
 
 ## Update the Matt skills
 
@@ -365,7 +364,7 @@ Claude Code checks:
 - **New-project setup:** the procedure above was run once in a scratch project.
 - **Grok Build (2026-10-23), once each, headless `grok -p`:** passed for the
   two plain routes and one explicit `/grill-me` below. Fixture
-  `/home/samiya/tmp/trellis-grok-matt-nPv9`,
+  `/home/samiya/tmp/trellis-matt-nPv9`,
   built with `trellis init -u fixture --claude --codex --grok -y` (the `-y`
   skips prompts), skills installer **1.7.4** (`38` skills, symlinked to Grok
   Build), and the three-file copy. Grok **1.0.67**, model **grok-4.7-build**,
@@ -389,7 +388,7 @@ Claude Code checks:
     `to-spec`, `wayfinder`, `retro`, and the other user-only Matt skills) and
     still listed `diagnosing-bugs` and `tdd`.
 - **Grok Build 1.0.70 (2026-10-26), headless, `grok-4.7-build-fast`:** fixtures
-  under `/home/samiya/tmp/trellis-grok-val-20261026/`. Passed: typo, bug report,
+  under `/home/samiya/tmp/trellis-matt-val-20261026/`. Passed: typo, bug report,
   `/grill-with-docs` (one `--no-start` task), `/wayfinder` (map plus three
   planning children), resume by task path, `/trellis-continue`, `/implement`,
   `/implement-spec` without a spec (offers `/implement`, no task). After the Grok

@@ -19,7 +19,7 @@ The typo and bug runs finished matching commits that were already in the fixture
 
 ## Failed
 
-`/grill-me Should textstats treat punctuation as part of a word?` in `/home/samiya/tmp/trellis-grok-val-20261026/normal`, session `01a17823-4787-7ee3-b9fe-4b9fca57742e`.
+`/grill-me Should textstats treat punctuation as part of a word?` in `/home/samiya/tmp/trellis-matt-val-20261026/normal`, session `01a17823-4787-7ee3-b9fe-4b9fca57742e`.
 
 The interview itself was real: it loaded `grilling` and waited through five answers. After you confirmed the contract, it updated `textstats.py` help text and `tests/test_textstats.py` directly. Those edits are still uncommitted. It did not hand back `/implement`, and it did not suggest `/grill-with-docs` for a recoverable record. That skips the user-only boundary `matt-flow.md` requires for `implement`.
 
@@ -27,14 +27,14 @@ The interview itself was real: it loaded `grilling` and waited through five answ
 
 Reply with answers, or with `accept all`, and I can resume. Otherwise run these yourself:
 
-1. Grill handoff. In `/home/samiya/tmp/trellis-grok-val-20261026/grill-docs`, resume session `01a17842-eb1b-74c1-b9c9-8f2218136197` and answer Q1–Q8. Each recommended answer is yes. The pass condition is a Trellis task plus a pause at the next user-only command, with no product code.
+1. Grill handoff. In `/home/samiya/tmp/trellis-matt-val-20261026/grill-docs`, resume session `01a17842-eb1b-74c1-b9c9-8f2218136197` and answer Q1–Q8. Each recommended answer is yes. The pass condition is a Trellis task plus a pause at the next user-only command, with no product code.
 2. Wayfinder continuation, only after that if you want the planning ticket grilled:
 
 ```text
 /wayfinder .trellis/tasks/10-26-textstats-library-map
 ```
 
-Run that in `/home/samiya/tmp/trellis-grok-val-20261026/wayfinder`.
+Run that in `/home/samiya/tmp/trellis-matt-val-20261026/wayfinder`.
 
 3. Spec publication from the seeded resume. `/to-spec` will ask you to confirm the testing seam:
 
@@ -42,7 +42,7 @@ Run that in `/home/samiya/tmp/trellis-grok-val-20261026/wayfinder`.
 /to-spec .trellis/tasks/10-26-textstats-top
 ```
 
-Run that in `/home/samiya/tmp/trellis-grok-val-20261026/continue`. The recorded seam is unittest. `/to-tickets`, `/implement-spec` on a real spec, and closeout come after this.
+Run that in `/home/samiya/tmp/trellis-matt-val-20261026/continue`. The recorded seam is unittest. `/to-tickets`, `/implement-spec` on a real spec, and closeout come after this.
 
 Still not run: Codex with the current routing text, `/retro`, and `/trellis-finish-work`. The Grok continue command file is still the stock Trellis phase list. The continue run also loaded `matt-flow.md` and stopped at the boundary above.
 EXIT=0

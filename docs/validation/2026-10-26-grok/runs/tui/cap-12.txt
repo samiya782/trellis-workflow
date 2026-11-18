@@ -1,5 +1,5 @@
 
-  textstats-top ~/t/trellis-grok-val-20261026/recheck-tui                                                                                                                    124K / 256K │ [Dashboard]
+  textstats-top ~/t/trellis-matt-val-20261026/recheck-tui                                                                                                                    124K / 256K │ [Dashboard]
 
 
      ❯ /trellis-finish-work — do not commit and do not push. Archive the finished tickets with --no-commit and leave the parent spec task active.                                            7:37 AM

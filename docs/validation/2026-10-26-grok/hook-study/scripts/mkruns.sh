@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # create disposable run copies; "off" variants drop the hooks block from .claude/settings.json
 set -euo pipefail
-B=$HOME/tmp/trellis-grok-val-20261026
+B=$HOME/tmp/trellis-matt-val-20261026
 for r in "$@"; do            # e.g. hs-orig-on-r1
   fx=$(echo "$r" | cut -d- -f2); mode=$(echo "$r" | cut -d- -f3)
   rm -rf "$B/$r"; cp -a "$B/hs-tpl-$fx" "$B/$r"

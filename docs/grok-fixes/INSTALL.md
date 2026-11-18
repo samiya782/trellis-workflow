@@ -22,7 +22,7 @@ against Trellis **0.7.0-beta.4** with Grok Build **1.0.70**.
 
 It commits nothing, and running it twice is safe.
 
-## Quick deploy (`trellis-grok` shortcut)
+## Quick deploy (`trellis-matt` shortcut)
 
 Prerequisites on Linux and Windows: Git, Python 3, Node/npx, and the Trellis CLI
 at exactly **0.7.0-beta.4**. Install the CLI with the same command on both:
@@ -47,7 +47,7 @@ On Windows, from cmd or PowerShell (no Administrator, and no need to open Git Ba
 scripts\grok-fixes\install-shortcut.cmd
 ```
 
-That writes `trellis-grok.cmd` and `trellis-grok.ps1` into a user-writable
+That writes `trellis-matt.cmd` and `trellis-matt.ps1` into a user-writable
 directory already on PATH, or `%USERPROFILE%\.local\bin`. If the directory is
 not on PATH, the command says so. The `.cmd` file finds
 `C:\Program Files\Git\bin\bash.exe` (or Git's `bash.exe` next to `git.exe`).
@@ -56,25 +56,25 @@ It does not call `C:\Windows\System32\bash.exe`.
 Then, in any Trellis project (or pass `DIR`):
 
 ```bash
-trellis-grok status              # version + applied/pending/conflict per patch
-trellis-grok dry-run [DIR]       # preview
-trellis-grok apply [DIR]         # apply + smoke test (idempotent)
-trellis-grok revert [DIR]        # undo patches
-trellis-grok init [DIR] -u NAME  # new project: trellis init --grok, copy Matt
+trellis-matt status              # version + applied/pending/conflict per patch
+trellis-matt dry-run [DIR]       # preview
+trellis-matt apply [DIR]         # apply + smoke test (idempotent)
+trellis-matt revert [DIR]        # undo patches
+trellis-matt init [DIR] -u NAME  # new project: trellis init --grok, copy Matt
                                  # docs + workflow + aligned .grok/commands, apply
-trellis-grok update [DIR]        # safe: trellis update -n, re-apply, list .new;
+trellis-matt update [DIR]        # safe: trellis update -n, re-apply, list .new;
                                  # protects .trellis/workflow.md by default
 ```
 
-Override the source checkout with `TRELLIS_GROK_HOME=/path/to/checkout`.
-Grok Build slash command: `.grok/commands/trellis-grok-deploy.md` (`/trellis-grok-deploy`)
+Override the source checkout with `TRELLIS_MATT_HOME=/path/to/checkout`.
+Grok Build slash command: `.grok/commands/trellis-matt-deploy.md` (`/trellis-matt-deploy`)
 runs status → dry-run → wait for confirm → apply.
 
 ## One-click install (Claude Code, Codex, and Grok Build)
 
-You do not need a `trellis-grok` command already installed.
+You do not need a `trellis-matt` command already installed.
 
-`trellis-grok install` is the full new-project path. It keeps
+`trellis-matt install` is the full new-project path. It keeps
 `status`, `dry-run`, `apply`, `revert`, `init`, and `update` as they are.
 `init` still means "Grok project, no Matt skills installer". `apply` stays
 idempotent and still upserts the Matt/grill block into both `AGENTS.md` and
@@ -88,20 +88,20 @@ On Windows, install Git for Windows; the launcher uses
 Linux or WSL, from GitHub:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/samiya782/trellis-workflow/grok/scripts/grok-fixes/oneclick.sh \
+curl -fsSL https://raw.githubusercontent.com/samiya782/trellis-workflow/main/scripts/grok-fixes/oneclick.sh \
   | bash -s -- ~/my-project -u your-name --claude --codex --grok
 ```
 
 Windows, from PowerShell, from GitHub:
 
 ```powershell
-& ([scriptblock]::Create((irm https://raw.githubusercontent.com/samiya782/trellis-workflow/grok/scripts/grok-fixes/oneclick.ps1))) "$env:USERPROFILE\my-project" -u your-name --claude --codex --grok
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/samiya782/trellis-workflow/main/scripts/grok-fixes/oneclick.ps1))) "$env:USERPROFILE\my-project" -u your-name --claude --codex --grok
 ```
 
-A standalone download of `oneclick.sh` or `oneclick.ps1` clones branch `grok`,
-then runs that clone's installer. The cache is `TRELLIS_GROK_CLONE_DIR`, or
-`$XDG_CACHE_HOME/trellis-grok/workflow` (default `~/.cache/trellis-grok/workflow`)
-on Linux, or `%LOCALAPPDATA%\trellis-grok\workflow` on Windows. A dirty cache
+A standalone download of `oneclick.sh` or `oneclick.ps1` clones branch `main`,
+then runs that clone's installer. The cache is `TRELLIS_MATT_CLONE_DIR`, or
+`$XDG_CACHE_HOME/trellis-matt/workflow` (default `~/.cache/trellis-matt/workflow`)
+on Linux, or `%LOCALAPPDATA%\trellis-matt\workflow` on Windows. A dirty cache
 is left alone and the command stops.
 
 Platforms (any combination). Omit every platform flag to install Claude Code,
@@ -113,7 +113,7 @@ codefree-o or CodeFree Space, so those names are not passed through to it.
 |---|---|---|---|
 | `--claude` | `--claude` | `.claude/hooks/session-start.py`, `.claude/hooks/inject-subagent-context.py`, `.claude/commands/trellis/{continue,finish-work}.md`, plus the SessionStart `new`/`load` merge into `.claude/settings.json` | `claude-code` |
 | `--codex` | `--codex` | `.codex/config.toml`, `.codex/hooks/{session-start,inject-subagent-context}.py`, `.codex/agents/trellis-{check,implement,research}.toml`, `.agents/skills/trellis-{start,continue,finish-work}/SKILL.md` | `codex` |
-| `--grok` | `--grok` | `.grok/commands/trellis-*.md` (start, continue, finish-work, and `trellis-grok-deploy`) | `grok` |
+| `--grok` | `--grok` | `.grok/commands/trellis-*.md` (start, continue, finish-work, and `trellis-matt-deploy`) | `grok` |
 | `--codefree-o` | not passed | `.agents/skills/trellis-{start,continue,finish-work}/SKILL.md` and `.codefree-o/command/trellis-{start,continue,finish-work}.md`. The grill block is upserted into `AGENTS.md` and `CLAUDE.md` on every install | `codex` (the skills CLI writes `.agents/skills` for that name; this is not a Codex install) |
 | `--codefree-space` | not passed | the same `.agents/skills/trellis-*` files, plus the grill block in `AGENTS.md` and `CLAUDE.md`. CodeFree Space has no project command directory | `codex` (same directory; one `--agent codex` if either new client or `--codex` is requested) |
 
@@ -132,7 +132,7 @@ block is written into `AGENTS.md`, so that is the file codefree-o loads.
 CodeFree Space reads `AGENTS.md` and `CLAUDE.md`. Neither client has a
 SessionStart hook in this overlay. Do not add a project `codefree.json`.
 
-From this checkout, with no `trellis-grok` command on PATH:
+From this checkout, with no `trellis-matt` command on PATH:
 
 ```bash
 scripts/grok-fixes/oneclick.sh ~/my-project -u your-name --codefree-o --codefree-space
@@ -166,24 +166,24 @@ planning task with `task.py create … --no-start`.
 From a local checkout or the shortcut:
 
 ```bash
-trellis-grok install ~/my-project -u your-name --claude --codex --grok
+trellis-matt install ~/my-project -u your-name --claude --codex --grok
 ```
 
 Windows, from cmd or PowerShell, using this checkout:
 
 ```bat
-scripts\grok-fixes\trellis-grok.cmd install %USERPROFILE%\my-project -u your-name --claude --codex --grok
+scripts\grok-fixes\trellis-matt.cmd install %USERPROFILE%\my-project -u your-name --claude --codex --grok
 ```
 
-Or, with the shortcut already installed, clone branch `grok` and use it even
+Or, with the shortcut already installed, clone branch `main` and use it even
 if a local checkout exists:
 
 ```bash
-trellis-grok install ~/my-project -u your-name --from-github --claude --codex --grok
+trellis-matt install ~/my-project -u your-name --from-github --claude --codex --grok
 ```
 
 `--from-github` clones `https://github.com/samiya782/trellis-workflow.git`
-branch `grok` (override with `TRELLIS_GROK_REPO` / `TRELLIS_GROK_BRANCH`).
+branch `main` (override with `TRELLIS_MATT_REPO` / `TRELLIS_MATT_BRANCH`).
 Re-running `install` in a project that already has `.trellis/` skips
 `trellis init` and copies the overlays again.
 
@@ -319,7 +319,7 @@ uncommitted customizations.
 
 ## Apply syncs the Grok/Matt layer (2026-10-28)
 
-`trellis-grok apply` now **copies** from the source checkout before applying
+`trellis-matt apply` now **copies** from the source checkout before applying
 script patches 0001–0002:
 
 - `.trellis/workflow.md`, `docs/agents/matt-flow.md`, `docs/agents/issue-tracker.md`
@@ -340,7 +340,7 @@ while bootstrap text was still missing).
 
 Grok Build session `prompt_context.agents_md_files` only includes project
 `CLAUDE.md` (and optional `~/.claude/CLAUDE.md`). The Matt/grill bootstrap that
-lives in `AGENTS.md` was invisible to Grok until `trellis-grok apply` also
+lives in `AGENTS.md` was invisible to Grok until `trellis-matt apply` also
 upserted the same `<!-- TRELLIS-GROK:MATT-START -->` block into `CLAUDE.md`.
 Keep both files in sync; do not remove the AGENTS.md copy (Claude Code still
 reads it).

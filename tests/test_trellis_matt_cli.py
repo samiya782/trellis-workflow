@@ -1,4 +1,4 @@
-"""Contract checks for trellis-grok install. No network and no trellis init."""
+"""Contract checks for trellis-matt install. No network and no trellis init."""
 
 import os
 import subprocess
@@ -7,7 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 FIX = ROOT / "scripts" / "grok-fixes"
-CLI = FIX / ("trellis-grok.cmd" if os.name == "nt" else "trellis-grok")
+CLI = FIX / ("trellis-matt.cmd" if os.name == "nt" else "trellis-matt")
 
 
 def command(args):
@@ -33,7 +33,7 @@ class TrellisGrokCliTests(unittest.TestCase):
         result = run("--help")
         self.assertEqual(result.returncode, 0, result.stderr)
         text = result.stdout
-        self.assertIn("trellis-grok install", text)
+        self.assertIn("trellis-matt install", text)
         self.assertIn("--claude", text)
         self.assertIn("--codex", text)
         self.assertIn("--grok", text)

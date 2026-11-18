@@ -106,7 +106,7 @@ hooks 走 Claude-compat 侧信道，**不会**出现在 Grok session events 里�
 可选为 SessionStart 增加 `new|load` matcher（仍保留命令内显式 `get_context`）。
 ## 5) 修复后复验（2026-10-27）
 
-Fixture: `~/tmp/trellis-grok-reval-grill-boot-20261027`（从旧 grill-docs 复制并覆盖 AGENTS/matt-flow/workflow/settings/trellis-start）。
+Fixture: `~/tmp/trellis-matt-reval-grill-boot-20261027`（从旧 grill-docs 复制并覆盖 AGENTS/matt-flow/workflow/settings/trellis-start）。
 Session: `01a17de6-10a5-7e22-aeb7-f2fca476518f`（headless, `grok-4.7-build-fast`, xhigh）。
 
 Prompt 含「accept every recommended answer… do not implement」，以便单轮跑完。

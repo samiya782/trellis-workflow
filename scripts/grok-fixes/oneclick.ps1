@@ -6,14 +6,14 @@
 #   .\oneclick.ps1 $env:USERPROFILE\my-project -u NAME --claude --codex --grok
 #   .\oneclick.ps1 $env:USERPROFILE\my-project -u NAME --codefree-o --codefree-space
 #
-# From GitHub, with no checkout and no trellis-grok command:
-#   & ([scriptblock]::Create((irm https://raw.githubusercontent.com/samiya782/trellis-workflow/grok/scripts/grok-fixes/oneclick.ps1))) "$env:USERPROFILE\my-project" -u your-name --claude --codex --grok
+# From GitHub, with no checkout and no trellis-matt command:
+#   & ([scriptblock]::Create((irm https://raw.githubusercontent.com/samiya782/trellis-workflow/main/scripts/grok-fixes/oneclick.ps1))) "$env:USERPROFILE\my-project" -u your-name --claude --codex --grok
 #
 # A copy run without neighboring oneclick.sh / invoke-git-bash.cmd clones
-# https://github.com/samiya782/trellis-workflow branch grok, then runs that
+# https://github.com/samiya782/trellis-workflow branch main, then runs that
 # clone's oneclick.sh through Git for Windows bash.exe. It does not call
-# C:\Windows\System32\bash.exe. Cache: TRELLIS_GROK_CLONE_DIR, or
-# %LOCALAPPDATA%\trellis-grok\workflow.
+# C:\Windows\System32\bash.exe. Cache: TRELLIS_MATT_CLONE_DIR, or
+# %LOCALAPPDATA%\trellis-matt\workflow.
 # Do not add a param() block: install flags such as -u, --claude,
 # --codefree-o, and --codefree-space must stay in $args. The launcher
 # forwards @args to invoke-git-bash.cmd.
@@ -39,25 +39,25 @@ function Get-ScriptHere {
 }
 
 function Get-CloneDir {
-    if ($env:TRELLIS_GROK_CLONE_DIR) {
-        return $env:TRELLIS_GROK_CLONE_DIR
+    if ($env:TRELLIS_MATT_CLONE_DIR) {
+        return $env:TRELLIS_MATT_CLONE_DIR
     }
     $base = $env:LOCALAPPDATA
     if (-not $base) {
         $base = Join-Path $env:USERPROFILE "AppData\Local"
     }
-    return (Join-Path $base "trellis-grok\workflow")
+    return (Join-Path $base "trellis-matt\workflow")
 }
 
 $here = Get-ScriptHere
 if (-not $here) {
-    $repo = if ($env:TRELLIS_GROK_REPO) { $env:TRELLIS_GROK_REPO } else { "https://github.com/samiya782/trellis-workflow.git" }
-    $branch = if ($env:TRELLIS_GROK_BRANCH) { $env:TRELLIS_GROK_BRANCH } else { "grok" }
+    $repo = if ($env:TRELLIS_MATT_REPO) { $env:TRELLIS_MATT_REPO } else { "https://github.com/samiya782/trellis-workflow.git" }
+    $branch = if ($env:TRELLIS_MATT_BRANCH) { $env:TRELLIS_MATT_BRANCH } else { "main" }
     $dest = Get-CloneDir
     $here = Join-Path $dest "scripts\grok-fixes"
-    if (-not (Test-Path -LiteralPath (Join-Path $here "trellis-grok"))) {
+    if (-not (Test-Path -LiteralPath (Join-Path $here "trellis-matt"))) {
         if (Test-Path -LiteralPath $dest) {
-            throw "error: $dest exists but has no scripts/grok-fixes/trellis-grok"
+            throw "error: $dest exists but has no scripts/grok-fixes/trellis-matt"
         }
         $parent = Split-Path -Parent $dest
         if ($parent -and -not (Test-Path -LiteralPath $parent)) {

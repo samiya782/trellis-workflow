@@ -1,4 +1,4 @@
-Thanks. For the disposable fixtures under ~/tmp/trellis-grok-val-20261026 you may act as the user yourself: accept all recommended answers ("accept all") and keep going. Do not modify ~/trellis in this turn; only report defects there with a proposed minimal fix.
+Thanks. For the disposable fixtures under ~/tmp/trellis-matt-val-20261026 you may act as the user yourself: accept all recommended answers ("accept all") and keep going. Do not modify ~/trellis in this turn; only report defects there with a proposed minimal fix.
 
 Please continue with these scenarios, each in a disposable fixture, and give a pass/fail line with session id and evidence for each:
 1. Re-run `/grill-me Should textstats treat punctuation as part of a word?` in a fresh copy of the bug fixture, answer with the recommended answers, and check whether it now stops with an `/implement <scope>` command instead of editing code. Tell me whether the earlier failure reproduces and which instruction (stock skill, matt-flow.md, workflow.md, or a .grok file) is responsible.

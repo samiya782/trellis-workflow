@@ -7,7 +7,7 @@ PDT (UTC−7), so raw logs and TUI clocks read 15 h earlier.
 - Grok CLI: `grok 1.0.70 (f50904eaee6c) [stable]`. Model: `grok-4.7-build-fast`, reasoning effort `xhigh`. Five sessions at 20:49 used `grok-4.7` and were aborted before any prompt was answered (see DECISIONS.md).
 - Trellis: `@mindfoldhq/trellis` 0.7.0-beta.4. Matt skills come from `mattpocock/skills` through the skills installer.
 - Repo: `~/trellis`, branch `grok`. Its parent is `835396a`. Commits: `393c488` (fixes and tests), `a4d429f` (Grok docs and commands), `78d2f30` (install bundle), then this audit.
-- Fixtures: `~/tmp/trellis-grok-val-20261026/<name>` (disposable).
+- Fixtures: `~/tmp/trellis-matt-val-20261026/<name>` (disposable).
 - Who typed what: the user wrote only the P1 prompt text. The assistant wrote every other prompt and answer on the user's behalf. Transcripts mark this on each prompt heading.
 
 ## Layout

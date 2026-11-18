@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Per-run analysis for the Trellis hook study. Usage: analyze.py RUN [RUN...]"""
 import json, sys, glob, os, subprocess, collections, re
-B = os.path.expanduser("~/tmp/trellis-grok-val-20261026")
+B = os.path.expanduser("~/tmp/trellis-matt-val-20261026")
 TASK = ".trellis/tasks/10-26-textstats-top"
 
 def texts(content):

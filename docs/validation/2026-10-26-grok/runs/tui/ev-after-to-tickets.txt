@@ -19,7 +19,7 @@ $ task.py list
 Total: 4 task(s)
 $ task.py validate .trellis/tasks/10-26-textstats-rank-top
 [0;34m=== Validating Context Files ===[0m
-Target dir: /home/samiya/tmp/trellis-grok-val-20261026/recheck-tui/.trellis/tasks/10-26-textstats-rank-top
+Target dir: /home/samiya/tmp/trellis-matt-val-20261026/recheck-tui/.trellis/tasks/10-26-textstats-rank-top
 
   [0;32mimplement.jsonl: ✓ (3 entries)[0m
   [0;32mcheck.jsonl: ✓ (3 entries)[0m
@@ -63,7 +63,7 @@ $ cat implement.jsonl
 {"file": "docs/adr/0001-rank-exact-words.md", "reason": "Why the Ranking counts exact Words"}
 $ task.py validate .trellis/tasks/10-26-textstats-usage-reject
 [0;34m=== Validating Context Files ===[0m
-Target dir: /home/samiya/tmp/trellis-grok-val-20261026/recheck-tui/.trellis/tasks/10-26-textstats-usage-reject
+Target dir: /home/samiya/tmp/trellis-matt-val-20261026/recheck-tui/.trellis/tasks/10-26-textstats-usage-reject
 
   [0;32mimplement.jsonl: ✓ (3 entries)[0m
   [0;32mcheck.jsonl: ✓ (3 entries)[0m

@@ -25,18 +25,18 @@ before each non-trivial edit.
 | Path | Change | Backup |
 |---|---|---|
 | `~/.grok/trusted_folders.toml` | Added fixture entries (see DECISIONS.md #1) | `~/trellis-backups/20261026/trusted_folders.toml.bak2` (taken before `recheck-tui` was added) |
-| `~/tmp/trellis-grok-val-20261026/*` | Disposable fixtures created by the assistant, kept for inspection | — |
+| `~/tmp/trellis-matt-val-20261026/*` | Disposable fixtures created by the assistant, kept for inspection | — |
 | `~/tmp/trellis-before-20261026` | Disposable copy used for the before/after test matrix | — |
 | `~/trellis-backups/grok-fixes/install-fresh-20261026-074152/` | Backup written by an apply-script test on the `install-fresh` fixture | — |
 
 These files in `~/trellis` were already uncommitted before this work. They were left as they were, not reverted and not committed: `.agents/skills/*` (16 files), `.agents/skills/wizard/template.sh`, `.trellis/.template-hashes.json`, `skills-lock.json`. Untracked `.grok/skills/` and `.grok/agents/` come from `trellis init --grok` and were not committed.
 
-## 2026-10-27 — trellis-grok shortcut
+## 2026-10-27 — trellis-matt shortcut
 
 | Commit | File | Change |
 |---|---|---|
-| (this) | `scripts/grok-fixes/trellis-grok` | CLI: status / dry-run / apply / revert / init / update |
-| (this) | `scripts/grok-fixes/install-shortcut.sh` | Install/uninstall `~/.local/bin/trellis-grok` symlink |
-| (this) | `.grok/commands/trellis-grok-deploy.md` | Slash command: status → dry-run → confirm → apply |
+| (this) | `scripts/grok-fixes/trellis-matt` | CLI: status / dry-run / apply / revert / init / update |
+| (this) | `scripts/grok-fixes/install-shortcut.sh` | Install/uninstall `~/.local/bin/trellis-matt` symlink |
+| (this) | `.grok/commands/trellis-matt-deploy.md` | Slash command: status → dry-run → confirm → apply |
 | (this) | `docs/grok-fixes/INSTALL.md`, `README.md` | Quick deploy sections |
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # hook-study fixture builder (disposable fixtures only)
 set -euo pipefail
-B=$HOME/tmp/trellis-grok-val-20261026
+B=$HOME/tmp/trellis-matt-val-20261026
 HS=/tmp/grokval/hs
 SRC=/tmp/hs-src
 rm -rf "$SRC"; git clone -q "$B/recheck-tui" "$SRC"; git -C "$SRC" checkout -q 9164a53

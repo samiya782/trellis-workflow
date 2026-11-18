@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""End-to-end checks for trellis-grok install.
+"""End-to-end checks for trellis-matt install.
 
 Work directory: TRELLIS_ONECLICK_WORKDIR, else
 $TRELLIS_ONECLICK_TMP/<stamp> or the OS temp dir. Never touches the source
@@ -17,11 +17,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 FIX = ROOT / "scripts" / "grok-fixes"
 if os.name == "nt":
-    CLI = FIX / "trellis-grok.cmd"
+    CLI = FIX / "trellis-matt.cmd"
     ONECLICK = FIX / "oneclick.cmd"
     SHORTCUT = FIX / "install-shortcut.cmd"
 else:
-    CLI = FIX / "trellis-grok"
+    CLI = FIX / "trellis-matt"
     ONECLICK = FIX / "oneclick.sh"
     SHORTCUT = FIX / "install-shortcut.sh"
 STAMP = time.strftime("%Y%m%d-%H%M%S")
@@ -64,7 +64,7 @@ ALL_OVERLAY = (
     ".grok/commands/trellis-start.md",
     ".grok/commands/trellis-continue.md",
     ".grok/commands/trellis-finish-work.md",
-    ".grok/commands/trellis-grok-deploy.md",
+    ".grok/commands/trellis-matt-deploy.md",
     ".trellis/workflow.md",
     "docs/agents/matt-flow.md",
     "docs/agents/issue-tracker.md",
@@ -159,12 +159,12 @@ def allow_dubious_git(env: dict[str, str]) -> None:
 def base_env() -> dict[str, str]:
     env = os.environ.copy()
     for key in (
-        "TRELLIS_GROK_HOME",
-        "TRELLIS_GROK_CLONE_DIR",
-        "TRELLIS_GROK_REPO",
-        "TRELLIS_GROK_BRANCH",
-        "TRELLIS_GROK_PLATFORM",
-        "TRELLIS_GROK_PYTHON",
+        "TRELLIS_MATT_HOME",
+        "TRELLIS_MATT_CLONE_DIR",
+        "TRELLIS_MATT_REPO",
+        "TRELLIS_MATT_BRANCH",
+        "TRELLIS_MATT_PLATFORM",
+        "TRELLIS_MATT_PYTHON",
     ):
         env.pop(key, None)
     allow_dubious_git(env)
@@ -289,15 +289,15 @@ def main() -> int:
     code, out = run("shortcut", [str(SHORTCUT), "--home", str(ROOT)], env=shortcut_env)
     if os.name == "nt":
         check("shortcut install exits 0", code == 0, out[-800:])
-        check("shortcut writes trellis-grok.cmd", (bindir / "trellis-grok.cmd").is_file())
-        check("shortcut writes trellis-grok.ps1", (bindir / "trellis-grok.ps1").is_file())
-        shim = bindir / "trellis-grok.cmd"
+        check("shortcut writes trellis-matt.cmd", (bindir / "trellis-matt.cmd").is_file())
+        check("shortcut writes trellis-matt.ps1", (bindir / "trellis-matt.ps1").is_file())
+        shim = bindir / "trellis-matt.cmd"
     else:
         check("shortcut install exits 0", code == 0, out[-800:])
-        check("shortcut symlinks trellis-grok", (bindir / "trellis-grok").is_symlink())
-        shim = bindir / "trellis-grok"
+        check("shortcut symlinks trellis-matt", (bindir / "trellis-matt").is_symlink())
+        shim = bindir / "trellis-matt"
     code, out = run("shortcut-help", [str(shim), "--help"], env=shortcut_env)
-    check("shortcut command runs --help", code == 0 and "trellis-grok install" in out, out[-800:])
+    check("shortcut command runs --help", code == 0 and "trellis-matt install" in out, out[-800:])
 
     remotes_before = subprocess.check_output(["git", "-C", str(ROOT), "remote", "-v"], text=True, encoding="utf-8", errors="replace")
 
@@ -338,8 +338,8 @@ def main() -> int:
     clone_dir = WORK / "github-src"
     github = WORK / "github"
     github_env = env.copy()
-    github_env["TRELLIS_GROK_CLONE_DIR"] = str(clone_dir)
-    github_env["TRELLIS_GROK_REPO"] = str(snapshot)
+    github_env["TRELLIS_MATT_CLONE_DIR"] = str(clone_dir)
+    github_env["TRELLIS_MATT_REPO"] = str(snapshot)
     code, out = run(
         "github-install",
         [

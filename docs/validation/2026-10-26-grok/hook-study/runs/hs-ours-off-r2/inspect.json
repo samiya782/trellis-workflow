@@ -2,8 +2,8 @@
   "grokVersion": "1.0.70",
   "channel": "stable",
   "updateChannel": null,
-  "cwd": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2",
-  "projectRoot": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/",
+  "cwd": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2",
+  "projectRoot": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/",
   "projectTrusted": true,
   "projectInstructions": [
     {
@@ -16,7 +16,7 @@
       "compatibilityStatus": "enabled"
     },
     {
-      "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/AGENTS.md",
+      "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/AGENTS.md",
       "scope": "project",
       "fileType": "agents_md",
       "sizeBytes": 1776,
@@ -52,7 +52,7 @@
       "description": "Ask which skill or flow fits your situation. A router over the skills in this repo.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/ask-matt/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/ask-matt/SKILL.md"
       },
       "userInvocable": true
     },
@@ -61,7 +61,7 @@
       "description": "Pursue a long-running goal in a single session by co-ordinating subagents.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/chief-of-staff/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/chief-of-staff/SKILL.md"
       },
       "userInvocable": true
     },
@@ -70,7 +70,7 @@
       "description": "Hand the current conversation off to a fresh background agent that picks up the work immediately.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/claude-handoff/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/claude-handoff/SKILL.md"
       },
       "userInvocable": true
     },
@@ -79,7 +79,7 @@
       "description": "Review the changes since a fixed point (commit, branch, tag, or merge-base) along two axes: Standards (does the code follow this repo's documented coding standards?) and Spec (does the code match what the originating issue/spec asked for?). Runs both reviews in parallel sub-agents and reports them side by side. Use when the user wants to review a branch, a PR, work-in-progress changes, or asks to \"review since X\".",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/code-review/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/code-review/SKILL.md"
       },
       "userInvocable": true
     },
@@ -88,7 +88,7 @@
       "description": "Shared vocabulary for designing deep modules. Use when the user wants to design or improve a module's interface, find deepening opportunities, decide where a seam goes, make code more testable or AI-navigable, or when another skill needs the deep-module vocabulary.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/codebase-design/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/codebase-design/SKILL.md"
       },
       "userInvocable": true
     },
@@ -97,7 +97,7 @@
       "description": "Diagnosis loop for hard bugs and performance regressions. Use when the user says \"diagnose\"/\"debug this\", or reports something broken/throwing/failing/slow.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/diagnosing-bugs/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/diagnosing-bugs/SKILL.md"
       },
       "userInvocable": true
     },
@@ -106,7 +106,7 @@
       "description": "Build and sharpen a project's domain model. Use when discussing codebase terminology, writing or editing a GLOSSARY.md, or recording or editing an ADR.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/domain-modeling/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/domain-modeling/SKILL.md"
       },
       "userInvocable": true
     },
@@ -115,7 +115,7 @@
       "description": "Set up Claude Code hooks to block dangerous git commands (push, reset --hard, clean, branch -D, etc.) before they execute. Use when user wants to prevent destructive git operations, add git safety hooks, or block git push/reset in Claude Code.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/git-guardrails-claude-code/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/git-guardrails-claude-code/SKILL.md"
       },
       "userInvocable": true
     },
@@ -124,7 +124,7 @@
       "description": "A relentless interview to sharpen a plan or design.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/grill-me/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/grill-me/SKILL.md"
       },
       "userInvocable": true
     },
@@ -133,7 +133,7 @@
       "description": "A relentless interview to sharpen a plan or design, which also creates docs (ADR's and glossary) as we go.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/grill-with-docs/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/grill-with-docs/SKILL.md"
       },
       "userInvocable": true
     },
@@ -142,7 +142,7 @@
       "description": "Grill the user relentlessly about a plan, decision, or idea. Use when the user wants to stress-test their thinking, or uses any 'grill' trigger phrases.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/grilling/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/grilling/SKILL.md"
       },
       "userInvocable": true
     },
@@ -151,7 +151,7 @@
       "description": "Compact the current conversation into a handoff document for another agent to pick up.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/handoff/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/handoff/SKILL.md"
       },
       "userInvocable": true
     },
@@ -160,7 +160,7 @@
       "description": "Implement a piece of work based on a spec or set of tickets.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/implement/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/implement/SKILL.md"
       },
       "userInvocable": true
     },
@@ -169,7 +169,7 @@
       "description": "Implement the result of /to-spec and /to-tickets in code.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/implement-spec/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/implement-spec/SKILL.md"
       },
       "userInvocable": true
     },
@@ -178,7 +178,7 @@
       "description": "Scan a codebase for deepening opportunities, present them as a visual HTML report, then grill through whichever one you pick.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/improve-codebase-architecture/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/improve-codebase-architecture/SKILL.md"
       },
       "userInvocable": true
     },
@@ -187,7 +187,7 @@
       "description": "Grill me about specs for the workflows I want to build, within this workspace.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/loop-me/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/loop-me/SKILL.md"
       },
       "userInvocable": true
     },
@@ -196,7 +196,7 @@
       "description": "Migrate test files from `as` type assertions to @total-typescript/shoehorn. Use when user mentions shoehorn, wants to replace `as` in tests, or needs partial test data.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/migrate-to-shoehorn/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/migrate-to-shoehorn/SKILL.md"
       },
       "userInvocable": true
     },
@@ -205,7 +205,7 @@
       "description": "Use when writing a PR body.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/pr/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/pr/SKILL.md"
       },
       "userInvocable": true
     },
@@ -214,7 +214,7 @@
       "description": "Build a throwaway prototype to answer a design question. Use when the user wants to sanity-check whether a state model or logic feels right, or explore what a UI should look like.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/prototype/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/prototype/SKILL.md"
       },
       "userInvocable": true
     },
@@ -223,7 +223,7 @@
       "description": "Investigate a question against high-trust primary sources and capture the findings as a Markdown file in the repo. Use when the user wants a topic researched, docs or API facts gathered, or reading legwork delegated to a background agent.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/research/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/research/SKILL.md"
       },
       "userInvocable": true
     },
@@ -232,7 +232,7 @@
       "description": "Conduct a retrospective on a coding session.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/retro/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/retro/SKILL.md"
       },
       "userInvocable": true
     },
@@ -241,7 +241,7 @@
       "description": "Create exercise directory structures with sections, problems, solutions, and explainers that pass linting. Use when user wants to scaffold exercises, create exercise stubs, or set up a new course section.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/scaffold-exercises/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/scaffold-exercises/SKILL.md"
       },
       "userInvocable": true
     },
@@ -250,7 +250,7 @@
       "description": "Configure this repo for the engineering skills: set up its issue tracker, triage label vocabulary, and domain doc layout. Run once before first use of the other engineering skills.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/setup-matt-pocock-skills/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/setup-matt-pocock-skills/SKILL.md"
       },
       "userInvocable": true
     },
@@ -259,7 +259,7 @@
       "description": "Set up Husky pre-commit hooks with lint-staged (Prettier), type checking, and tests in the current repo. Use when user wants to add pre-commit hooks, set up Husky, configure lint-staged, or add commit-time formatting/typechecking/testing.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/setup-pre-commit/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/setup-pre-commit/SKILL.md"
       },
       "userInvocable": true
     },
@@ -268,7 +268,7 @@
       "description": "Wire dependency-cruiser into a TypeScript repo so each package is a deep module, with implementation hidden in subfolders and reachable only through its entry-point files. User-invoked.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/setup-ts-deep-modules/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/setup-ts-deep-modules/SKILL.md"
       },
       "userInvocable": true
     },
@@ -277,7 +277,7 @@
       "description": "Test-driven development. Use when the user wants to build features or fix bugs test-first, mentions \"red-green-refactor\", or wants integration tests.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/tdd/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/tdd/SKILL.md"
       },
       "userInvocable": true
     },
@@ -286,7 +286,7 @@
       "description": "Teach the user a new skill or concept, within this workspace.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/teach/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/teach/SKILL.md"
       },
       "userInvocable": true
     },
@@ -295,7 +295,7 @@
       "description": "Turn a decision you can't fully answer into a questionnaire for someone else to fill in.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/to-questionnaire/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/to-questionnaire/SKILL.md"
       },
       "userInvocable": true
     },
@@ -304,7 +304,7 @@
       "description": "Turn the current conversation into a spec and publish it to the project issue tracker: no interview, just synthesis of what you've already discussed.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/to-spec/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/to-spec/SKILL.md"
       },
       "userInvocable": true
     },
@@ -313,7 +313,7 @@
       "description": "Break a plan, spec, or the current conversation into a set of tracer-bullet tickets, each declaring its blocking edges, published to the configured tracker (edges as text in one file per ticket locally, or native blocking links on a real tracker).",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/to-tickets/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/to-tickets/SKILL.md"
       },
       "userInvocable": true
     },
@@ -322,7 +322,7 @@
       "description": "Discovers and injects project-specific coding guidelines from .trellis/spec/ before implementation begins. Reads spec indexes, pre-development checklists, and shared thinking guides for the target package. Use when starting a new coding task, before writing any code, switching to a different package, or needing to refresh project conventions and standards.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/trellis-before-dev/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/trellis-before-dev/SKILL.md"
       },
       "userInvocable": true
     },
@@ -331,7 +331,7 @@
       "description": "Guides collaborative requirements discovery before implementation. Creates task directory, seeds PRD, asks high-value questions one at a time, researches technical choices, and converges on MVP scope. Use when requirements are unclear, there are multiple valid approaches, or the user describes a new feature or complex task.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/trellis-brainstorm/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/trellis-brainstorm/SKILL.md"
       },
       "userInvocable": true
     },
@@ -340,7 +340,7 @@
       "description": "Deep bug analysis to break the fix-forget-repeat cycle. Analyzes root cause category, why fixes failed, prevention mechanisms, and captures knowledge into specs. Use after fixing a bug to prevent the same class of bugs.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/trellis-break-loop/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/trellis-break-loop/SKILL.md"
       },
       "userInvocable": true
     },
@@ -349,7 +349,7 @@
       "description": "Use Trellis channel for live multi-agent collaboration, spawned workers, cross-agent review, progress inspection, forum channels, and channel log debugging.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/trellis-channel/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/trellis-channel/SKILL.md"
       },
       "userInvocable": true
     },
@@ -358,7 +358,7 @@
       "description": "Comprehensive quality verification: spec compliance, lint, type-check, tests, cross-layer data flow, code reuse, and consistency checks. Use when code is written and needs quality verification, before committing changes, or to catch context drift during long sessions.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/trellis-check/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/trellis-check/SKILL.md"
       },
       "userInvocable": true
     },
@@ -367,7 +367,7 @@
       "description": "Understand and customize the local Trellis architecture inside a user project. Use when modifying .trellis plus platform hooks, settings, agents, skills, commands, prompts, workflows, the channel runtime (trellis channel), bundled runtime agents under .trellis/agents/, selectable workflow templates, registry-backed spec refresh, cross-session memory (trellis mem) generated by trellis init, or AI-facing bundled skills (trellis-channel, trellis-session-insight, trellis-spec-bootstrap) and bundled-skill auto-dispatch flow.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/trellis-meta/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/trellis-meta/SKILL.md"
       },
       "userInvocable": true
     },
@@ -376,7 +376,7 @@
       "description": "Reach into past AI conversation history through the `trellis mem` CLI. Use whenever the user asks 'how did we solve X last time', 'have we discussed this before', 'what was the decision on X', 'remind me what we did in this task', '上次怎么解的', '之前讨论过吗', '想起一段对话', or when starting a brainstorm that overlaps prior work, debugging a familiar bug, continuing a task across sessions, or doing a finish-work review. Returns raw past dialogue; decide for the moment whether to update spec, append to task notes, quote inline in the answer, or just internalize.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/trellis-session-insight/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/trellis-session-insight/SKILL.md"
       },
       "userInvocable": true
     },
@@ -385,7 +385,7 @@
       "description": "Bootstrap project-specific Trellis coding specs with a platform-neutral single-agent workflow. Use when creating or refreshing .trellis/spec guidelines, analyzing a codebase with GitNexus, ABCoder, or source inspection, decomposing package/layer spec work, and writing real codebase-backed spec docs without placeholder text.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/trellis-spec-bootstrap/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/trellis-spec-bootstrap/SKILL.md"
       },
       "userInvocable": true
     },
@@ -394,7 +394,7 @@
       "description": "Captures executable contracts and coding conventions into .trellis/spec/ documents. Use when learning something valuable from debugging, implementing, or discussion that should be preserved for future sessions.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/trellis-update-spec/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/trellis-update-spec/SKILL.md"
       },
       "userInvocable": true
     },
@@ -403,7 +403,7 @@
       "description": "Move issues and external PRs through a state machine of triage roles, categorise, verify, grill if needed, and write agent-ready briefs.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/triage/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/triage/SKILL.md"
       },
       "userInvocable": true
     },
@@ -412,7 +412,7 @@
       "description": "Stop. That last message did not land: re-pitch it.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/wait-what/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/wait-what/SKILL.md"
       },
       "userInvocable": true
     },
@@ -421,7 +421,7 @@
       "description": "Plan a huge chunk of work (more than one agent session can hold) as a shared map of decision tickets on your issue tracker, and resolve them one at a time until the way to the destination is clear.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/wayfinder/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/wayfinder/SKILL.md"
       },
       "userInvocable": true
     },
@@ -430,7 +430,7 @@
       "description": "Generate an interactive bash wizard that walks a human through steps only they can perform. Use when provisioning infrastructure, setting up credentials or CI secrets, walking an unfamiliar third-party dashboard, or running a one-off migration or cutover. Don't invoke this for steps the agent can perform itself.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/wizard/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/wizard/SKILL.md"
       },
       "userInvocable": true
     },
@@ -439,7 +439,7 @@
       "description": "Writing, exploit; assemble raw material into a journey of beats, grounding each term before a beat leans on it.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/writing-beats/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/writing-beats/SKILL.md"
       },
       "userInvocable": true
     },
@@ -448,7 +448,7 @@
       "description": "Writing documents for agents. Use when creating or editing skills, or modifying AGENTS.md or CLAUDE.md.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/writing-for-agents/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/writing-for-agents/SKILL.md"
       },
       "userInvocable": true
     },
@@ -457,7 +457,7 @@
       "description": "Writing, explore: mine raw fragments, no structure yet.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/writing-fragments/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/writing-fragments/SKILL.md"
       },
       "userInvocable": true
     },
@@ -466,7 +466,7 @@
       "description": "Writing, exploit: shape raw material into an article, paragraph by paragraph.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/skills/writing-shape/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/skills/writing-shape/SKILL.md"
       },
       "userInvocable": true
     },
@@ -475,7 +475,7 @@
       "description": "Run python3 ./.trellis/scripts/get_context.py and python3 ./.trellis/scripts/get_context.py --mode phase. The loaded project workflow owns routing; this command supplies recovery, not a second phase policy.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/commands/trellis-continue.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/commands/trellis-continue.md"
       },
       "userInvocable": true
     },
@@ -484,7 +484,7 @@
       "description": "Complete the authorized work and reconcile closeout, including direct calls and interrupted or repeated attempts. Load get_context.py --mode phase and steps 3.4/3.5; the project workflow owns authorization and commit policy.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/commands/trellis-finish-work.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/commands/trellis-finish-work.md"
       },
       "userInvocable": true
     },
@@ -493,7 +493,7 @@
       "description": "Grok Build does not run the SessionStart hook, so load the compact context yourself. Grok does run the project's .claude/settings.json UserPromptSubmit/PreToolUse/PostToolUse hooks, but their additionalContext is not guaranteed to reach the model; treat the commands below as the authoritative context load.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/commands/trellis-start.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/commands/trellis-start.md"
       },
       "userInvocable": true
     },
@@ -815,7 +815,7 @@
       "description": "Code and tech search expert for Trellis. Finds files, patterns, and tech\nsolutions, and PERSISTS every finding to the current task's research/\ndirectory. No code modifications outside that directory. Dispatch via\nspawn_subagent with subagent_type trellis-research.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/agents/trellis-research.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/agents/trellis-research.md"
       }
     },
     {
@@ -823,7 +823,7 @@
       "description": "Code implementation expert for Trellis. Understands specs and requirements,\nthen implements features. No git commit allowed. Dispatch via spawn_subagent\nwith subagent_type trellis-implement; first prompt line must be Active task: <path>.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/agents/trellis-implement.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/agents/trellis-implement.md"
       }
     },
     {
@@ -831,7 +831,7 @@
       "description": "Code quality check expert for Trellis. Reviews code changes against specs\nand self-fixes issues. Dispatch via spawn_subagent with subagent_type\ntrellis-check; first prompt line must be Active task: <path>.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-ours-off-r2/.grok/agents/trellis-check.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-ours-off-r2/.grok/agents/trellis-check.md"
       }
     },
     {

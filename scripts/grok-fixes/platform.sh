@@ -1,18 +1,18 @@
-# Shared platform helpers for trellis-grok, oneclick.sh, install-shortcut.sh,
+# Shared platform helpers for trellis-matt, oneclick.sh, install-shortcut.sh,
 # and apply-grok-fixes.sh. Source this file; do not execute it for install.
 #
-# Windows clone cache: %LOCALAPPDATA%\trellis-grok\workflow
-# Linux clone cache: $XDG_CACHE_HOME/trellis-grok/workflow or ~/.cache/trellis-grok/workflow
-# Override either with TRELLIS_GROK_CLONE_DIR.
-# TRELLIS_GROK_PLATFORM=windows|unix forces detection (tests). Real Windows
+# Windows clone cache: %LOCALAPPDATA%\trellis-matt\workflow
+# Linux clone cache: $XDG_CACHE_HOME/trellis-matt/workflow or ~/.cache/trellis-matt/workflow
+# Override either with TRELLIS_MATT_CLONE_DIR.
+# TRELLIS_MATT_PLATFORM=windows|unix forces detection (tests). Real Windows
 # Git Bash is detected from uname (MINGW/MSYS/CYGWIN).
 
 platform_kind() {
-  if [[ -n "${TRELLIS_GROK_PLATFORM:-}" ]]; then
-    case "${TRELLIS_GROK_PLATFORM}" in
+  if [[ -n "${TRELLIS_MATT_PLATFORM:-}" ]]; then
+    case "${TRELLIS_MATT_PLATFORM}" in
       windows|win) printf '%s\n' windows ;;
       unix|linux|mac) printf '%s\n' unix ;;
-      *) printf '%s\n' "${TRELLIS_GROK_PLATFORM}" ;;
+      *) printf '%s\n' "${TRELLIS_MATT_PLATFORM}" ;;
     esac
     return 0
   fi
@@ -56,8 +56,8 @@ to_windows_path() {
 }
 
 default_clone_dir() {
-  if [[ -n "${TRELLIS_GROK_CLONE_DIR:-}" ]]; then
-    normalize_path "$TRELLIS_GROK_CLONE_DIR"
+  if [[ -n "${TRELLIS_MATT_CLONE_DIR:-}" ]]; then
+    normalize_path "$TRELLIS_MATT_CLONE_DIR"
     return 0
   fi
   if is_windows; then
@@ -66,10 +66,10 @@ default_clone_dir() {
       base="${USERPROFILE:-$HOME}/AppData/Local"
     fi
     base="$(normalize_path "$base")"
-    printf '%s\n' "${base%/}/trellis-grok/workflow"
+    printf '%s\n' "${base%/}/trellis-matt/workflow"
     return 0
   fi
-  printf '%s\n' "${XDG_CACHE_HOME:-$HOME/.cache}/trellis-grok/workflow"
+  printf '%s\n' "${XDG_CACHE_HOME:-$HOME/.cache}/trellis-matt/workflow"
 }
 
 python_is_3() {
@@ -77,11 +77,11 @@ python_is_3() {
 }
 
 # Sets the global PY array to (python3), (python), or (py -3).
-# TRELLIS_GROK_PYTHON, when set, is split and used as-is.
+# TRELLIS_MATT_PYTHON, when set, is split and used as-is.
 resolve_python() {
-  if [[ -n "${TRELLIS_GROK_PYTHON:-}" ]]; then
+  if [[ -n "${TRELLIS_MATT_PYTHON:-}" ]]; then
     # shellcheck disable=SC2206
-    PY=(${TRELLIS_GROK_PYTHON})
+    PY=(${TRELLIS_MATT_PYTHON})
     return 0
   fi
   if command -v python3 >/dev/null 2>&1 && python_is_3 python3; then
@@ -148,7 +148,7 @@ under_user_profile() {
   [[ -n "$profile" && ( "$part" == "$profile" || "$part" == "$profile"/* ) ]]
 }
 
-# Directory that should receive trellis-grok.cmd. Caller still prints a PATH note.
+# Directory that should receive trellis-matt.cmd. Caller still prints a PATH note.
 windows_shortcut_dir() {
   local home profile preferred
   home="$(normalize_path "${USERPROFILE:-$HOME}")"

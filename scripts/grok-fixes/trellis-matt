@@ -1,26 +1,26 @@
 #!/usr/bin/env bash
-# trellis-grok — quick deploy / manage the Trellis + Matt Grok fixes.
+# trellis-matt — quick deploy / manage the Trellis + Matt Grok fixes.
 #
-#   trellis-grok status  [DIR]
-#   trellis-grok dry-run [DIR]
-#   trellis-grok apply   [DIR]
-#   trellis-grok revert  [DIR]
-#   trellis-grok init    [DIR] [-u NAME] [--claude] [--codex] [...]
-#   trellis-grok install [DIR] [-u NAME] [--claude] [--codex] [--grok]
+#   trellis-matt status  [DIR]
+#   trellis-matt dry-run [DIR]
+#   trellis-matt apply   [DIR]
+#   trellis-matt revert  [DIR]
+#   trellis-matt init    [DIR] [-u NAME] [--claude] [--codex] [...]
+#   trellis-matt install [DIR] [-u NAME] [--claude] [--codex] [--grok]
 #                        [--codefree-o] [--codefree-space]
 #                        [--from-github] [--no-skills]
-#   trellis-grok update  [DIR] [--allow-workflow]
-#   trellis-grok --help
+#   trellis-matt update  [DIR] [--allow-workflow]
+#   trellis-matt --help
 #
-# TRELLIS_GROK_HOME overrides the source checkout (default: resolve to the
+# TRELLIS_MATT_HOME overrides the source checkout (default: resolve to the
 # clone that contains scripts/grok-fixes, usually ~/trellis).
-# install --from-github clones TRELLIS_GROK_REPO (default:
-# https://github.com/samiya782/trellis-workflow.git) branch TRELLIS_GROK_BRANCH
-# (default: grok) into TRELLIS_GROK_CLONE_DIR. The default cache is
-# $XDG_CACHE_HOME/trellis-grok/workflow or ~/.cache/trellis-grok/workflow on
-# Linux, and %LOCALAPPDATA%\trellis-grok\workflow on Windows. That clone is
+# install --from-github clones TRELLIS_MATT_REPO (default:
+# https://github.com/samiya782/trellis-workflow.git) branch TRELLIS_MATT_BRANCH
+# (default: grok) into TRELLIS_MATT_CLONE_DIR. The default cache is
+# $XDG_CACHE_HOME/trellis-matt/workflow or ~/.cache/trellis-matt/workflow on
+# Linux, and %LOCALAPPDATA%\trellis-matt\workflow on Windows. That clone is
 # the file source.
-# On Windows, cmd and PowerShell run scripts/grok-fixes/trellis-grok.cmd
+# On Windows, cmd and PowerShell run scripts/grok-fixes/trellis-matt.cmd
 # (Git for Windows bash.exe, never C:\Windows\System32\bash.exe).
 #
 # Exit codes (aligned with apply-grok-fixes.sh where applicable):
@@ -46,23 +46,23 @@ SCRIPT_DIR="$(resolve_self)"
 source "$SCRIPT_DIR/platform.sh"
 
 resolve_home() {
-  if [[ -n "${TRELLIS_GROK_HOME:-}" ]]; then
-    local h; h="$(normalize_path "$TRELLIS_GROK_HOME")"
+  if [[ -n "${TRELLIS_MATT_HOME:-}" ]]; then
+    local h; h="$(normalize_path "$TRELLIS_MATT_HOME")"
     h="$(cd "$h" && pwd)"
     [[ -x "$h/scripts/grok-fixes/apply-grok-fixes.sh" ]] || {
-      echo "error: TRELLIS_GROK_HOME=$h has no scripts/grok-fixes/apply-grok-fixes.sh" >&2
+      echo "error: TRELLIS_MATT_HOME=$h has no scripts/grok-fixes/apply-grok-fixes.sh" >&2
       exit 2
     }
     echo "$h"; return
   fi
-  # Script lives at <home>/scripts/grok-fixes/trellis-grok
+  # Script lives at <home>/scripts/grok-fixes/trellis-matt
   if [[ -x "$SCRIPT_DIR/apply-grok-fixes.sh" ]]; then
     cd "$SCRIPT_DIR/../.." && pwd; return
   fi
   if [[ -x "$HOME/trellis/scripts/grok-fixes/apply-grok-fixes.sh" ]]; then
     echo "$HOME/trellis"; return
   fi
-  echo "error: cannot find Trellis+Grok checkout. Set TRELLIS_GROK_HOME or install via scripts/grok-fixes/install-shortcut.sh" >&2
+  echo "error: cannot find Trellis + Matt checkout. Set TRELLIS_MATT_HOME or install via scripts/grok-fixes/install-shortcut.sh" >&2
   exit 2
 }
 
@@ -71,22 +71,22 @@ APPLY="$HOME_SRC/scripts/grok-fixes/apply-grok-fixes.sh"
 
 usage() {
   cat <<USAGE
-trellis-grok — quick deploy the modified Trellis + Matt Grok version
+trellis-matt — quick deploy the modified Trellis + Matt version
 
 Source: $HOME_SRC
-Override with TRELLIS_GROK_HOME=/path/to/checkout
+Override with TRELLIS_MATT_HOME=/path/to/checkout
 
 Usage:
-  trellis-grok status  [DIR]     Trellis version + which patches are applied
-  trellis-grok dry-run [DIR]     Preview apply (no writes)
-  trellis-grok apply   [DIR]     Sync Matt/workflow/commands + script patches
-  trellis-grok revert  [DIR]     Revert applied patches
-  trellis-grok init    [DIR] [-u NAME] [trellis-init-flags...]
+  trellis-matt status  [DIR]     Trellis version + which patches are applied
+  trellis-matt dry-run [DIR]     Preview apply (no writes)
+  trellis-matt apply   [DIR]     Sync Matt/workflow/commands + script patches
+  trellis-matt revert  [DIR]     Revert applied patches
+  trellis-matt init    [DIR] [-u NAME] [trellis-init-flags...]
                                  New project: trellis init --grok, copy Matt docs
                                  + workflow, apply fixes. Does not install Matt
                                  skills. Extra flags (including --claude/--codex)
                                  are passed through to trellis init.
-  trellis-grok install [DIR] [-u NAME] [--claude] [--codex] [--grok]
+  trellis-matt install [DIR] [-u NAME] [--claude] [--codex] [--grok]
                                  [--codefree-o] [--codefree-space]
                                  [--from-github] [--no-skills]
                                  [trellis-init-flags...]
@@ -100,18 +100,18 @@ Usage:
                                  they load.
                                  --from-github clones branch grok and copies
                                  from that clone. --no-skills skips npx skills.
-  trellis-grok update  [DIR] [--allow-workflow]
+  trellis-matt update  [DIR] [--allow-workflow]
                                  Safe update: trellis update -n, re-apply fixes,
                                  list .new merges; protect .trellis/workflow.md
                                  unless --allow-workflow
-  trellis-grok --help
+  trellis-matt --help
 
 DIR defaults to the current directory (or git toplevel when inside a repo
 for status/dry-run/apply/revert/update). install/init default to the current
 directory and refuse to run inside the source checkout.
 Idempotent: re-apply is a no-op when already patched. install on an existing
 Trellis project skips trellis init and re-syncs overlays.
-Windows: trellis-grok.cmd (or the trellis-grok shim from install-shortcut.cmd).
+Windows: trellis-matt.cmd (or the trellis-matt shim from install-shortcut.cmd).
 Python: python3, then python, then py -3.
 USAGE
   exit "${1:-0}"
@@ -611,14 +611,14 @@ copy_platform_overlay() {
 }
 
 clone_github_source() {
-  local repo="${TRELLIS_GROK_REPO:-https://github.com/samiya782/trellis-workflow.git}"
-  local branch="${TRELLIS_GROK_BRANCH:-grok}"
+  local repo="${TRELLIS_MATT_REPO:-https://github.com/samiya782/trellis-workflow.git}"
+  local branch="${TRELLIS_MATT_BRANCH:-main}"
   local dest
   dest="$(default_clone_dir)"
   local url
   export GIT_TERMINAL_PROMPT=0
   if [[ -e "$dest" && ! -d "$dest/.git" ]]; then
-    echo "error: $dest exists and is not a git checkout. Set TRELLIS_GROK_CLONE_DIR or remove it." >&2
+    echo "error: $dest exists and is not a git checkout. Set TRELLIS_MATT_CLONE_DIR or remove it." >&2
     exit 2
   fi
   if [[ ! -d "$dest/.git" ]]; then
@@ -635,7 +635,7 @@ clone_github_source() {
         ;;
     esac
     if [[ -n "$(git -C "$dest" status --porcelain)" ]]; then
-      echo "error: $dest has local changes. Remove it or set TRELLIS_GROK_CLONE_DIR to a fresh path." >&2
+      echo "error: $dest has local changes. Remove it or set TRELLIS_MATT_CLONE_DIR to a fresh path." >&2
       exit 2
     fi
     echo "--- fetch $repo branch $branch in $dest" >&2
@@ -713,7 +713,7 @@ cmd_install() {
     local src
     src="$(clone_github_source)" || exit $?
     echo "github source: $src"
-    exec env TRELLIS_GROK_HOME="$src" "$0" install "${replay[@]}"
+    exec env TRELLIS_MATT_HOME="$src" "$0" install "${replay[@]}"
   fi
   trap cleanup_seed EXIT
   if [[ $platform_set -eq 0 ]]; then
@@ -738,8 +738,8 @@ cmd_install() {
     exit 2
   fi
   if [[ -z "$user" ]]; then
-    user="${TRELLIS_GROK_USER:-${USER:-developer}}"
-    echo "install: using -u $user (override with -u NAME or TRELLIS_GROK_USER)"
+    user="${TRELLIS_MATT_USER:-${USER:-developer}}"
+    echo "install: using -u $user (override with -u NAME or TRELLIS_MATT_USER)"
   fi
   command -v trellis >/dev/null 2>&1 || {
     echo "error: trellis CLI not found on PATH" >&2
@@ -842,8 +842,8 @@ cmd_init() {
     d="$(pwd)"
   fi
   if [[ -z "$user" ]]; then
-    user="${TRELLIS_GROK_USER:-${USER:-developer}}"
-    echo "init: using -u $user (override with -u NAME or TRELLIS_GROK_USER)"
+    user="${TRELLIS_MATT_USER:-${USER:-developer}}"
+    echo "init: using -u $user (override with -u NAME or TRELLIS_MATT_USER)"
   fi
   if [[ -d "$d/.trellis" ]]; then
     echo "error: $d already has .trellis/; use apply/update, or pass -f/-s through to trellis init" >&2

@@ -1,5 +1,5 @@
 
-  main ~/t/trellis-grok-val-20261026/hs-fix-on-r2                                                                                                                             66K / 256K │ [Dashboard]
+  main ~/t/trellis-matt-val-20261026/hs-fix-on-r2                                                                                                                             66K / 256K │ [Dashboard]
 
 
      ❯ The PRD is approved as complete. You are authorized to implement this task now. Do not commit and do not push.                                                                        8:53 AM

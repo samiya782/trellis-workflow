@@ -1,5 +1,5 @@
 
-  textstats-top ~/t/trellis-grok-val-20261026/recheck-tui                                                                                                                    127K / 256K │ [Dashboard]
+  textstats-top ~/t/trellis-matt-val-20261026/recheck-tui                                                                                                                    127K / 256K │ [Dashboard]
 
 
      ❯ Both tickets are delivered, so the parent spec is done too. Archive .trellis/tasks/10-26-textstats-top with --no-commit (no commit, no push), then run task.py validate on both       7:40 AM
@@ -19,7 +19,7 @@
      task.py validate on .trellis/tasks/archive/2026-10/10-26-textstats-rank-top:
 
      === Validating Context Files ===
-     Target dir: /home/samiya/tmp/trellis-grok-val-20261026/recheck-tui/.trellis/tasks/archive/2026-10/10-26-textstats-rank-top
+     Target dir: /home/samiya/tmp/trellis-matt-val-20261026/recheck-tui/.trellis/tasks/archive/2026-10/10-26-textstats-rank-top
 
        implement.jsonl: ✓ (3 entries)
        check.jsonl: ✓ (3 entries)
@@ -30,7 +30,7 @@
      task.py validate on .trellis/tasks/archive/2026-10/10-26-textstats-usage-reject:
 
      === Validating Context Files ===
-     Target dir: /home/samiya/tmp/trellis-grok-val-20261026/recheck-tui/.trellis/tasks/archive/2026-10/10-26-textstats-usage-reject
+     Target dir: /home/samiya/tmp/trellis-matt-val-20261026/recheck-tui/.trellis/tasks/archive/2026-10/10-26-textstats-usage-reject
 
        implement.jsonl: ✓ (3 entries)                                                                                                                                                                  █
        check.jsonl: ✓ (3 entries)                                                                                                                                                                      █

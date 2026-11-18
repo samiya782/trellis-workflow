@@ -1,7 +1,7 @@
 {
   "run": "hs-orig-on-r2",
   "session_id": "9a3f343a-55ef-42c7-a5f7-e44d61bef803",
-  "session_dir": "/home/samiya/.grok/sessions/%2Fhome%2Fsamiya%2Ftmp%2Ftrellis-grok-val-20261026%2Fhs-orig-on-r2/9a3f343a-55ef-42c7-a5f7-e44d61bef803",
+  "session_dir": "/home/samiya/.grok/sessions/%2Fhome%2Fsamiya%2Ftmp%2Ftrellis-matt-val-20261026%2Fhs-orig-on-r2/9a3f343a-55ef-42c7-a5f7-e44d61bef803",
   "tool_names": {
     "CMD": 6,
     "read_file": 27,
@@ -305,7 +305,7 @@
     [
       "EDIT",
       1,
-      "search_replace /home/samiya/tmp/trellis-grok-val-20261026/hs-orig-on-r2/.trellis/tasks/10-26-textstats-top/task.json"
+      "search_replace /home/samiya/tmp/trellis-matt-val-20261026/hs-orig-on-r2/.trellis/tasks/10-26-textstats-top/task.json"
     ]
   ]
 }

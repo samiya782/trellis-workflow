@@ -1,7 +1,7 @@
 {
   "info": {
     "id": "01a17855-2d1d-7953-9a51-d228285ed2cf",
-    "cwd": "/home/samiya/.grok/worktrees/trellis-grok-val-20261026-continue/subagent-01a17855-2d1d-7953-9a51-d228285ed2cf"
+    "cwd": "/home/samiya/.grok/worktrees/trellis-matt-val-20261026-continue/subagent-01a17855-2d1d-7953-9a51-d228285ed2cf"
   },
   "agent_id": "01a17855-2d1d-7953-9a51-d228285ed2cf",
   "attempt_id": "at1.acdc0ca7e88a45009dca51871b0115da",
@@ -14,7 +14,7 @@
   "next_trace_turn": 1,
   "chat_format_version": 1,
   "session_kind": "subagent",
-  "git_root_dir": "/home/samiya/.grok/worktrees/trellis-grok-val-20261026-continue/subagent-01a17855-2d1d-7953-9a51-d228285ed2cf/",
+  "git_root_dir": "/home/samiya/.grok/worktrees/trellis-matt-val-20261026-continue/subagent-01a17855-2d1d-7953-9a51-d228285ed2cf/",
   "head_commit": "e1206eb3280833007a5b4251cbcbcc3935019493",
   "head_branch": "integrate/textstats-top",
   "grok_home": "/home/samiya/.grok",

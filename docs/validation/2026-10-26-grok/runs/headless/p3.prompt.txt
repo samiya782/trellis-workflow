@@ -1,6 +1,6 @@
 Good work. Next, audit Trellis task creation in every scenario. Still do not modify ~/trellis; fixtures only.
 
-For each scenario fixture under ~/tmp/trellis-grok-val-20261026 (small change = normal typo run, bug report = bug, grill-me, grill-with-docs = grill-docs, wayfinder, to-spec/to-tickets and implement-spec = continue, implement, implement-spec without a spec = ispec-none, resume = resume and continue, trellis-start = start, trellis-finish-work = continue), record:
+For each scenario fixture under ~/tmp/trellis-matt-val-20261026 (small change = normal typo run, bug report = bug, grill-me, grill-with-docs = grill-docs, wayfinder, to-spec/to-tickets and implement-spec = continue, implement, implement-spec without a spec = ispec-none, resume = resume and continue, trellis-start = start, trellis-finish-work = continue), record:
 - whether a new .trellis/tasks/<dir> was created, and whether one should have been per docs/agents/matt-flow.md and .trellis/workflow.md (expected vs actual);
 - `python3 .trellis/scripts/task.py validate <task>` result for every task the run created or touched;
 - presence of prd.md / implement.md / task.json and whether their content matches what actually happened (decisions, authorization, next command);

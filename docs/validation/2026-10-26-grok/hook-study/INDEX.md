@@ -4,7 +4,7 @@ Date: 2026-10-26 23:28 to 2026-10-27 00:25 (UTC+8). The WSL clock is PDT, so raw
 logs show 08:28 to 09:25 -07:00.
 Tooling: grok 1.0.70, model `grok-4.7-build-fast`, Trellis 0.7.0-beta.4, `--always-approve` with deny rules
 (`git commit/push/reset/checkout/stash`, `rm -rf`).
-All runs used disposable fixtures under `~/tmp/trellis-grok-val-20261026/`. The `~/trellis` tree was
+All runs used disposable fixtures under `~/tmp/trellis-matt-val-20261026/`. The `~/trellis` tree was
 not touched until the verified fix commit.
 
 Question (user, pt8u): did the Claude-compat hooks cause Grok to skip `task.py start`

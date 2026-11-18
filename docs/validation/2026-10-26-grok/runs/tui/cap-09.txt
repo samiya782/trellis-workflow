@@ -1,5 +1,5 @@
 
-  textstats-top ~/t/trellis-grok-val-20261026/recheck-tui                                                                                                                    106K / 256K │ [Dashboard]
+  textstats-top ~/t/trellis-matt-val-20261026/recheck-tui                                                                                                                    106K / 256K │ [Dashboard]
 
 
      ❯ Workflow step 1.4 says the coordinator runs task.py start once implementation is authorized, and that step was skipped. Run python3 .trellis/scripts/task.py start .trellis/          7:36 AM

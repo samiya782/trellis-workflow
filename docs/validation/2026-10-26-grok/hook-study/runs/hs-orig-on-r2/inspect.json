@@ -2,8 +2,8 @@
   "grokVersion": "1.0.70",
   "channel": "stable",
   "updateChannel": null,
-  "cwd": "/home/samiya/tmp/trellis-grok-val-20261026/hs-orig-on-r2",
-  "projectRoot": "/home/samiya/tmp/trellis-grok-val-20261026/hs-orig-on-r2/",
+  "cwd": "/home/samiya/tmp/trellis-matt-val-20261026/hs-orig-on-r2",
+  "projectRoot": "/home/samiya/tmp/trellis-matt-val-20261026/hs-orig-on-r2/",
   "projectTrusted": true,
   "projectInstructions": [
     {
@@ -16,7 +16,7 @@
       "compatibilityStatus": "enabled"
     },
     {
-      "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-orig-on-r2/AGENTS.md",
+      "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-orig-on-r2/AGENTS.md",
       "scope": "project",
       "fileType": "agents_md",
       "sizeBytes": 1073,
@@ -52,7 +52,7 @@
       "target": "python3 .claude/hooks/session-start.py",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-orig-on-r2/.claude"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-orig-on-r2/.claude"
       },
       "matcher": "startup",
       "vendor": "claude",
@@ -64,7 +64,7 @@
       "target": "python3 .claude/hooks/session-start.py",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-orig-on-r2/.claude"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-orig-on-r2/.claude"
       },
       "matcher": "clear",
       "vendor": "claude",
@@ -76,7 +76,7 @@
       "target": "python3 .claude/hooks/inject-spec-context.py",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-orig-on-r2/.claude"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-orig-on-r2/.claude"
       },
       "matcher": "clear",
       "vendor": "claude",
@@ -88,7 +88,7 @@
       "target": "python3 .claude/hooks/session-start.py",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-orig-on-r2/.claude"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-orig-on-r2/.claude"
       },
       "matcher": "compact",
       "vendor": "claude",
@@ -100,7 +100,7 @@
       "target": "python3 .claude/hooks/inject-spec-context.py",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-orig-on-r2/.claude"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-orig-on-r2/.claude"
       },
       "matcher": "compact",
       "vendor": "claude",
@@ -112,7 +112,7 @@
       "target": "python3 .claude/hooks/inject-workflow-state.py",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-orig-on-r2/.claude"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-orig-on-r2/.claude"
       },
       "matcher": null,
       "vendor": "claude",
@@ -124,7 +124,7 @@
       "target": "python3 .claude/hooks/inject-subagent-context.py",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-orig-on-r2/.claude"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-orig-on-r2/.claude"
       },
       "matcher": "Task",
       "vendor": "claude",
@@ -136,7 +136,7 @@
       "target": "python3 .claude/hooks/inject-subagent-context.py",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-orig-on-r2/.claude"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-orig-on-r2/.claude"
       },
       "matcher": "Agent",
       "vendor": "claude",
@@ -148,7 +148,7 @@
       "target": "python3 .claude/hooks/inject-spec-context.py",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-orig-on-r2/.claude"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-orig-on-r2/.claude"
       },
       "matcher": "Read|Edit|Write|MultiEdit",
       "vendor": "claude",
@@ -161,7 +161,7 @@
       "description": "Discovers and injects project-specific coding guidelines from .trellis/spec/ before implementation begins. Reads spec indexes, pre-development checklists, and shared thinking guides for the target package. Use when starting a new coding task, before writing any code, switching to a different package, or needing to refresh project conventions and standards.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-orig-on-r2/.grok/skills/trellis-before-dev/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-orig-on-r2/.grok/skills/trellis-before-dev/SKILL.md"
       },
       "userInvocable": true
     },
@@ -170,7 +170,7 @@
       "description": "Guides collaborative requirements discovery before implementation. Creates task directory, seeds PRD, asks high-value questions one at a time, researches technical choices, and converges on MVP scope. Use when requirements are unclear, there are multiple valid approaches, or the user describes a new feature or complex task.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-orig-on-r2/.grok/skills/trellis-brainstorm/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-orig-on-r2/.grok/skills/trellis-brainstorm/SKILL.md"
       },
       "userInvocable": true
     },
@@ -179,7 +179,7 @@
       "description": "Deep bug analysis to break the fix-forget-repeat cycle. Analyzes root cause category, why fixes failed, prevention mechanisms, and captures knowledge into specs. Use after fixing a bug to prevent the same class of bugs.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-orig-on-r2/.grok/skills/trellis-break-loop/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-orig-on-r2/.grok/skills/trellis-break-loop/SKILL.md"
       },
       "userInvocable": true
     },
@@ -188,7 +188,7 @@
       "description": "Use Trellis channel for live multi-agent collaboration, spawned workers, cross-agent review, progress inspection, forum channels, and channel log debugging.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-orig-on-r2/.grok/skills/trellis-channel/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-orig-on-r2/.grok/skills/trellis-channel/SKILL.md"
       },
       "userInvocable": true
     },
@@ -197,7 +197,7 @@
       "description": "Comprehensive quality verification: spec compliance, lint, type-check, tests, cross-layer data flow, code reuse, and consistency checks. Use when code is written and needs quality verification, before committing changes, or to catch context drift during long sessions.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-orig-on-r2/.grok/skills/trellis-check/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-orig-on-r2/.grok/skills/trellis-check/SKILL.md"
       },
       "userInvocable": true
     },
@@ -206,7 +206,7 @@
       "description": "Understand and customize the local Trellis architecture inside a user project. Use when modifying .trellis plus platform hooks, settings, agents, skills, commands, prompts, workflows, the channel runtime (trellis channel), bundled runtime agents under .trellis/agents/, selectable workflow templates, registry-backed spec refresh, cross-session memory (trellis mem) generated by trellis init, or AI-facing bundled skills (trellis-channel, trellis-session-insight, trellis-spec-bootstrap) and bundled-skill auto-dispatch flow.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-orig-on-r2/.grok/skills/trellis-meta/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-orig-on-r2/.grok/skills/trellis-meta/SKILL.md"
       },
       "userInvocable": true
     },
@@ -215,7 +215,7 @@
       "description": "Reach into past AI conversation history through the `trellis mem` CLI. Use whenever the user asks 'how did we solve X last time', 'have we discussed this before', 'what was the decision on X', 'remind me what we did in this task', '上次怎么解的', '之前讨论过吗', '想起一段对话', or when starting a brainstorm that overlaps prior work, debugging a familiar bug, continuing a task across sessions, or doing a finish-work review. Returns raw past dialogue; decide for the moment whether to update spec, append to task notes, quote inline in the answer, or just internalize.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-orig-on-r2/.grok/skills/trellis-session-insight/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-orig-on-r2/.grok/skills/trellis-session-insight/SKILL.md"
       },
       "userInvocable": true
     },
@@ -224,7 +224,7 @@
       "description": "Bootstrap project-specific Trellis coding specs with a platform-neutral single-agent workflow. Use when creating or refreshing .trellis/spec guidelines, analyzing a codebase with GitNexus, ABCoder, or source inspection, decomposing package/layer spec work, and writing real codebase-backed spec docs without placeholder text.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-orig-on-r2/.grok/skills/trellis-spec-bootstrap/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-orig-on-r2/.grok/skills/trellis-spec-bootstrap/SKILL.md"
       },
       "userInvocable": true
     },
@@ -233,7 +233,7 @@
       "description": "Captures executable contracts and coding conventions into .trellis/spec/ documents. Use when learning something valuable from debugging, implementing, or discussion that should be preserved for future sessions.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-orig-on-r2/.grok/skills/trellis-update-spec/SKILL.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-orig-on-r2/.grok/skills/trellis-update-spec/SKILL.md"
       },
       "userInvocable": true
     },
@@ -242,7 +242,7 @@
       "description": "Resume work on the current task — pick up at the right phase/step in .trellis/workflow.md.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-orig-on-r2/.grok/commands/trellis-continue.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-orig-on-r2/.grok/commands/trellis-continue.md"
       },
       "userInvocable": true
     },
@@ -251,7 +251,7 @@
       "description": "Wrap up the current session: archive the active task (and any other completed-but-unarchived tasks the user wants to clean up) and record the session journal. Code commits are NOT done here — those happen in workflow Phase 3.4 before you invoke this command.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-orig-on-r2/.grok/commands/trellis-finish-work.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-orig-on-r2/.grok/commands/trellis-finish-work.md"
       },
       "userInvocable": true
     },
@@ -260,7 +260,7 @@
       "description": "Initialize a Trellis-managed development session. This platform has no session-start hook, so manually load the equivalent compact context by following these steps.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-orig-on-r2/.grok/commands/trellis-start.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-orig-on-r2/.grok/commands/trellis-start.md"
       },
       "userInvocable": true
     },
@@ -600,7 +600,7 @@
       "description": "Code and tech search expert for Trellis. Finds files, patterns, and tech\nsolutions, and PERSISTS every finding to the current task's research/\ndirectory. No code modifications outside that directory. Dispatch via\nspawn_subagent with subagent_type trellis-research.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-orig-on-r2/.grok/agents/trellis-research.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-orig-on-r2/.grok/agents/trellis-research.md"
       }
     },
     {
@@ -608,7 +608,7 @@
       "description": "Code implementation expert for Trellis. Understands specs and requirements,\nthen implements features. No git commit allowed. Dispatch via spawn_subagent\nwith subagent_type trellis-implement; first prompt line must be Active task: <path>.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-orig-on-r2/.grok/agents/trellis-implement.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-orig-on-r2/.grok/agents/trellis-implement.md"
       }
     },
     {
@@ -616,7 +616,7 @@
       "description": "Code quality check expert for Trellis. Reviews code changes against specs\nand self-fixes issues. Dispatch via spawn_subagent with subagent_type\ntrellis-check; first prompt line must be Active task: <path>.",
       "source": {
         "type": "project",
-        "path": "/home/samiya/tmp/trellis-grok-val-20261026/hs-orig-on-r2/.grok/agents/trellis-check.md"
+        "path": "/home/samiya/tmp/trellis-matt-val-20261026/hs-orig-on-r2/.grok/agents/trellis-check.md"
       }
     },
     {

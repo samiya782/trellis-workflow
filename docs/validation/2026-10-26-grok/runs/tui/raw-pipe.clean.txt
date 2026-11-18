@@ -41,7 +41,7 @@ ing
  4 files, 5 searches, ran 1 co
 mand
 Running
-Read `/home/samiya/tmp/trellis-grok-val-20261026/recheck-tui/.trellis/scripts/common/task_store.py`
+Read `/home/samiya/tmp/trellis-matt-val-20261026/recheck-tui/.trellis/scripts/common/task_store.py`
  0.0s
 ◈
 ed
@@ -833,7 +833,7 @@ ing
  4 files, 5 searches, ran 1 co
 mand
 Running
-Read `/home/samiya/tmp/trellis-grok-val-20261026/recheck-tui/.trellis/scripts/common/task_store.py`
+Read `/home/samiya/tmp/trellis-matt-val-20261026/recheck-tui/.trellis/scripts/common/task_store.py`
  0.0s
 ◈
 1
@@ -1029,7 +1029,7 @@ ead_file (3)…
 Exploring
  3 files, ran 1 command
 Running
-Read `/home/samiya/tmp/trellis-grok-val-20261026/recheck-tui/.trellis/tasks/10-26-textstats-rank-top/prd.md`
+Read `/home/samiya/tmp/trellis-matt-val-20261026/recheck-tui/.trellis/tasks/10-26-textstats-rank-top/prd.md`
  0.0s
 ◈
 1
@@ -1285,7 +1285,7 @@ Editing
  +33
  -20
 Running
-Write `/home/samiya/tmp/trellis-grok-val-20261026/recheck-tui/.trellis/tasks/10-26-textstats-usage-reject/prd.md`
+Write `/home/samiya/tmp/trellis-matt-val-20261026/recheck-tui/.trellis/tasks/10-26-textstats-usage-reject/prd.md`
  0.0s
 ◈
 1
@@ -1943,7 +1943,7 @@ mands
  +46
  -26
 Running
-Edit `/home/samiya/tmp/trellis-grok-val-20261026/recheck-tui/.trellis/tasks/10-26-textstats-top/implement.md`
+Edit `/home/samiya/tmp/trellis-matt-val-20261026/recheck-tui/.trellis/tasks/10-26-textstats-top/implement.md`
  0.0s
 7
 2
@@ -2016,7 +2016,7 @@ ing
  +46
  -26
 Running
-Read `/home/samiya/tmp/trellis-grok-val-20261026/recheck-tui/.trellis/tasks/10-26-textstats-top/implement.md`
+Read `/home/samiya/tmp/trellis-matt-val-20261026/recheck-tui/.trellis/tasks/10-26-textstats-top/implement.md`
  0.0s
 7
 ◈
@@ -2654,7 +2654,7 @@ nd (4)…
 Exploring
  3 files, ran 1 command
 Running
-Read `/home/samiya/tmp/trellis-grok-val-20261026/recheck-tui/.grok/skills/implement-spec/SKILL.md`
+Read `/home/samiya/tmp/trellis-matt-val-20261026/recheck-tui/.grok/skills/implement-spec/SKILL.md`
  0.0s
 26s ⇣71.6k [↓]
 b
@@ -3218,7 +3218,7 @@ ing
  7 files, ran 2 co
 mands
 Running
-Read `/home/samiya/tmp/trellis-grok-val-20261026/recheck-tui/.grok/skills/code-review/SKILL.md`
+Read `/home/samiya/tmp/trellis-matt-val-20261026/recheck-tui/.grok/skills/code-review/SKILL.md`
  0.0s
 49s ⇣75.9k [↓]
 b
@@ -4422,7 +4422,7 @@ ing
  10 files, ran
 2 commands
 Running
-Read `/home/samiya/tmp/trellis-grok-val-20261026/recheck-tui/.grok/skills/tdd/tests.md`
+Read `/home/samiya/tmp/trellis-matt-val-20261026/recheck-tui/.grok/skills/tdd/tests.md`
  0.0s
 84
 2
@@ -5421,7 +5421,7 @@ xplored
  +10
  -4
 Running
-Edit `/home/samiya/tmp/trellis-grok-val-20261026/recheck-tui/.trellis/tasks/10-26-textstats-top/implement.md`
+Edit `/home/samiya/tmp/trellis-matt-val-20261026/recheck-tui/.trellis/tasks/10-26-textstats-top/implement.md`
  0.0s
 90
 2
@@ -5578,7 +5578,7 @@ test_textstats.py
 /
 -1
 Running
-Edit `/home/samiya/tmp/trellis-grok-val-20261026/recheck-tui/tests/test_textstats.py`
+Edit `/home/samiya/tmp/trellis-matt-val-20261026/recheck-tui/tests/test_textstats.py`
  0.0s
 9
 1
@@ -5767,7 +5767,7 @@ textstats.py
 /
 -0
 Running
-Edit `/home/samiya/tmp/trellis-grok-val-20261026/recheck-tui/textstats.py`
+Edit `/home/samiya/tmp/trellis-matt-val-20261026/recheck-tui/textstats.py`
  0.0s
 ⠹ Waiting for response…
  0.0s
@@ -5976,7 +5976,7 @@ Editing
  +32
  -1
 Running
-Edit `/home/samiya/tmp/trellis-grok-val-20261026/recheck-tui/tests/test_textstats.py`
+Edit `/home/samiya/tmp/trellis-matt-val-20261026/recheck-tui/tests/test_textstats.py`
  0.0s
 3m2s ⇣93.0k [↓]
 b
@@ -6489,7 +6489,7 @@ mand
  +77
  -9
 Running
-Edit `/home/samiya/tmp/trellis-grok-val-20261026/recheck-tui/.trellis/tasks/10-26-textstats-top/implement.md`
+Edit `/home/samiya/tmp/trellis-matt-val-20261026/recheck-tui/.trellis/tasks/10-26-textstats-top/implement.md`
  0.0s
 ◈
 1
@@ -6782,7 +6782,7 @@ mands
  +81
  -10
 Running
-Edit `/home/samiya/tmp/trellis-grok-val-20261026/recheck-tui/textstats.py`
+Edit `/home/samiya/tmp/trellis-matt-val-20261026/recheck-tui/textstats.py`
  0.0s
 1
 ◈
@@ -7279,7 +7279,7 @@ ing
  +86
  -10
 Running
-Edit `/home/samiya/tmp/trellis-grok-val-20261026/recheck-tui/tests/test_textstats.py`
+Edit `/home/samiya/tmp/trellis-matt-val-20261026/recheck-tui/tests/test_textstats.py`
  0.0s
 ◈
 1
@@ -7734,7 +7734,7 @@ mands
  +93
  -17
 Running
-Edit `/home/samiya/tmp/trellis-grok-val-20261026/recheck-tui/.trellis/tasks/10-26-textstats-top/task.json`
+Edit `/home/samiya/tmp/trellis-matt-val-20261026/recheck-tui/.trellis/tasks/10-26-textstats-top/task.json`
  0.0s
 3
 ◈
@@ -7987,7 +7987,7 @@ mands
  +94
  -18
 Running
-Edit `/home/samiya/tmp/trellis-grok-val-20261026/recheck-tui/.trellis/tasks/10-26-textstats-top/implement.md`
+Edit `/home/samiya/tmp/trellis-matt-val-20261026/recheck-tui/.trellis/tasks/10-26-textstats-top/implement.md`
  0.0s
 4m46s ⇣105k [↓]
 b
@@ -9092,7 +9092,7 @@ ing
 s, 2 searches, ran 2
 commands
 Running
-Read `/home/samiya/tmp/trellis-grok-val-20261026/recheck-tui/.trellis/tasks/10-26-textstats-rank-top/task.json`
+Read `/home/samiya/tmp/trellis-matt-val-20261026/recheck-tui/.trellis/tasks/10-26-textstats-rank-top/task.json`
  0.0s
 3
 ◈
@@ -10052,7 +10052,7 @@ search, ran 1 command
  +5
  -4
 Running
-Edit `/home/samiya/tmp/trellis-grok-val-20261026/recheck-tui/.trellis/tasks/10-26-textstats-top/implement.md`
+Edit `/home/samiya/tmp/trellis-matt-val-20261026/recheck-tui/.trellis/tasks/10-26-textstats-top/implement.md`
  0.0s
 ◈
 1
@@ -10435,7 +10435,7 @@ ing
  +5
  -4
 Running
-Read `/home/samiya/tmp/trellis-grok-val-20261026/recheck-tui/.trellis/workspace/fixture/index.md`
+Read `/home/samiya/tmp/trellis-matt-val-20261026/recheck-tui/.trellis/workspace/fixture/index.md`
  0.0s
 1
 ◈
@@ -11347,7 +11347,7 @@ Target dir:
  /home/samiya
 /tmp/
 5
-trellis-grok
+trellis-matt
 -val
 -20261026/re
 check-t
@@ -11385,7 +11385,7 @@ trellis/tasks
 === Valid
 ating Context Files ===
 Target dir:
- /home/samiya/tmp/trellis-grok-val-20261026/recheck-tui/.trellis/tasks/archive/2026-10/10-26-textstats-usage-reject
+ /home/samiya/tmp/trellis-matt-val-20261026/recheck-tui/.trellis/tasks/archive/2026-10/10-26-textstats-usage-reject
   implement.jsonl: ✓ (3 entries)
   check.jsonl: ✓ (3 entries)
 ✓ All validations passed
@@ -11400,7 +11400,7 @@ task.py validate
 .trellis/tasks/archive/2026-10/10-26-textstats-usage-reject
 :
 === Validating Context Files ===
-Target dir: /home/samiya/tmp/trellis-grok-val-20261026/recheck-tui/.trellis/tasks/archive/2026-10/10-26-textstats-usage-reject
+Target dir: /home/samiya/tmp/trellis-matt-val-20261026/recheck-tui/.trellis/tasks/archive/2026-10/10-26-textstats-usage-reject
 implement.jsonl: ✓ (3 entries)
   check.jsonl: ✓ (3 entries)
 ✓ All validations passed

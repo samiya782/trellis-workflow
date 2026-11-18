@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Install (or uninstall) the `trellis-grok` shortcut.
+# Install (or uninstall) the `trellis-matt` shortcut.
 #
 #   scripts/grok-fixes/install-shortcut.sh [--uninstall] [--home DIR]
 #
-# Linux: symlink ~/.local/bin/trellis-grok -> <home>/scripts/grok-fixes/trellis-grok
-# Windows: write trellis-grok.cmd and trellis-grok.ps1 into a user-writable
+# Linux: symlink ~/.local/bin/trellis-matt -> <home>/scripts/grok-fixes/trellis-matt
+# Windows: write trellis-matt.cmd and trellis-matt.ps1 into a user-writable
 # directory already on PATH, or %USERPROFILE%\.local\bin. No Administrator
 # and no symlink. The .cmd launcher uses Git for Windows bash.exe, never
 # C:\Windows\System32\bash.exe.
@@ -37,7 +37,7 @@ while [[ $# -gt 0 ]]; do
   shift
 done
 
-SRC="$HOME_SRC/scripts/grok-fixes/trellis-grok"
+SRC="$HOME_SRC/scripts/grok-fixes/trellis-matt"
 [[ -f "$SRC" ]] || { echo "error: missing $SRC" >&2; exit 2; }
 if ! is_windows; then
   [[ -x "$SRC" ]] || { echo "error: missing executable $SRC" >&2; exit 2; }
@@ -72,12 +72,24 @@ write_crlf() {
   sed 's/\r$//' | sed 's/$/\r/' > "$dest"
 }
 
+
+remove_legacy() {
+  local dir="$1"
+  local f
+  for f in "$dir/trellis-grok" "$dir/trellis-grok.cmd" "$dir/trellis-grok.ps1"; do
+    if [[ -e "$f" || -L "$f" ]]; then
+      rm -f "$f"
+      echo "removed old shortcut: $f"
+    fi
+  done
+}
+
 install_windows() {
   local dir cmd ps1 invoke src_win invoke_win
   dir="$(shortcut_dir)"
   mkdir -p "$dir"
-  cmd="$dir/trellis-grok.cmd"
-  ps1="$dir/trellis-grok.ps1"
+  cmd="$dir/trellis-matt.cmd"
+  ps1="$dir/trellis-matt.ps1"
   invoke="$HOME_SRC/scripts/grok-fixes/invoke-git-bash.cmd"
   [[ -f "$invoke" ]] || { echo "error: missing $invoke" >&2; exit 2; }
   src_win="$(to_windows_path "$SRC")"
@@ -88,7 +100,7 @@ call "$invoke_win" "$src_win" %*
 exit /b %ERRORLEVEL%
 EOF
   write_crlf "$ps1" <<EOF
-# Installed trellis-grok shortcut. Calls the checkout's Git Bash launcher.
+# Installed trellis-matt shortcut. Calls the checkout's Git Bash launcher.
 \$ErrorActionPreference = "Stop"
 & "$invoke_win" "$src_win" @args
 exit \$LASTEXITCODE
@@ -96,13 +108,14 @@ EOF
   echo "installed: $cmd"
   echo "installed: $ps1"
   echo "source: $src_win"
+  remove_legacy "$dir"
   note_if_missing_from_path "$dir"
 }
 
 uninstall_windows() {
   local dir removed=0 f
   dir="$(shortcut_dir)"
-  for f in "$dir/trellis-grok.cmd" "$dir/trellis-grok.ps1"; do
+  for f in "$dir/trellis-matt.cmd" "$dir/trellis-matt.ps1"; do
     if [[ -f "$f" ]]; then
       rm -f "$f"
       echo "removed: $f"
@@ -110,8 +123,9 @@ uninstall_windows() {
     fi
   done
   if [[ $removed -eq 0 ]]; then
-    echo "nothing to remove ($dir/trellis-grok.cmd not present)"
+    echo "nothing to remove ($dir/trellis-matt.cmd not present)"
   fi
+  remove_legacy "$dir"
 }
 
 install_unix() {
@@ -159,9 +173,11 @@ if is_windows; then
   exit 0
 fi
 
-DEST="$(shortcut_dir)/trellis-grok"
+DEST="$(shortcut_dir)/trellis-matt"
 if [[ "$MODE" == uninstall ]]; then
   uninstall_unix "$DEST"
+  remove_legacy "$(shortcut_dir)"
 else
   install_unix "$DEST"
+  remove_legacy "$(shortcut_dir)"
 fi

@@ -1,5 +1,5 @@
                                                                                                                                                                                                         
-  main ~/t/trellis-grok-val-20261026/hs-orig-on-r2                                                                                                                            72K / 256K │ [Dashboard]  
+  main ~/t/trellis-matt-val-20261026/hs-orig-on-r2                                                                                                                            72K / 256K │ [Dashboard]  
                                                                                                                                                                                                         
                                                                                                                                                                                                         
      ❯ /trellis-continue .trellis/tasks/10-26-textstats-top                                                                                                                                  8:43 AM    

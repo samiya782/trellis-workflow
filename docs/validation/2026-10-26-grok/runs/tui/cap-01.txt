@@ -1,5 +1,5 @@
 
-  main ~/t/trellis-grok-val-20261026/recheck-tui                                                                                                                              53K / 256K │ [Dashboard]
+  main ~/t/trellis-matt-val-20261026/recheck-tui                                                                                                                              53K / 256K │ [Dashboard]
 
 
      ❯ Granularity is right: keep two slices, ticket 2 blocked by ticket 1, no further split. Publish them.                                                                                  7:27 AM

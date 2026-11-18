@@ -1,7 +1,7 @@
 {
   "info": {
     "id": "01a17850-3672-72a1-8b31-5395cea03459",
-    "cwd": "/home/samiya/tmp/trellis-grok-val-20261026/continue"
+    "cwd": "/home/samiya/tmp/trellis-matt-val-20261026/continue"
   },
   "agent_id": "ag1.df57339e30a452c85c23056115af698",
   "attempt_id": "at1.e8f5de52827e4d0d857a3b576a773e2b",
@@ -14,7 +14,7 @@
   "next_trace_turn": 1,
   "chat_format_version": 1,
   "session_kind": "headless",
-  "git_root_dir": "/home/samiya/tmp/trellis-grok-val-20261026/continue/",
+  "git_root_dir": "/home/samiya/tmp/trellis-matt-val-20261026/continue/",
   "head_commit": "e1206eb3280833007a5b4251cbcbcc3935019493",
   "head_branch": "main",
   "request_id": "0cbcc8f4-5438-4a94-b61b-9695f35a7ff0",

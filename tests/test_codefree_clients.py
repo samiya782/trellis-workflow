@@ -16,7 +16,7 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-CLI = ROOT / "scripts" / "grok-fixes" / ("trellis-grok.cmd" if os.name == "nt" else "trellis-grok")
+CLI = ROOT / "scripts" / "grok-fixes" / ("trellis-matt.cmd" if os.name == "nt" else "trellis-matt")
 SKILL_NAMES = ("trellis-start", "trellis-continue", "trellis-finish-work")
 NEEDLES = ("get_context.py", "grill-with-docs", "task.py create", "--no-start")
 ABSENT = (".claude", ".codex", ".grok", ".opencode", ".cursor")
@@ -122,7 +122,7 @@ class CodefreeOnlyInstallTests(unittest.TestCase):
         self.assertTrue((self.project / ".trellis" / "workflow.md").is_file())
         self.assertTrue((self.project / "docs" / "agents" / "matt-flow.md").is_file())
         self.assertTrue((self.project / ".gitattributes").is_file())
-        self.assertFalse((self.project / ".codefree-o" / "command" / "trellis-grok-deploy.md").exists())
+        self.assertFalse((self.project / ".codefree-o" / "command" / "trellis-matt-deploy.md").exists())
         for name in SKILL_NAMES:
             command = self.project / ".codefree-o" / "command" / f"{name}.md"
             text = command.read_text(encoding="utf-8")
