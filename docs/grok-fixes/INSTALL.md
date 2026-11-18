@@ -48,6 +48,76 @@ Override the source checkout with `TRELLIS_GROK_HOME=/path/to/checkout`.
 Grok Build slash command: `.grok/commands/trellis-grok-deploy.md` (`/trellis-grok-deploy`)
 runs status → dry-run → wait for confirm → apply.
 
+## One-click install (Claude Code, Codex, and Grok Build)
+
+`trellis-grok install` is the full new-project path. It keeps
+`status`, `dry-run`, `apply`, `revert`, `init`, and `update` as they are.
+`init` still means "Grok project, no Matt skills installer". `apply` stays
+idempotent and still upserts the Matt/grill block into both `AGENTS.md` and
+`CLAUDE.md`.
+
+Platforms (any combination; omit all three to install all of them):
+
+| Flag | `trellis init` | Overlay copied from the source checkout | Matt skills agent |
+|---|---|---|---|
+| `--claude` | `--claude` | `.claude/hooks/session-start.py`, `.claude/hooks/inject-subagent-context.py`, `.claude/commands/trellis/{continue,finish-work}.md`, plus the SessionStart `new`/`load` merge into `.claude/settings.json` | `claude-code` |
+| `--codex` | `--codex` | `.codex/config.toml`, `.codex/hooks/{session-start,inject-subagent-context}.py`, `.codex/agents/trellis-{check,implement,research}.toml`, `.agents/skills/trellis-{start,continue,finish-work}/SKILL.md` | `codex` |
+| `--grok` | `--grok` | `.grok/commands/trellis-*.md` (start, continue, finish-work, and `trellis-grok-deploy`) | `grok` |
+
+Every install also copies `.trellis/workflow.md`, `docs/agents/matt-flow.md`,
+`docs/agents/issue-tracker.md`, and the patched
+`.trellis/scripts/common/{active_task,task_store}.py`, then runs
+`apply-grok-fixes.sh --only scripts`. Matt skills:
+
+```bash
+npx skills@latest add mattpocock/skills --agent <requested agents> --yes
+```
+
+`--no-skills` skips that. The installer does not run `/setup-matt-pocock-skills`.
+
+After a successful install, both `AGENTS.md` and `CLAUDE.md` contain the
+`get_context.py` workflow load and the `/grill-with-docs` line that creates a
+planning task with `task.py create … --no-start`.
+
+From a local checkout or the `~/.local/bin/trellis-grok` shortcut:
+
+```bash
+trellis-grok install ~/my-project -u your-name --claude --codex --grok
+```
+
+GitHub, when the machine has no checkout. This clone is the file source, so
+the published `grok` branch has to contain `trellis-grok install` (this
+commit):
+
+```bash
+git clone --depth 1 --branch grok https://github.com/samiya782/trellis-workflow.git /tmp/trellis-workflow
+/tmp/trellis-workflow/scripts/grok-fixes/oneclick.sh ~/my-project -u your-name --claude --codex --grok
+```
+
+Or, with the shortcut already installed, clone branch `grok` and use it even
+if `~/trellis` exists:
+
+```bash
+trellis-grok install ~/my-project -u your-name --from-github --claude --codex --grok
+```
+
+`--from-github` clones `https://github.com/samiya782/trellis-workflow.git`
+branch `grok` (override with `TRELLIS_GROK_REPO` / `TRELLIS_GROK_BRANCH`) into
+`TRELLIS_GROK_CLONE_DIR` or `$XDG_CACHE_HOME/trellis-grok/workflow` (default
+`~/.cache/trellis-grok/workflow`). A dirty cache is left alone and the command
+stops. Re-running `install` in a project that already has `.trellis/` skips
+`trellis init` and copies the overlays again.
+
+`oneclick.sh` next to `trellis-grok` just execs `install`. A standalone
+download clones the branch, then execs the clone:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/samiya782/trellis-workflow/grok/scripts/grok-fixes/oneclick.sh \
+  | bash -s -- ~/my-project -u your-name --claude --codex --grok
+```
+
+In the project directory, run `grok --trust` once before a Grok session.
+
 ## Quick start (this checkout or any beta.4 project)
 
 ```bash

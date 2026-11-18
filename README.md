@@ -30,8 +30,60 @@ New projects don't need them.
 Requirements: Git, Python 3, Node/npx, the `trellis` CLI, and Claude Code, Codex,
 and/or Grok Build. The files above were made against Trellis **0.7.0-beta.4**.
 Under another Trellis version, merge their changes into that version's generated
-files instead of copying over them. From the new project's root, with this
-checkout at `~/trellis`:
+files instead of copying over them.
+
+### One-click
+
+`trellis-grok install` runs `trellis init` for the platforms you name, copies
+this checkout's workflow, Matt docs, and platform overlays, installs Matt skills,
+applies the script fixes, and writes the grill / `get_context.py` /
+`task.py create … --no-start` bootstrap into both `AGENTS.md` and `CLAUDE.md`.
+It does not run `/setup-matt-pocock-skills`.
+
+From this checkout, or after `scripts/grok-fixes/install-shortcut.sh`:
+
+```bash
+trellis-grok install ~/my-project -u your-name --claude --codex --grok
+```
+
+Pass any combination of `--claude`, `--codex`, and `--grok`. With no platform
+flags, the command installs all three. `--no-skills` skips
+`npx skills@latest add mattpocock/skills`.
+
+A machine that does not already have `~/trellis` clones branch `grok` and runs
+the same command:
+
+```bash
+git clone --depth 1 --branch grok https://github.com/samiya782/trellis-workflow.git /tmp/trellis-workflow
+/tmp/trellis-workflow/scripts/grok-fixes/oneclick.sh ~/my-project -u your-name --claude --codex --grok
+```
+
+`scripts/grok-fixes/oneclick.sh` is a thin wrapper around `trellis-grok install`.
+Downloaded on its own, it clones that GitHub branch first. To force the file
+source to be a fresh GitHub clone even when a local checkout exists:
+
+```bash
+trellis-grok install ~/my-project -u your-name --from-github --claude --codex --grok
+```
+
+`--from-github` clones `https://github.com/samiya782/trellis-workflow` branch
+`grok` into `$XDG_CACHE_HOME/trellis-grok/workflow` (or `~/.cache/trellis-grok/workflow`).
+Override the cache with `TRELLIS_GROK_CLONE_DIR`. The curl form below works
+once this commit is on `origin/grok`:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/samiya782/trellis-workflow/grok/scripts/grok-fixes/oneclick.sh \
+  | bash -s -- ~/my-project -u your-name --claude --codex --grok
+```
+
+`trellis-grok init` is unchanged: it always passes `--grok`, forwards extra
+`trellis init` flags, and does not install Matt skills. `status`, `dry-run`,
+`apply`, `revert`, and `update` are unchanged. Details:
+[docs/grok-fixes/INSTALL.md](docs/grok-fixes/INSTALL.md#one-click-install-claude-code-codex-and-grok-build).
+
+### Manual steps
+
+From the new project's root, with this checkout at `~/trellis`:
 
 ```bash
 git init                                   # skip if already a repository
@@ -115,6 +167,7 @@ changes and keep the local edits.
 trellis-grok status
 trellis-grok dry-run
 trellis-grok apply                 # or: trellis-grok init -u your-name
+trellis-grok install ~/my-project -u your-name --claude --codex --grok
 trellis-grok update                # safe upgrade path (creates .new; keeps workflow.md)
 ```
 

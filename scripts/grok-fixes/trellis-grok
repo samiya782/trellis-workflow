@@ -6,11 +6,18 @@
 #   trellis-grok apply   [DIR]
 #   trellis-grok revert  [DIR]
 #   trellis-grok init    [DIR] [-u NAME] [--claude] [--codex] [...]
+#   trellis-grok install [DIR] [-u NAME] [--claude] [--codex] [--grok]
+#                        [--from-github] [--no-skills]
 #   trellis-grok update  [DIR] [--allow-workflow]
 #   trellis-grok --help
 #
 # TRELLIS_GROK_HOME overrides the source checkout (default: resolve to the
 # clone that contains scripts/grok-fixes, usually ~/trellis).
+# install --from-github clones TRELLIS_GROK_REPO (default:
+# https://github.com/samiya782/trellis-workflow.git) branch TRELLIS_GROK_BRANCH
+# (default: grok) into TRELLIS_GROK_CLONE_DIR (default:
+# $XDG_CACHE_HOME/trellis-grok/workflow or ~/.cache/trellis-grok/workflow)
+# and uses that clone as the file source.
 #
 # Exit codes (aligned with apply-grok-fixes.sh where applicable):
 #   0  OK
@@ -69,15 +76,29 @@ Usage:
   trellis-grok revert  [DIR]     Revert applied patches
   trellis-grok init    [DIR] [-u NAME] [trellis-init-flags...]
                                  New project: trellis init --grok, copy Matt docs
-                                 + workflow, apply fixes
+                                 + workflow, apply fixes. Does not install Matt
+                                 skills. Extra flags (including --claude/--codex)
+                                 are passed through to trellis init.
+  trellis-grok install [DIR] [-u NAME] [--claude] [--codex] [--grok]
+                                 [--from-github] [--no-skills]
+                                 [trellis-init-flags...]
+                                 One-click: trellis init for the requested
+                                 platforms, copy this checkout's overlays,
+                                 install Matt skills, apply script fixes.
+                                 No platform flags means all three.
+                                 --from-github clones branch grok and copies
+                                 from that clone. --no-skills skips npx skills.
   trellis-grok update  [DIR] [--allow-workflow]
                                  Safe update: trellis update -n, re-apply fixes,
                                  list .new merges; protect .trellis/workflow.md
                                  unless --allow-workflow
   trellis-grok --help
 
-DIR defaults to the current directory (or git toplevel when inside a repo).
-Idempotent: re-apply is a no-op when already patched.
+DIR defaults to the current directory (or git toplevel when inside a repo
+for status/dry-run/apply/revert/update). install/init default to the current
+directory and refuse to run inside the source checkout.
+Idempotent: re-apply is a no-op when already patched. install on an existing
+Trellis project skips trellis init and re-syncs overlays.
 USAGE
   exit "${1:-0}"
 }
@@ -342,7 +363,12 @@ or worker. An approval or authorization message does not replace the command.
 if start in text and end in text:
     pre, rest = text.split(start, 1)
     _, post = rest.split(end, 1)
-    new = pre.rstrip() + "\n\n" + block + "\n" + post.lstrip("\n")
+    # A file that is only this block (what create writes) must stay byte-stable.
+    # pre.rstrip() would turn a leading blank line into another rewrite.
+    if pre.strip() == "":
+        new = block + "\n" + post.lstrip("\n")
+    else:
+        new = pre.rstrip() + "\n\n" + block + "\n" + post.lstrip("\n")
     action = "updated"
 elif "On `/grill-with-docs`" in text and "docs/agents/matt-flow.md" in text:
     print(f"  in-sync: {label} (already has grill-with-docs bootstrap)")
@@ -366,6 +392,224 @@ PY
 copy_integration() {
   sync_integration "$@"
 }
+
+# Copy one repo-relative file from HOME_SRC onto the target. Missing sources
+# are skipped. Identical files are left in place.
+copy_overlay_file() {
+  local rel="$1" d="$2"
+  local dest="$d/$rel"
+  if [[ ! -f "$HOME_SRC/$rel" ]]; then
+    echo "  skip missing source: $rel"
+    return 0
+  fi
+  # Replace symlinks instead of following them. cp would otherwise write
+  # through a link and could change a file outside the project.
+  if [[ -e "$dest" && ! -L "$dest" ]] && cmp -s "$HOME_SRC/$rel" "$dest"; then
+    echo "  in-sync: $rel"
+    return 0
+  fi
+  mkdir -p "$(dirname "$dest")"
+  rm -f "$dest"
+  cp -p "$HOME_SRC/$rel" "$dest"
+  echo "  copied: $rel"
+}
+
+# Platform overlays from the README copy list. Shared script fixes are always
+# copied. Claude / Codex / Grok files are copied only for the platforms named
+# on this install. .agents/skills/trellis-* are the Codex skill surface.
+copy_platform_overlay() {
+  local d="$1" claude="$2" codex="$3" grok="$4"
+  local rel base f
+  for rel in \
+    .trellis/scripts/common/active_task.py \
+    .trellis/scripts/common/task_store.py
+  do
+    copy_overlay_file "$rel" "$d"
+  done
+  if [[ "$claude" -eq 1 ]]; then
+    for rel in \
+      .claude/hooks/session-start.py \
+      .claude/hooks/inject-subagent-context.py \
+      .claude/commands/trellis/continue.md \
+      .claude/commands/trellis/finish-work.md
+    do
+      copy_overlay_file "$rel" "$d"
+    done
+  fi
+  if [[ "$codex" -eq 1 ]]; then
+    for rel in \
+      .codex/config.toml \
+      .codex/hooks/session-start.py \
+      .codex/hooks/inject-subagent-context.py \
+      .codex/agents/trellis-check.toml \
+      .codex/agents/trellis-implement.toml \
+      .codex/agents/trellis-research.toml \
+      .agents/skills/trellis-start/SKILL.md \
+      .agents/skills/trellis-continue/SKILL.md \
+      .agents/skills/trellis-finish-work/SKILL.md
+    do
+      copy_overlay_file "$rel" "$d"
+    done
+  fi
+  if [[ "$grok" -eq 1 && -d "$HOME_SRC/.grok/commands" ]]; then
+    for f in "$HOME_SRC"/.grok/commands/trellis-*.md; do
+      [[ -f "$f" ]] || continue
+      base="$(basename "$f")"
+      copy_overlay_file ".grok/commands/$base" "$d"
+    done
+  fi
+}
+
+clone_github_source() {
+  local repo="${TRELLIS_GROK_REPO:-https://github.com/samiya782/trellis-workflow.git}"
+  local branch="${TRELLIS_GROK_BRANCH:-grok}"
+  local dest="${TRELLIS_GROK_CLONE_DIR:-${XDG_CACHE_HOME:-$HOME/.cache}/trellis-grok/workflow}"
+  local url
+  if [[ -e "$dest" && ! -d "$dest/.git" ]]; then
+    echo "error: $dest exists and is not a git checkout. Set TRELLIS_GROK_CLONE_DIR or remove it." >&2
+    exit 2
+  fi
+  if [[ ! -d "$dest/.git" ]]; then
+    mkdir -p "$(dirname "$dest")"
+    echo "--- clone $repo branch $branch -> $dest" >&2
+    git clone --depth 1 --branch "$branch" "$repo" "$dest"
+  else
+    url="$(git -C "$dest" remote get-url origin 2>/dev/null || true)"
+    case "$url" in
+      "$repo"|"${repo%.git}"|"${repo}.git") ;;
+      *)
+        echo "error: $dest origin is '$url', expected $repo" >&2
+        exit 2
+        ;;
+    esac
+    if [[ -n "$(git -C "$dest" status --porcelain)" ]]; then
+      echo "error: $dest has local changes. Remove it or set TRELLIS_GROK_CLONE_DIR to a fresh path." >&2
+      exit 2
+    fi
+    echo "--- fetch $repo branch $branch in $dest" >&2
+    git -C "$dest" fetch --depth 1 origin "$branch"
+    git -C "$dest" checkout -q --detach FETCH_HEAD
+  fi
+  [[ -x "$dest/scripts/grok-fixes/apply-grok-fixes.sh" ]] || {
+    echo "error: $dest has no scripts/grok-fixes/apply-grok-fixes.sh" >&2
+    exit 2
+  }
+  (cd "$dest" && pwd)
+}
+
+install_matt_skills() {
+  local d="$1" no_skills="$2" claude="$3" codex="$4" grok="$5"
+  local -a agents=()
+  if [[ "$no_skills" -eq 1 ]]; then
+    echo "--- skip Matt skills (--no-skills)"
+    return 0
+  fi
+  command -v npx >/dev/null 2>&1 || {
+    echo "error: npx not found; install Node.js or re-run with --no-skills" >&2
+    exit 2
+  }
+  [[ "$claude" -eq 1 ]] && agents+=(claude-code)
+  [[ "$codex" -eq 1 ]] && agents+=(codex)
+  [[ "$grok" -eq 1 ]] && agents+=(grok)
+  if [[ ${#agents[@]} -eq 0 ]]; then
+    echo "--- skip Matt skills (no platforms)"
+    return 0
+  fi
+  echo "--- npx skills@latest add mattpocock/skills --agent ${agents[*]} --yes"
+  (cd "$d" && npx --yes skills@latest add mattpocock/skills --agent "${agents[@]}" --yes)
+}
+
+cmd_install() {
+  local d="" user="" from_github=0 no_skills=0
+  local want_claude=0 want_codex=0 want_grok=0 platform_set=0
+  local -a extra=() replay=()
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -u|--user)
+        [[ $# -ge 2 ]] || { echo "error: $1 needs a value" >&2; exit 2; }
+        user="$2"; replay+=("$1" "$2"); shift 2; continue
+        ;;
+      --claude) want_claude=1; platform_set=1; replay+=("$1"); shift; continue ;;
+      --codex) want_codex=1; platform_set=1; replay+=("$1"); shift; continue ;;
+      --grok) want_grok=1; platform_set=1; replay+=("$1"); shift; continue ;;
+      --from-github) from_github=1; shift; continue ;;
+      --no-skills) no_skills=1; replay+=("$1"); shift; continue ;;
+      -h|--help) usage 0 ;;
+      -t|--template|-r|--registry|--workflow|--workflow-source)
+        [[ $# -ge 2 ]] || { echo "error: $1 needs a value" >&2; exit 2; }
+        extra+=("$1" "$2"); replay+=("$1" "$2"); shift 2; continue
+        ;;
+      -*)
+        extra+=("$1"); replay+=("$1"); shift; continue
+        ;;
+      *)
+        if [[ -z "$d" ]]; then d="$1"; else extra+=("$1"); fi
+        replay+=("$1"); shift; continue
+        ;;
+    esac
+  done
+  if [[ $from_github -eq 1 ]]; then
+    local src
+    src="$(clone_github_source)" || exit $?
+    echo "github source: $src"
+    exec env TRELLIS_GROK_HOME="$src" "$0" install "${replay[@]}"
+  fi
+  if [[ $platform_set -eq 0 ]]; then
+    want_claude=1; want_codex=1; want_grok=1
+    echo "install: no platform flags; using --claude --codex --grok"
+  fi
+  if [[ -n "$d" ]]; then
+    mkdir -p "$d"
+    d="$(cd "$d" && pwd)"
+  else
+    d="$(pwd)"
+  fi
+  local script_home
+  script_home="$(cd "$SCRIPT_DIR/../.." && pwd)"
+  if [[ "$d" == "$HOME_SRC" || "$d" == "$script_home" ]]; then
+    echo "error: refusing to install into the Trellis source checkout ($d)" >&2
+    echo "       pass a new project directory. Use apply/update inside this checkout." >&2
+    exit 2
+  fi
+  if [[ -z "$user" ]]; then
+    user="${TRELLIS_GROK_USER:-${USER:-developer}}"
+    echo "install: using -u $user (override with -u NAME or TRELLIS_GROK_USER)"
+  fi
+  command -v trellis >/dev/null 2>&1 || {
+    echo "error: trellis CLI not found on PATH" >&2
+    exit 2
+  }
+  echo "source checkout: $HOME_SRC"
+  echo "target: $d"
+  local -a platforms=()
+  [[ $want_claude -eq 1 ]] && platforms+=(--claude)
+  [[ $want_codex -eq 1 ]] && platforms+=(--codex)
+  [[ $want_grok -eq 1 ]] && platforms+=(--grok)
+  if [[ -d "$d/.trellis" ]]; then
+    echo "--- .trellis exists; skipping trellis init"
+  else
+    if ! git -C "$d" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+      git -C "$d" init
+      echo "  git init: $d"
+    fi
+    echo "--- trellis init -u $user -y ${platforms[*]:-} ${extra[*]:-}"
+    (cd "$d" && trellis init -u "$user" -y ${platforms[@]+"${platforms[@]}"} ${extra[@]+"${extra[@]}"})
+  fi
+  echo "--- Matt skills"
+  install_matt_skills "$d" "$no_skills" "$want_claude" "$want_codex" "$want_grok"
+  echo "--- copy platform overlays from $HOME_SRC"
+  copy_platform_overlay "$d" "$want_claude" "$want_codex" "$want_grok"
+  echo "--- sync workflow, Matt docs, Grok commands, AGENTS.md, CLAUDE.md"
+  sync_integration "$d"
+  echo "--- apply script patches (0001-0002)"
+  "$APPLY" --target "$d" --only scripts
+  echo "install done: $d"
+  echo "platforms: ${platforms[*]:-(none)}"
+  if [[ $want_grok -eq 1 ]]; then
+    echo "Next for Grok: grok --trust   (once, in the project)"
+  fi
+}
+
 cmd_init() {
   local d="" user="" extra=()
   while [[ $# -gt 0 ]]; do
@@ -494,6 +738,7 @@ case "$cmd" in
   apply)   cmd_apply "$@" ;;
   revert)  cmd_revert "$@" ;;
   init)    cmd_init "$@" ;;
+  install) cmd_install "$@" ;;
   update)  cmd_update "$@" ;;
   *)
     echo "unknown command: $cmd" >&2
