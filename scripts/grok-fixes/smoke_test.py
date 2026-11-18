@@ -47,7 +47,7 @@ try:
     tasks = tmp / ".trellis" / "tasks"
     shutil.rmtree(tasks, ignore_errors=True)
     tasks.mkdir()
-    (tasks / ".gitkeep").write_text("")
+    (tasks / ".gitkeep").write_text("", encoding="utf-8")
     run("git", "init", "-q", "-b", "main")
     run("git", "add", "-A"); run("git", "commit", "-qm", "smoke base")
     run("git", "checkout", "-qb", "smoke-feature")
@@ -61,7 +61,7 @@ try:
         task(*a)
         d = next(p for p in tasks.iterdir() if p.is_dir() and p.name.endswith(slug))
         if not (d / "prd.md").exists():
-            (d / "prd.md").write_text(f"# {slug}\n")
+            (d / "prd.md").write_text(f"# {slug}\n", encoding="utf-8")
         return d
 
     parent = create("smoke-parent")
@@ -79,7 +79,7 @@ try:
     ptr = tmp / ".trellis/.runtime/sessions/grok_smoke-sess.json"
     cur = ""
     if ptr.is_file():
-        cur = json.loads(ptr.read_text()).get("current_task", "")
+        cur = json.loads(ptr.read_text(encoding="utf-8")).get("current_task", "")
     check("GROK_SESSION_ID -> .runtime/sessions/grok_smoke-sess.json", child.name in cur,
           f"pointer file present={ptr.is_file()} current_task={cur!r}")
     src = task("current", "--source", ok=False).stdout
@@ -95,13 +95,13 @@ try:
     arch_parent = next(tasks.glob(f"archive/*/{parent.name}"), None)
     check("child and parent moved under archive/", arch_child and arch_parent)
     if arch_child and arch_parent:
-        txt = (arch_child / "implement.jsonl").read_text()
+        txt = (arch_child / "implement.jsonl").read_text(encoding="utf-8")
         check("archived child implement.jsonl points at archived parent",
               rel(arch_parent) + "/prd.md" in txt, txt.strip())
         v = task("validate", rel(arch_child), ok=False)
         check("task.py validate passes on the archived child", v.returncode == 0,
               (v.stdout + v.stderr).strip()[-600:])
-    ptr_after = ptr.is_file() and child.name in ptr.read_text()
+    ptr_after = ptr.is_file() and child.name in ptr.read_text(encoding="utf-8")
     check("archive cleared the grok pointer", not ptr_after)
 except Exception as exc:  # noqa: BLE001
     check(f"smoke harness ran ({exc.__class__.__name__})", False, str(exc)[-1500:])

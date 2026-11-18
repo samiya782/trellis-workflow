@@ -268,7 +268,7 @@ sync_integration() {
     if [[ $dry -eq 1 ]]; then
       if py_exec - "$d/.claude/settings.json" "$HOME_SRC/.claude/settings.json" <<'PY'
 import json,sys
-t=json.load(open(sys.argv[1])); s=json.load(open(sys.argv[2]))
+t=json.load(open(sys.argv[1], encoding="utf-8")); s=json.load(open(sys.argv[2], encoding="utf-8"))
 tm={h.get("matcher") for h in t.get("hooks",{}).get("SessionStart",[])}
 need={"new","load"}
 raise SystemExit(0 if need <= tm else 1)
@@ -281,7 +281,7 @@ PY
 import json,sys
 from pathlib import Path
 target, source = Path(sys.argv[1]), Path(sys.argv[2])
-t=json.loads(target.read_text()); s=json.loads(source.read_text())
+t=json.loads(target.read_text(encoding="utf-8")); s=json.loads(source.read_text(encoding="utf-8"))
 th=t.setdefault("hooks",{}).setdefault("SessionStart",[])
 sh=s.get("hooks",{}).get("SessionStart",[])
 have={h.get("matcher") for h in th}
@@ -291,7 +291,7 @@ for block in sh:
     if m in ("new","load") and m not in have:
         th.append(block); have.add(m); added.append(m)
 if added:
-    target.write_text(json.dumps(t, indent=2) + "\n")
+    target.write_text(json.dumps(t, indent=2) + "\n", encoding="utf-8")
     print("  merged: .claude/settings.json SessionStart " + "|".join(added))
 else:
     print("  in-sync: .claude/settings.json SessionStart new|load")
@@ -334,7 +334,7 @@ and confirm `task.py current --source` names the task, before any product edit
 or worker. An approval or authorization message does not replace the command.
 <!-- TRELLIS-GROK:MATT-END -->
 """
-path.write_text(block)
+path.write_text(block, encoding="utf-8")
 print(f"  created: {label} Matt/grill block")
 PY
       return
@@ -354,7 +354,7 @@ import sys
 from pathlib import Path
 path = Path(sys.argv[1])
 label = sys.argv[2]
-text = path.read_text()
+text = path.read_text(encoding="utf-8")
 start = "<!-- TRELLIS-GROK:MATT-START -->"
 end = "<!-- TRELLIS-GROK:MATT-END -->"
 block = """<!-- TRELLIS-GROK:MATT-START -->
@@ -393,7 +393,7 @@ else:
     new = text.rstrip() + "\n\n" + block + "\n"
     action = "appended"
 if new != text:
-    path.write_text(new)
+    path.write_text(new, encoding="utf-8")
     print(f"  {action}: {label} Matt/grill block")
 else:
     print(f"  in-sync: {label} Matt/grill block")
