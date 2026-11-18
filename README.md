@@ -29,6 +29,15 @@ New projects don't need them.
 
 Requirements: Git, Python 3, Node/npx, the `trellis` CLI, and Claude Code, Codex,
 and/or Grok Build. The files above were made against Trellis **0.7.0-beta.4**.
+Install that exact CLI on Linux or Windows, and do not upgrade past it:
+
+```bash
+npm install -g @mindfoldhq/trellis@0.7.0-beta.4
+```
+
+Python is resolved as `python3`, then `python`, then `py -3`. On Windows, Git for
+Windows supplies `bash.exe` (usually `C:\Program Files\Git\bin\bash.exe`). The
+launcher does not call `C:\Windows\System32\bash.exe`, which starts WSL.
 Under another Trellis version, merge their changes into that version's generated
 files instead of copying over them.
 
@@ -40,22 +49,44 @@ applies the script fixes, and writes the grill / `get_context.py` /
 `task.py create … --no-start` bootstrap into both `AGENTS.md` and `CLAUDE.md`.
 It does not run `/setup-matt-pocock-skills`.
 
-From this checkout, or after `scripts/grok-fixes/install-shortcut.sh`:
+From this checkout on Linux or WSL, or after `scripts/grok-fixes/install-shortcut.sh`:
 
 ```bash
 trellis-grok install ~/my-project -u your-name --claude --codex --grok
 ```
 
+On Windows, from cmd or PowerShell, without opening a Git Bash window:
+
+```bat
+scripts\grok-fixes\trellis-grok.cmd install %USERPROFILE%\my-project -u your-name --claude --codex --grok
+scripts\grok-fixes\install-shortcut.cmd
+trellis-grok install %USERPROFILE%\my-project -u your-name --claude --codex --grok
+```
+
+`install-shortcut` writes `trellis-grok.cmd` and `trellis-grok.ps1` into a
+user-writable directory that is already on PATH, or `%USERPROFILE%\.local\bin`.
+It does not need Administrator. If that directory is not on PATH, the command
+prints the directory to add. PowerShell can also run
+`scripts\grok-fixes\trellis-grok.ps1`.
+
 Pass any combination of `--claude`, `--codex`, and `--grok`. With no platform
 flags, the command installs all three. `--no-skills` skips
 `npx skills@latest add mattpocock/skills`.
 
-A machine that does not already have `~/trellis` clones branch `grok` and runs
+A Linux machine that does not already have `~/trellis` clones branch `grok` and runs
 the same command:
 
 ```bash
 git clone --depth 1 --branch grok https://github.com/samiya782/trellis-workflow.git /tmp/trellis-workflow
 /tmp/trellis-workflow/scripts/grok-fixes/oneclick.sh ~/my-project -u your-name --claude --codex --grok
+```
+
+The Windows equivalent, once this commit is on `origin/grok` (a fresh GitHub
+clone before that push does not contain `trellis-grok.cmd`):
+
+```powershell
+git clone --depth 1 --branch grok https://github.com/samiya782/trellis-workflow.git $env:TEMP\trellis-workflow
+& "$env:TEMP\trellis-workflow\scripts\grok-fixes\trellis-grok.cmd" install "$env:USERPROFILE\my-project" -u your-name --claude --codex --grok
 ```
 
 `scripts/grok-fixes/oneclick.sh` is a thin wrapper around `trellis-grok install`.
@@ -67,9 +98,11 @@ trellis-grok install ~/my-project -u your-name --from-github --claude --codex --
 ```
 
 `--from-github` clones `https://github.com/samiya782/trellis-workflow` branch
-`grok` into `$XDG_CACHE_HOME/trellis-grok/workflow` (or `~/.cache/trellis-grok/workflow`).
-Override the cache with `TRELLIS_GROK_CLONE_DIR`. The curl form below works
-once this commit is on `origin/grok`:
+`grok`. The cache is `TRELLIS_GROK_CLONE_DIR`, or on Linux
+`$XDG_CACHE_HOME/trellis-grok/workflow` (default `~/.cache/trellis-grok/workflow`),
+or on Windows `%LOCALAPPDATA%\trellis-grok\workflow`.
+The curl form below is bash-only (Linux, WSL, or Git Bash). It does not run in
+cmd. It works once this commit is on `origin/grok`:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/samiya782/trellis-workflow/grok/scripts/grok-fixes/oneclick.sh \
@@ -163,12 +196,20 @@ changes and keep the local edits.
 ## Quick deploy (Grok shortcut)
 
 ```bash
-~/trellis/scripts/grok-fixes/install-shortcut.sh   # once → ~/.local/bin/trellis-grok
+~/trellis/scripts/grok-fixes/install-shortcut.sh   # Linux: ~/.local/bin/trellis-grok
 trellis-grok status
 trellis-grok dry-run
 trellis-grok apply                 # or: trellis-grok init -u your-name
 trellis-grok install ~/my-project -u your-name --claude --codex --grok
 trellis-grok update                # safe upgrade path (creates .new; keeps workflow.md)
+```
+
+Windows, from cmd or PowerShell:
+
+```bat
+scripts\grok-fixes\install-shortcut.cmd
+trellis-grok status
+trellis-grok install %USERPROFILE%\my-project -u your-name --claude --codex --grok
 ```
 
 Details: [docs/grok-fixes/INSTALL.md](docs/grok-fixes/INSTALL.md#quick-deploy-trellis-grok-shortcut).

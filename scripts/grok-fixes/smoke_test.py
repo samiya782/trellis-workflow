@@ -27,7 +27,9 @@ env.update(GROK_SESSION_ID="smoke-sess", GROK_AGENT="1",
 results = []
 
 def run(*cmd, ok=True):
-    p = subprocess.run(cmd, cwd=tmp, env=env, text=True, capture_output=True)
+    p = subprocess.run(
+        cmd, cwd=tmp, env=env, text=True, encoding="utf-8", errors="replace", capture_output=True
+    )
     if ok and p.returncode != 0:
         raise RuntimeError(f"{' '.join(cmd)} -> {p.returncode}\n{p.stdout}\n{p.stderr}")
     return p
@@ -64,7 +66,9 @@ try:
 
     parent = create("smoke-parent")
     child = create("smoke-child", parent=f".trellis/tasks/{parent.name}")
-    rel = lambda p: str(p.relative_to(tmp))
+    # JSONL paths are slash-separated on every OS. str(Path) on Windows
+    # would store backslashes, which archive repointing does not match.
+    rel = lambda p: p.relative_to(tmp).as_posix()
     for kind in ("implement", "check"):
         task("add-context", rel(child), kind, rel(parent / "prd.md"), "parent spec")
         task("add-context", rel(child), kind, rel(child / "prd.md"), "own spec")

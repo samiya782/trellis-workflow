@@ -15,9 +15,12 @@
 # clone that contains scripts/grok-fixes, usually ~/trellis).
 # install --from-github clones TRELLIS_GROK_REPO (default:
 # https://github.com/samiya782/trellis-workflow.git) branch TRELLIS_GROK_BRANCH
-# (default: grok) into TRELLIS_GROK_CLONE_DIR (default:
-# $XDG_CACHE_HOME/trellis-grok/workflow or ~/.cache/trellis-grok/workflow)
-# and uses that clone as the file source.
+# (default: grok) into TRELLIS_GROK_CLONE_DIR. The default cache is
+# $XDG_CACHE_HOME/trellis-grok/workflow or ~/.cache/trellis-grok/workflow on
+# Linux, and %LOCALAPPDATA%\trellis-grok\workflow on Windows. That clone is
+# the file source.
+# On Windows, cmd and PowerShell run scripts/grok-fixes/trellis-grok.cmd
+# (Git for Windows bash.exe, never C:\Windows\System32\bash.exe).
 #
 # Exit codes (aligned with apply-grok-fixes.sh where applicable):
 #   0  OK
@@ -38,10 +41,13 @@ resolve_self() {
 }
 
 SCRIPT_DIR="$(resolve_self)"
+# shellcheck disable=SC1091
+source "$SCRIPT_DIR/platform.sh"
 
 resolve_home() {
   if [[ -n "${TRELLIS_GROK_HOME:-}" ]]; then
-    local h; h="$(cd "$TRELLIS_GROK_HOME" && pwd)"
+    local h; h="$(normalize_path "$TRELLIS_GROK_HOME")"
+    h="$(cd "$h" && pwd)"
     [[ -x "$h/scripts/grok-fixes/apply-grok-fixes.sh" ]] || {
       echo "error: TRELLIS_GROK_HOME=$h has no scripts/grok-fixes/apply-grok-fixes.sh" >&2
       exit 2
@@ -99,6 +105,8 @@ for status/dry-run/apply/revert/update). install/init default to the current
 directory and refuse to run inside the source checkout.
 Idempotent: re-apply is a no-op when already patched. install on an existing
 Trellis project skips trellis init and re-syncs overlays.
+Windows: trellis-grok.cmd (or the trellis-grok shim from install-shortcut.cmd).
+Python: python3, then python, then py -3.
 USAGE
   exit "${1:-0}"
 }
@@ -107,6 +115,8 @@ resolve_dir() {
   local d="${1:-}"
   if [[ -z "$d" ]]; then
     d="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+  else
+    d="$(normalize_path "$d")"
   fi
   [[ -d "$d" ]] || { echo "error: directory not found: $d" >&2; exit 2; }
   cd "$d" && pwd
@@ -250,7 +260,7 @@ sync_integration() {
   fi
   if [[ -f "$d/.claude/settings.json" && -f "$HOME_SRC/.claude/settings.json" ]]; then
     if [[ $dry -eq 1 ]]; then
-      if python3 - "$d/.claude/settings.json" "$HOME_SRC/.claude/settings.json" <<'PY'
+      if py_exec - "$d/.claude/settings.json" "$HOME_SRC/.claude/settings.json" <<'PY'
 import json,sys
 t=json.load(open(sys.argv[1])); s=json.load(open(sys.argv[2]))
 tm={h.get("matcher") for h in t.get("hooks",{}).get("SessionStart",[])}
@@ -261,7 +271,7 @@ PY
       else echo "  would merge: .claude/settings.json SessionStart new|load"
       fi
     else
-      python3 - "$d/.claude/settings.json" "$HOME_SRC/.claude/settings.json" <<'PY'
+      py_exec - "$d/.claude/settings.json" "$HOME_SRC/.claude/settings.json" <<'PY'
 import json,sys
 from pathlib import Path
 target, source = Path(sys.argv[1]), Path(sys.argv[2])
@@ -293,7 +303,7 @@ PY
         return
       fi
       mkdir -p "$(dirname "$target")"
-      python3 - "$target" "$label" <<'PY'
+      py_exec - "$target" "$label" <<'PY'
 import sys
 from pathlib import Path
 path = Path(sys.argv[1])
@@ -333,7 +343,7 @@ PY
       fi
       return
     fi
-    python3 - "$target" "$label" <<'PY'
+    py_exec - "$target" "$label" <<'PY'
 import sys
 from pathlib import Path
 path = Path(sys.argv[1])
@@ -463,8 +473,10 @@ copy_platform_overlay() {
 clone_github_source() {
   local repo="${TRELLIS_GROK_REPO:-https://github.com/samiya782/trellis-workflow.git}"
   local branch="${TRELLIS_GROK_BRANCH:-grok}"
-  local dest="${TRELLIS_GROK_CLONE_DIR:-${XDG_CACHE_HOME:-$HOME/.cache}/trellis-grok/workflow}"
+  local dest
+  dest="$(default_clone_dir)"
   local url
+  export GIT_TERMINAL_PROMPT=0
   if [[ -e "$dest" && ! -d "$dest/.git" ]]; then
     echo "error: $dest exists and is not a git checkout. Set TRELLIS_GROK_CLONE_DIR or remove it." >&2
     exit 2
@@ -559,8 +571,12 @@ cmd_install() {
     echo "install: no platform flags; using --claude --codex --grok"
   fi
   if [[ -n "$d" ]]; then
-    mkdir -p "$d"
-    d="$(cd "$d" && pwd)"
+    d="$(normalize_path "$d")"
+    # mkdir -p on an existing UNC path tries to create //server and fails.
+    if [[ ! -d "$d" ]]; then
+      mkdir -p "$d"
+    fi
+    d="$(cd "$d" && pwd)" || { echo "error: directory not found: $d" >&2; exit 2; }
   else
     d="$(pwd)"
   fi
@@ -633,8 +649,11 @@ cmd_init() {
     esac
   done
   if [[ -n "$d" ]]; then
-    mkdir -p "$d"
-    d="$(cd "$d" && pwd)"
+    d="$(normalize_path "$d")"
+    if [[ ! -d "$d" ]]; then
+      mkdir -p "$d"
+    fi
+    d="$(cd "$d" && pwd)" || { echo "error: directory not found: $d" >&2; exit 2; }
   else
     d="$(pwd)"
   fi

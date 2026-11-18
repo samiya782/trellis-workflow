@@ -24,12 +24,34 @@ It commits nothing, and running it twice is safe.
 
 ## Quick deploy (`trellis-grok` shortcut)
 
-Install the shell shortcut once (symlink into `~/.local/bin`):
+Prerequisites on Linux and Windows: Git, Python 3, Node/npx, and the Trellis CLI
+at exactly **0.7.0-beta.4**. Install the CLI with the same command on both:
+
+```bash
+npm install -g @mindfoldhq/trellis@0.7.0-beta.4
+```
+
+Do not upgrade Trellis past `0.7.0-beta.4` for this branch. The installer looks
+up Python as `python3`, then `python`, then `py -3`.
+
+On Linux, install the shell shortcut once (symlink into `~/.local/bin`):
 
 ```bash
 ~/trellis/scripts/grok-fixes/install-shortcut.sh
 # uninstall: ~/trellis/scripts/grok-fixes/install-shortcut.sh --uninstall
 ```
+
+On Windows, from cmd or PowerShell (no Administrator, and no need to open Git Bash):
+
+```bat
+scripts\grok-fixes\install-shortcut.cmd
+```
+
+That writes `trellis-grok.cmd` and `trellis-grok.ps1` into a user-writable
+directory already on PATH, or `%USERPROFILE%\.local\bin`. If the directory is
+not on PATH, the command says so. The `.cmd` file finds
+`C:\Program Files\Git\bin\bash.exe` (or Git's `bash.exe` next to `git.exe`).
+It does not call `C:\Windows\System32\bash.exe`.
 
 Then, in any Trellis project (or pass `DIR`):
 
@@ -79,37 +101,56 @@ After a successful install, both `AGENTS.md` and `CLAUDE.md` contain the
 `get_context.py` workflow load and the `/grill-with-docs` line that creates a
 planning task with `task.py create … --no-start`.
 
-From a local checkout or the `~/.local/bin/trellis-grok` shortcut:
+From a local checkout or the shortcut:
 
 ```bash
 trellis-grok install ~/my-project -u your-name --claude --codex --grok
 ```
 
+Windows, from cmd or PowerShell, using this checkout:
+
+```bat
+scripts\grok-fixes\trellis-grok.cmd install %USERPROFILE%\my-project -u your-name --claude --codex --grok
+```
+
 GitHub, when the machine has no checkout. This clone is the file source, so
-the published `grok` branch has to contain `trellis-grok install` (this
-commit):
+the published `grok` branch has to contain `trellis-grok install` and, on
+Windows, `trellis-grok.cmd` (this commit). Until that commit is on
+`origin/grok`, clone or copy a checkout that already has it.
+
+Linux:
 
 ```bash
 git clone --depth 1 --branch grok https://github.com/samiya782/trellis-workflow.git /tmp/trellis-workflow
 /tmp/trellis-workflow/scripts/grok-fixes/oneclick.sh ~/my-project -u your-name --claude --codex --grok
 ```
 
+Windows:
+
+```powershell
+git clone --depth 1 --branch grok https://github.com/samiya782/trellis-workflow.git $env:TEMP\trellis-workflow
+& "$env:TEMP\trellis-workflow\scripts\grok-fixes\trellis-grok.cmd" install "$env:USERPROFILE\my-project" -u your-name --claude --codex --grok
+```
+
 Or, with the shortcut already installed, clone branch `grok` and use it even
-if `~/trellis` exists:
+if a local checkout exists:
 
 ```bash
 trellis-grok install ~/my-project -u your-name --from-github --claude --codex --grok
 ```
 
 `--from-github` clones `https://github.com/samiya782/trellis-workflow.git`
-branch `grok` (override with `TRELLIS_GROK_REPO` / `TRELLIS_GROK_BRANCH`) into
-`TRELLIS_GROK_CLONE_DIR` or `$XDG_CACHE_HOME/trellis-grok/workflow` (default
-`~/.cache/trellis-grok/workflow`). A dirty cache is left alone and the command
-stops. Re-running `install` in a project that already has `.trellis/` skips
-`trellis init` and copies the overlays again.
+branch `grok` (override with `TRELLIS_GROK_REPO` / `TRELLIS_GROK_BRANCH`).
+The cache directory is `TRELLIS_GROK_CLONE_DIR`, or
+`$XDG_CACHE_HOME/trellis-grok/workflow` (default `~/.cache/trellis-grok/workflow`)
+on Linux, or `%LOCALAPPDATA%\trellis-grok\workflow` on Windows. A dirty cache
+is left alone and the command stops. Re-running `install` in a project that
+already has `.trellis/` skips `trellis init` and copies the overlays again.
 
 `oneclick.sh` next to `trellis-grok` just execs `install`. A standalone
-download clones the branch, then execs the clone:
+download clones the branch, then execs the clone. This curl form is bash on
+Linux, WSL, or Git Bash. It does not run in cmd, and it works only after this
+commit is on `origin/grok`:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/samiya782/trellis-workflow/grok/scripts/grok-fixes/oneclick.sh \

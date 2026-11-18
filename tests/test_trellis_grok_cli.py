@@ -1,19 +1,30 @@
 """Contract checks for trellis-grok install. No network and no trellis init."""
 
+import os
 import subprocess
 import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-CLI = ROOT / "scripts" / "grok-fixes" / "trellis-grok"
+FIX = ROOT / "scripts" / "grok-fixes"
+CLI = FIX / ("trellis-grok.cmd" if os.name == "nt" else "trellis-grok")
+
+
+def command(args):
+    """Run a .cmd through cmd.exe. Windows CreateProcess does not do that itself."""
+    if os.name == "nt" and args and str(args[0]).lower().endswith((".cmd", ".bat")):
+        return ["cmd.exe", "/d", "/s", "/c", subprocess.list2cmdline([str(a) for a in args])]
+    return [str(a) for a in args]
 
 
 def run(*args):
     return subprocess.run(
-        [str(CLI), *args],
+        command([CLI, *args]),
         text=True,
+        encoding="utf-8",
+        errors="replace",
         capture_output=True,
-        cwd=ROOT,
+        cwd=None if os.name == "nt" else ROOT,
     )
 
 
@@ -28,6 +39,8 @@ class TrellisGrokCliTests(unittest.TestCase):
         self.assertIn("--grok", text)
         self.assertIn("--from-github", text)
         self.assertIn("--no-skills", text)
+        self.assertIn("Windows", text)
+        self.assertIn("py -3", text)
         for command in ("status", "dry-run", "apply", "revert", "init", "update"):
             self.assertIn(command, text)
 

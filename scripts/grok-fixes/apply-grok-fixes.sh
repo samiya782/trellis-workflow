@@ -21,6 +21,8 @@
 set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck disable=SC1091
+source "$HERE/platform.sh"
 PATCH_DIR="$HERE/patches"
 EXPECTED_VERSION="0.7.0-beta.4"
 MODE=apply; TARGET=""; ONLY=all; FORCE_VERSION=0; RUN_TESTS=1; BACKUP_DIR=""
@@ -125,9 +127,9 @@ fi
 
 if [[ $RUN_TESTS -eq 1 && "$MODE" == apply && ( "$ONLY" == all || "$ONLY" == scripts ) ]]; then
   echo "--- smoke test (throwaway copy of .trellis; the target is not touched)"
-  python3 "$HERE/smoke_test.py" "$TARGET"
+  py_exec "$HERE/smoke_test.py" "$TARGET"
   if [[ -f "$TARGET/tests/test_grok_fixes.py" ]]; then
-    echo "--- repo tests: python3 -m unittest discover -s tests"
-    (cd "$TARGET" && python3 -m unittest discover -s tests 2>&1 | tail -4)
+    echo "--- repo tests: ${PY[*]} -m unittest discover -s tests"
+    (cd "$TARGET" && py_exec -m unittest discover -s tests 2>&1 | tail -4)
   fi
 fi
