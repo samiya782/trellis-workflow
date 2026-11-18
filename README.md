@@ -52,6 +52,12 @@ It does not run `/setup-matt-pocock-skills`. After a successful install, both
 
 In the new project directory, run `grok --trust` once before a Grok session.
 
+A full local walkthrough for Windows and WSL, including the checks after
+install and common errors, is in
+[docs/grok-fixes/INSTALL.md](docs/grok-fixes/INSTALL.md#local-deploy-on-windows-and-wsl).
+Dual review is installed with the project; see
+[Dual review](docs/grok-fixes/INSTALL.md#dual-review).
+
 ### CodeFree Space and codefree-o
 
 Official `trellis init` at 0.7.0-beta.4 has no flag for these clients. Do not
@@ -270,6 +276,7 @@ Pick the entry by the situation. Codex uses `$skill`. Claude Code and Grok use `
 | Feature that deserves a durable record | `/grill-with-docs <idea>` | Interview with `GLOSSARY.md`/ADRs. A minimal Trellis task carries the handoff |
 | Published spec with tickets | `/implement-spec <task>` | Works the tickets as a task graph on an integration branch. Without a spec it stops and offers `/implement` |
 | Uncertainty spanning sessions | `/wayfinder <goal>` | Planning only, until you authorize delivery |
+| Ready to merge, or you want a second and third look | `/trellis-dual-review` (Claude Code: `/trellis:dual-review`) | Two independent reviewers look at the same tip. Must findings block the merge; Should findings are recorded and left for later. If the current client cannot reach the reviewers, it writes the two prompt files and stops |
 
 Stock `/implement` commits to the current branch. Agents have treated invoking
 it as commit permission. Say "leave it uncommitted" in the request to prevent

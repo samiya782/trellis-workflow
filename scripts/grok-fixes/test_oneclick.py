@@ -61,9 +61,13 @@ ALL_OVERLAY = (
     ".agents/skills/trellis-start/SKILL.md",
     ".agents/skills/trellis-continue/SKILL.md",
     ".agents/skills/trellis-finish-work/SKILL.md",
+    ".agents/skills/trellis-dual-review/SKILL.md",
+    ".agents/skills/trellis-dual-review/dual_review.py",
+    ".claude/commands/trellis/dual-review.md",
     ".grok/commands/trellis-start.md",
     ".grok/commands/trellis-continue.md",
     ".grok/commands/trellis-finish-work.md",
+    ".grok/commands/trellis-dual-review.md",
     ".grok/commands/trellis-matt-deploy.md",
     ".trellis/workflow.md",
     "docs/agents/matt-flow.md",
@@ -214,6 +218,53 @@ def assert_overlay(project: Path, label: str) -> None:
     )
 
 
+
+def assert_dual_review(project: Path, label: str, *, claude: bool = False, grok: bool = False, codefree_o: bool = False) -> None:
+    skill = project / ".agents/skills/trellis-dual-review/SKILL.md"
+    helper = project / ".agents/skills/trellis-dual-review/dual_review.py"
+    check(f"{label} dual-review skill exists", skill.is_file(), str(skill))
+    check(f"{label} dual-review helper exists", helper.is_file(), str(helper))
+    if skill.is_file():
+        text = skill.read_text(encoding="utf-8")
+        check(f"{label} dual-review skill names both reviewers", "aaaaa495-296c-45b3-82c2-0fa9211be10f" in text and "grok-4.7" in text)
+    for filename in ("AGENTS.md", "CLAUDE.md"):
+        path = project / filename
+        text = path.read_text(encoding="utf-8") if path.is_file() else ""
+        check(
+            f"{label} {filename} has the dual-review block",
+            "<!-- TRELLIS-GROK:DUAL-REVIEW-START -->" in text and "dual_review.py prepare" in text,
+            "missing block" if path.is_file() else "missing file",
+        )
+    if claude:
+        check(
+            f"{label} Claude dual-review command exists",
+            (project / ".claude/commands/trellis/dual-review.md").is_file(),
+        )
+    if grok:
+        check(
+            f"{label} Grok dual-review command exists",
+            (project / ".grok/commands/trellis-dual-review.md").is_file(),
+        )
+    if codefree_o:
+        check(
+            f"{label} codefree-o dual-review command exists",
+            (project / ".codefree-o/command/trellis-dual-review.md").is_file(),
+        )
+    if helper.is_file():
+        code, out = run(
+            f"{label}-dual-review-self-test",
+            [sys.executable, str(helper), "self-test"],
+            cwd=project,
+        )
+        check(f"{label} dual-review self-test exits 0", code == 0, out[-400:])
+        code, out = run(
+            f"{label}-dual-review-verify",
+            [sys.executable, str(helper), "verify-install", str(project)],
+            cwd=project,
+        )
+        check(f"{label} dual-review verify-install exits 0", code == 0, out[-400:])
+
+
 def assert_matt_skills(project: Path, label: str) -> None:
     lock = project / "skills-lock.json"
     text = lock.read_text(encoding="utf-8") if lock.is_file() else ""
@@ -317,10 +368,12 @@ def main() -> int:
         assert_overlay(local, "local")
         assert_bootstrap(local, "local")
         assert_matt_skills(local, "local")
+        assert_dual_review(local, "local", claude=True, grok=True)
         code, out = run("local-apply", [str(CLI), "apply", str(local)], env=env)
         check("apply on a fresh install exits 0", code == 0, out[-800:])
         check("apply reports script patches already applied", "already applied" in out, out[-800:])
         assert_bootstrap(local, "after apply")
+        assert_dual_review(local, "after apply", claude=True, grok=True)
         code, _ = run("local-status", [str(CLI), "status", str(local)], env=env)
         check("status exits 0", code == 0)
         code, _ = run("local-dry-run", [str(CLI), "dry-run", str(local)], env=env)
@@ -332,6 +385,7 @@ def main() -> int:
         )
         check("second install skips trellis init and exits 0", code == 0 and "skipping trellis init" in out, out[-800:])
         assert_bootstrap(local, "reinstall")
+        assert_dual_review(local, "reinstall", claude=True, grok=True)
 
     snapshot = WORK / "snapshot-repo"
     snapshot_repo(snapshot, env)
@@ -372,6 +426,7 @@ def main() -> int:
         assert_overlay(github, "github")
         assert_bootstrap(github, "github")
         assert_matt_skills(github, "github")
+        assert_dual_review(github, "github", claude=True, grok=True)
         same = (github / ".trellis/workflow.md").read_bytes() == (clone_dir / ".trellis/workflow.md").read_bytes()
         check("github project workflow.md matches the snapshot clone", same)
 
@@ -416,6 +471,15 @@ def main() -> int:
         check("claude-only does not create .opencode", not (claude_only / ".opencode").exists())
         check("claude-only skips Matt skills", not (claude_only / "skills-lock.json").exists())
         assert_bootstrap(claude_only, "claude-only")
+        assert_dual_review(claude_only, "claude-only", claude=True)
+        check(
+            "claude-only has no Grok dual-review command",
+            not (claude_only / ".grok/commands/trellis-dual-review.md").exists(),
+        )
+        check(
+            "claude-only has no codefree-o dual-review command",
+            not (claude_only / ".codefree-o/command/trellis-dual-review.md").exists(),
+        )
 
     legacy = WORK / "legacy-init"
     code, out = run(

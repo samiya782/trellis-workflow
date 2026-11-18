@@ -176,7 +176,11 @@ cmd_status() {
   local rel
   for rel in .trellis/workflow.md docs/agents/matt-flow.md docs/agents/issue-tracker.md \
              .grok/commands/trellis-start.md .grok/commands/trellis-continue.md \
-             .grok/commands/trellis-finish-work.md; do
+             .grok/commands/trellis-finish-work.md \
+             .grok/commands/trellis-dual-review.md \
+             .agents/skills/trellis-dual-review/SKILL.md \
+             .agents/skills/trellis-dual-review/dual_review.py \
+             .claude/commands/trellis/dual-review.md; do
     if [[ ! -f "$HOME_SRC/$rel" ]]; then
       continue
     fi
@@ -248,7 +252,7 @@ sync_integration() {
     echo "  copied: $f"
   done
   if [[ -d "$d/.grok/commands" ]]; then
-    for f in trellis-start.md trellis-continue.md trellis-finish-work.md; do
+    for f in trellis-start.md trellis-continue.md trellis-finish-work.md trellis-dual-review.md; do
       if [[ ! -f "$HOME_SRC/.grok/commands/$f" ]]; then
         continue
       fi
@@ -263,6 +267,11 @@ sync_integration() {
       cp -p "$HOME_SRC/.grok/commands/$f" "$d/.grok/commands/$f"
       echo "  copied: .grok/commands/$f"
     done
+  fi
+  if [[ $dry -eq 1 ]]; then
+    copy_dual_review_overlay "$d" 1
+  else
+    copy_dual_review_overlay "$d"
   fi
   if [[ -f "$d/.claude/settings.json" && -f "$HOME_SRC/.claude/settings.json" ]]; then
     if [[ $dry -eq 1 ]]; then
@@ -379,12 +388,9 @@ or worker. An approval or authorization message does not replace the command.
 if start in text and end in text:
     pre, rest = text.split(start, 1)
     _, post = rest.split(end, 1)
-    # A file that is only this block (what create writes) must stay byte-stable.
-    # pre.rstrip() would turn a leading blank line into another rewrite.
-    if pre.strip() == "":
-        new = block + "\n" + post.lstrip("\n")
-    else:
-        new = pre.rstrip() + "\n\n" + block + "\n" + post.lstrip("\n")
+    # Replace only the marked block so surrounding text, including a later
+    # dual-review block, stays byte-stable across repeated applies.
+    new = pre + block.strip() + post
     action = "updated"
 elif "On `/grill-with-docs`" in text and "docs/agents/matt-flow.md" in text:
     print(f"  in-sync: {label} (already has grill-with-docs bootstrap)")
@@ -401,6 +407,57 @@ PY
   }
   upsert_matt_file "$d/AGENTS.md" "AGENTS.md"
   upsert_matt_file "$d/CLAUDE.md" "CLAUDE.md"
+  upsert_dual_review_file() {
+    local target="$1"
+    local label="$2"
+    local start="<!-- TRELLIS-GROK:DUAL-REVIEW-START -->"
+    local end="<!-- TRELLIS-GROK:DUAL-REVIEW-END -->"
+    local block_file="$HOME_SRC/.agents/skills/trellis-dual-review/AGENTS.block.md"
+    if [[ ! -f "$target" ]]; then
+      if [[ $dry -eq 1 ]]; then
+        echo "  would create: $label dual-review block"
+      fi
+      return
+    fi
+    if [[ $dry -eq 1 ]]; then
+      if grep -qF "$start" "$target" 2>/dev/null; then
+        echo "  in-sync: $label dual-review block"
+      else
+        echo "  would upsert: $label dual-review block"
+      fi
+      return
+    fi
+    if [[ ! -f "$block_file" ]]; then
+      echo "  skip missing source: .agents/skills/trellis-dual-review/AGENTS.block.md"
+      return
+    fi
+    py_exec - "$target" "$label" "$block_file" <<'PY'
+import sys
+from pathlib import Path
+path = Path(sys.argv[1])
+label = sys.argv[2]
+block = Path(sys.argv[3]).read_text(encoding="utf-8").strip() + "\n"
+text = path.read_text(encoding="utf-8")
+start = "<!-- TRELLIS-GROK:DUAL-REVIEW-START -->"
+end = "<!-- TRELLIS-GROK:DUAL-REVIEW-END -->"
+if start in text and end in text:
+    pre, rest = text.split(start, 1)
+    _, post = rest.split(end, 1)
+    new = pre + block.strip() + post
+    action = "updated"
+else:
+    new = text.rstrip() + "\n\n" + block + "\n"
+    action = "appended"
+if new != text:
+    path.write_text(new, encoding="utf-8")
+    print(f"  {action}: {label} dual-review block")
+else:
+    print(f"  in-sync: {label} dual-review block")
+PY
+  }
+
+  upsert_dual_review_file "$d/AGENTS.md" "AGENTS.md"
+  upsert_dual_review_file "$d/CLAUDE.md" "CLAUDE.md"
 }
 
 
@@ -413,6 +470,7 @@ copy_integration() {
 # are skipped. Identical files are left in place.
 copy_overlay_file() {
   local rel="$1" d="$2"
+  local dry="${3:-0}"
   local dest="$d/$rel"
   if [[ ! -f "$HOME_SRC/$rel" ]]; then
     echo "  skip missing source: $rel"
@@ -424,11 +482,40 @@ copy_overlay_file() {
     echo "  in-sync: $rel"
     return 0
   fi
+  if [[ "$dry" -eq 1 ]]; then
+    echo "  would copy: $rel"
+    return 0
+  fi
   mkdir -p "$(dirname "$dest")"
   rm -f "$dest"
   cp -p "$HOME_SRC/$rel" "$dest"
   echo "  copied: $rel"
 }
+
+# Dual review is part of every install, then also of apply, so existing
+# projects pick it up without a re-init.
+copy_dual_review_overlay() {
+  local d="$1"
+  local dry="${2:-0}"
+  copy_overlay_file ".agents/skills/trellis-dual-review/SKILL.md" "$d" "$dry"
+  copy_overlay_file ".agents/skills/trellis-dual-review/dual_review.py" "$d" "$dry"
+  if [[ -d "$d/.claude/commands/trellis" ]]; then
+    copy_overlay_file ".claude/commands/trellis/dual-review.md" "$d" "$dry"
+  fi
+  if [[ -d "$d/.grok/commands" ]]; then
+    copy_overlay_file ".grok/commands/trellis-dual-review.md" "$d" "$dry"
+  fi
+  if [[ "$dry" -eq 1 ]]; then
+    if [[ -d "$d/.codefree-o/command" ]]; then
+      echo "  would refresh: .codefree-o/command/trellis-dual-review.md"
+    fi
+    return 0
+  fi
+  if [[ -d "$d/.codefree-o/command" || -d "$d/.codefree-o" ]]; then
+    write_codefree_o_commands "$d"
+  fi
+}
+
 
 # codefree-o slash commands live in .codefree-o/command/<name>.md.
 # The body is the installed skill, so /trellis-start matches trellis-start.
@@ -440,7 +527,7 @@ import sys
 from pathlib import Path
 
 root = Path(sys.argv[1])
-names = ("trellis-start", "trellis-continue", "trellis-finish-work")
+names = ("trellis-start", "trellis-continue", "trellis-finish-work", "trellis-dual-review")
 out_dir = root / ".codefree-o" / "command"
 out_dir.mkdir(parents=True, exist_ok=True)
 for name in names:
@@ -598,6 +685,10 @@ copy_platform_overlay() {
       copy_overlay_file "$rel" "$d"
     done
   fi
+  if [[ "$claude" -eq 1 ]]; then
+    copy_overlay_file ".claude/commands/trellis/dual-review.md" "$d"
+  fi
+  copy_dual_review_overlay "$d"
   if [[ "$codefree_o" -eq 1 ]]; then
     write_codefree_o_commands "$d"
   fi
