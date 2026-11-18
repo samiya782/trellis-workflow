@@ -35,12 +35,16 @@ Linux, and it reads and writes UTF-8:
 ```bash
 python3 .agents/skills/trellis-dual-review/dual_review.py prepare \
   --pr <N> --url <url> --branch <branch> \
-  --tip <ref-or-sha> --base main \
+  --tip <ref-or-sha> --base <base-ref> \
   --implementer <cursor.com/agents/bc-…> \
   --background "<what failed, with a minimal repro>" \
   --claimed-cause "<what the implementer says>" \
   --banned "<project banned items>"
 ```
+
+`--base` is usually `main`. Pass the parent commit or another ref when
+that is the actual comparison. If there is no pull request, omit `--pr`
+or pass `0` and a compare URL; the helper will not write `PR #0`.
 
 On Windows, `python` or `py -3` is fine if `python3` is missing. The helper
 writes three UTF-8 files under `.trellis/.runtime/dual-review/` (gitignored)
@@ -84,11 +88,12 @@ prompt.
 
 ```
 请交叉审查 PR #<N>（独立 Must/Should，不要合、不要改代码、不要在 GitHub 留言除非发现 Must 需要钉在 PR 上）。
+没有单独的 PR 时，写提交 SHA，不要写 PR #0。
 
 - PR: <url>
 - 分支: <branch>
 - tip: <完整 40 位 SHA>
-- base: main <完整 SHA>
+- base: <base-ref> <完整 SHA>
 - 实现代理: <cursor.com/agents/bc-…>
 
 背景：<哪次实测 FAIL / 什么现象，带最小复现片段>。实现方称根因是 <…>。请你独立核实，并按 Must / Should 回报。
@@ -101,7 +106,7 @@ On a re-review, add: `上次 Must 是 <X>，请核实是否修好、是否引入
 ```
 READ-ONLY review of PR #<N> on <url>. Do not modify files, do not commit, do not push, and do not merge or comment on GitHub. If a branch is created, leave it with zero new commits.
 
-Review tip <SHA> (branch <branch>) against base main <SHA>.
+Review tip <SHA> (branch <branch>) against base <base-ref> <SHA>.
 
 This is a generic fix for <the failure, with the minimal repro snippet>. The implementer says <claimed root cause>. Verify independently; you may discard that explanation.
 
@@ -133,9 +138,9 @@ whether they are fixed and whether anything new appeared.
    there is no CI, say so explicitly; do not invent a status.
 3. On the user's machine, in the real environment, retest the original
    failure: it is now a pass, and the default path still works.
-4. Merge with squash, and only when the user has authorized that merge. A
-   standing auto-loop permission is the only case where the coordinator
-   merges without asking again. Soft Should findings do not block.
+4. Merge with squash only when the user has authorized this squash merge. A
+   previously granted standing auto-loop permission counts as that
+   authorization; otherwise ask. Soft Should findings do not block.
 
 ## 6. After a review
 

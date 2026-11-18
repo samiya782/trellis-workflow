@@ -184,6 +184,14 @@ cmd_status() {
     if [[ ! -f "$HOME_SRC/$rel" ]]; then
       continue
     fi
+    case "$rel" in
+      .grok/*)
+        [[ -d "$d/.grok/commands" ]] || continue
+        ;;
+      .claude/commands/trellis/*)
+        [[ -d "$d/.claude/commands/trellis" ]] || continue
+        ;;
+    esac
     if [[ ! -f "$d/$rel" ]]; then
       printf '  %-42s %s\n' "$rel" "missing"
     elif cmp -s "$HOME_SRC/$rel" "$d/$rel"; then
@@ -385,12 +393,27 @@ first action is workflow 1.4: run `python3 .trellis/scripts/task.py start <task>
 and confirm `task.py current --source` names the task, before any product edit
 or worker. An approval or authorization message does not replace the command.
 <!-- TRELLIS-GROK:MATT-END -->"""
-if start in text and end in text:
-    pre, rest = text.split(start, 1)
-    _, post = rest.split(end, 1)
-    # Replace only the marked block so surrounding text, including a later
-    # dual-review block, stays byte-stable across repeated applies.
-    new = pre + block.strip() + post
+def matched_span(text, start, end):
+    idx = 0
+    while True:
+        s = text.find(start, idx)
+        if s < 0:
+            return None
+        e = text.find(end, s + len(start))
+        if e < 0:
+            return None
+        nxt = text.find(start, s + len(start))
+        if nxt >= 0 and nxt < e:
+            idx = s + len(start)
+            continue
+        return s, e + len(end)
+
+span = matched_span(text, start, end)
+if span:
+    s, e = span
+    # Replace only the marked pair so an orphan START earlier in the file
+    # cannot delete the body up to a later END.
+    new = text[:s] + block.strip() + text[e:]
     action = "updated"
 elif "On `/grill-with-docs`" in text and "docs/agents/matt-flow.md" in text:
     print(f"  in-sync: {label} (already has grill-with-docs bootstrap)")
@@ -419,41 +442,57 @@ PY
       fi
       return
     fi
-    if [[ $dry -eq 1 ]]; then
-      if grep -qF "$start" "$target" 2>/dev/null; then
-        echo "  in-sync: $label dual-review block"
-      else
-        echo "  would upsert: $label dual-review block"
-      fi
-      return
-    fi
     if [[ ! -f "$block_file" ]]; then
       echo "  skip missing source: .agents/skills/trellis-dual-review/AGENTS.block.md"
       return
     fi
-    py_exec - "$target" "$label" "$block_file" <<'PY'
+    local mode="write"
+    [[ $dry -eq 1 ]] && mode="dry"
+    py_exec - "$target" "$label" "$block_file" "$mode" <<'ENDDUAL'
 import sys
 from pathlib import Path
 path = Path(sys.argv[1])
 label = sys.argv[2]
 block = Path(sys.argv[3]).read_text(encoding="utf-8").strip() + "\n"
 text = path.read_text(encoding="utf-8")
+mode = sys.argv[4]
 start = "<!-- TRELLIS-GROK:DUAL-REVIEW-START -->"
 end = "<!-- TRELLIS-GROK:DUAL-REVIEW-END -->"
-if start in text and end in text:
-    pre, rest = text.split(start, 1)
-    _, post = rest.split(end, 1)
-    new = pre + block.strip() + post
+
+def matched_span(text, start, end):
+    idx = 0
+    while True:
+        s = text.find(start, idx)
+        if s < 0:
+            return None
+        e = text.find(end, s + len(start))
+        if e < 0:
+            return None
+        nxt = text.find(start, s + len(start))
+        if nxt >= 0 and nxt < e:
+            idx = s + len(start)
+            continue
+        return s, e + len(end)
+
+span = matched_span(text, start, end)
+if span:
+    s, e = span
+    new = text[:s] + block.strip() + text[e:]
     action = "updated"
 else:
     new = text.rstrip() + "\n\n" + block + "\n"
     action = "appended"
-if new != text:
+if mode == "dry":
+    if new != text:
+        print(f"  would upsert: {label} dual-review block")
+    else:
+        print(f"  in-sync: {label} dual-review block")
+elif new != text:
     path.write_text(new, encoding="utf-8")
     print(f"  {action}: {label} dual-review block")
 else:
     print(f"  in-sync: {label} dual-review block")
-PY
+ENDDUAL
   }
 
   upsert_dual_review_file "$d/AGENTS.md" "AGENTS.md"
@@ -533,8 +572,8 @@ out_dir.mkdir(parents=True, exist_ok=True)
 for name in names:
     skill = root / ".agents" / "skills" / name / "SKILL.md"
     if not skill.is_file():
-        print(f"error: missing {skill}", file=sys.stderr)
-        raise SystemExit(2)
+        print(f"  skip codefree-o command {name}: missing .agents/skills/{name}/SKILL.md")
+        continue
     text = skill.read_text(encoding="utf-8")
     desc = name
     body = text
@@ -894,7 +933,7 @@ cmd_install() {
     echo "Next for Grok: grok --trust   (once, in the project)"
   fi
   if [[ $want_codefree_o -eq 1 ]]; then
-    echo "Next for codefree-o: AGENTS.md, .agents/skills, and .codefree-o/command are project-local. Slash commands: /trellis-start /trellis-continue /trellis-finish-work."
+    echo "Next for codefree-o: AGENTS.md, .agents/skills, and .codefree-o/command are project-local. Slash commands: /trellis-start /trellis-continue /trellis-finish-work /trellis-dual-review."
   fi
   if [[ $want_space -eq 1 ]]; then
     echo "Next for CodeFree Space: open this folder in the app. It reads AGENTS.md, CLAUDE.md, and .agents/skills."

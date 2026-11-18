@@ -13,7 +13,8 @@ Independent merge-gate review of a pinned git tip. This is not Matt's
 
 ```bash
 python3 .agents/skills/trellis-dual-review/dual_review.py prepare \
-  --tip <ref-or-sha> --base main --pr <N> --url <url> --branch <branch> \
+  --tip <ref-or-sha> --base <base-ref> --pr <N> --url <url> --branch <branch> \
+  --implementer <cursor.com/agents/bc-…> \
   --background "<failure and minimal repro>" \
   --claimed-cause "<implementer's claim, dismissible>" \
   --banned "<project banned items>"

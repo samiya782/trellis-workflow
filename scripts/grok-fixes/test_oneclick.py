@@ -232,7 +232,7 @@ def assert_dual_review(project: Path, label: str, *, claude: bool = False, grok:
         text = path.read_text(encoding="utf-8") if path.is_file() else ""
         check(
             f"{label} {filename} has the dual-review block",
-            "<!-- TRELLIS-GROK:DUAL-REVIEW-START -->" in text and "dual_review.py prepare" in text,
+            "<!-- TRELLIS-GROK:DUAL-REVIEW-START -->" in text and "dual_review.py prepare --tip" in text,
             "missing block" if path.is_file() else "missing file",
         )
     if claude:
@@ -369,23 +369,27 @@ def main() -> int:
         assert_bootstrap(local, "local")
         assert_matt_skills(local, "local")
         assert_dual_review(local, "local", claude=True, grok=True)
+        agents_before = (local / "AGENTS.md").read_bytes()
+        claude_before = (local / "CLAUDE.md").read_bytes()
         code, out = run("local-apply", [str(CLI), "apply", str(local)], env=env)
         check("apply on a fresh install exits 0", code == 0, out[-800:])
         check("apply reports script patches already applied", "already applied" in out, out[-800:])
         assert_bootstrap(local, "after apply")
         assert_dual_review(local, "after apply", claude=True, grok=True)
+        check("after apply AGENTS.md bytes unchanged", (local / "AGENTS.md").read_bytes() == agents_before)
+        check("after apply CLAUDE.md bytes unchanged", (local / "CLAUDE.md").read_bytes() == claude_before)
         code, _ = run("local-status", [str(CLI), "status", str(local)], env=env)
         check("status exits 0", code == 0)
         code, _ = run("local-dry-run", [str(CLI), "dry-run", str(local)], env=env)
         check("dry-run exits 0", code == 0)
         code, out = run(
             "local-reinstall",
-            [str(CLI), "install", str(local), "-u", "oneclick", "--claude", "--codex", "--grok", "--no-skills"],
+            [str(CLI), "install", str(local), "-u", "oneclick", "--claude", "--codex", "--grok", "--codefree-o", "--no-skills"],
             env=env,
         )
         check("second install skips trellis init and exits 0", code == 0 and "skipping trellis init" in out, out[-800:])
         assert_bootstrap(local, "reinstall")
-        assert_dual_review(local, "reinstall", claude=True, grok=True)
+        assert_dual_review(local, "reinstall", claude=True, grok=True, codefree_o=True)
 
     snapshot = WORK / "snapshot-repo"
     snapshot_repo(snapshot, env)
