@@ -72,11 +72,37 @@ runs status → dry-run → wait for confirm → apply.
 
 ## One-click install (Claude Code, Codex, and Grok Build)
 
+You do not need a `trellis-grok` command already installed.
+
 `trellis-grok install` is the full new-project path. It keeps
 `status`, `dry-run`, `apply`, `revert`, `init`, and `update` as they are.
 `init` still means "Grok project, no Matt skills installer". `apply` stays
 idempotent and still upserts the Matt/grill block into both `AGENTS.md` and
 `CLAUDE.md`.
+
+Prerequisites: Git, Python 3, Node/npx, and `@mindfoldhq/trellis@0.7.0-beta.4`.
+On Windows, install Git for Windows; the launcher uses
+`C:\Program Files\Git\bin\bash.exe` and does not call
+`C:\Windows\System32\bash.exe`.
+
+Linux or WSL, from GitHub:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/samiya782/trellis-workflow/grok/scripts/grok-fixes/oneclick.sh \
+  | bash -s -- ~/my-project -u your-name --claude --codex --grok
+```
+
+Windows, from PowerShell, from GitHub:
+
+```powershell
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/samiya782/trellis-workflow/grok/scripts/grok-fixes/oneclick.ps1))) "$env:USERPROFILE\my-project" -u your-name --claude --codex --grok
+```
+
+A standalone download of `oneclick.sh` or `oneclick.ps1` clones branch `grok`,
+then runs that clone's installer. The cache is `TRELLIS_GROK_CLONE_DIR`, or
+`$XDG_CACHE_HOME/trellis-grok/workflow` (default `~/.cache/trellis-grok/workflow`)
+on Linux, or `%LOCALAPPDATA%\trellis-grok\workflow` on Windows. A dirty cache
+is left alone and the command stops.
 
 Platforms (any combination; omit all three to install all of them):
 
@@ -113,25 +139,6 @@ Windows, from cmd or PowerShell, using this checkout:
 scripts\grok-fixes\trellis-grok.cmd install %USERPROFILE%\my-project -u your-name --claude --codex --grok
 ```
 
-GitHub, when the machine has no checkout. This clone is the file source, so
-the published `grok` branch has to contain `trellis-grok install` and, on
-Windows, `trellis-grok.cmd` (this commit). Until that commit is on
-`origin/grok`, clone or copy a checkout that already has it.
-
-Linux:
-
-```bash
-git clone --depth 1 --branch grok https://github.com/samiya782/trellis-workflow.git /tmp/trellis-workflow
-/tmp/trellis-workflow/scripts/grok-fixes/oneclick.sh ~/my-project -u your-name --claude --codex --grok
-```
-
-Windows:
-
-```powershell
-git clone --depth 1 --branch grok https://github.com/samiya782/trellis-workflow.git $env:TEMP\trellis-workflow
-& "$env:TEMP\trellis-workflow\scripts\grok-fixes\trellis-grok.cmd" install "$env:USERPROFILE\my-project" -u your-name --claude --codex --grok
-```
-
 Or, with the shortcut already installed, clone branch `grok` and use it even
 if a local checkout exists:
 
@@ -141,21 +148,8 @@ trellis-grok install ~/my-project -u your-name --from-github --claude --codex --
 
 `--from-github` clones `https://github.com/samiya782/trellis-workflow.git`
 branch `grok` (override with `TRELLIS_GROK_REPO` / `TRELLIS_GROK_BRANCH`).
-The cache directory is `TRELLIS_GROK_CLONE_DIR`, or
-`$XDG_CACHE_HOME/trellis-grok/workflow` (default `~/.cache/trellis-grok/workflow`)
-on Linux, or `%LOCALAPPDATA%\trellis-grok\workflow` on Windows. A dirty cache
-is left alone and the command stops. Re-running `install` in a project that
-already has `.trellis/` skips `trellis init` and copies the overlays again.
-
-`oneclick.sh` next to `trellis-grok` just execs `install`. A standalone
-download clones the branch, then execs the clone. This curl form is bash on
-Linux, WSL, or Git Bash. It does not run in cmd, and it works only after this
-commit is on `origin/grok`:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/samiya782/trellis-workflow/grok/scripts/grok-fixes/oneclick.sh \
-  | bash -s -- ~/my-project -u your-name --claude --codex --grok
-```
+Re-running `install` in a project that already has `.trellis/` skips
+`trellis init` and copies the overlays again.
 
 In the project directory, run `grok --trust` once before a Grok session.
 
